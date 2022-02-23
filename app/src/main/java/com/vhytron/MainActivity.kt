@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener{ _, destination, _ ->
 
-            if (destination.id == R.id.sign_up){
+            if (destination.id == R.id.sign_up || destination.id == R.id.login){
                 drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
                 supportActionBar?.hide()
                 binding.appBarMain.fab.visibility = GONE
