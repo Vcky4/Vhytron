@@ -79,6 +79,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/login_bt"
         app:layout_constraintTop_toBottomOf="@id/input_layout" />
 
@@ -90,6 +91,7 @@
         android:enabled="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@id/login_loading"
         app:cornerRadius="20dp"
         android:layout_marginHorizontal="80dp"
