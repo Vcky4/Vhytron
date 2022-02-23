@@ -27,5 +27,15 @@
         android:id="@+id/sign_up"
         android:name="com.vhytron.ui.authentication.SignUpFragment"
         tools:layout="@layout/fragment_sign_up"
-        android:label="@string/sign_up"/>
+        android:label="@string/sign_up">
+        <action
+            android:id="@+id/action_sign_up_to_nav_home"
+            app:destination="@id/nav_home"
+            app:enterAnim="@animator/nav_default_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim"
+            app:popUpTo="@id/sign_up"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>

@@ -6,12 +6,21 @@
         <item name="colorPrimaryVariant">@color/silver_dark</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/gold_light</item>
-        <item name="colorSecondaryVariant">@color/gold_light</item>
+        <item name="colorSecondary">@color/gold</item>
+        <item name="colorSecondaryVariant">@color/gold</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@drawable/gradient_night</item>
     </style>
+
+    <style name="Theme.Vhytron.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Vhytron.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Vhytron.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="serif-monospace"
         android:text="@string/sign_up"
-        android:textColor="@color/text_color"
+        android:textColor="@color/gold"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/input_layout"
@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/email"
-                android:padding="10dp"
+                android:padding="15dp"
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
