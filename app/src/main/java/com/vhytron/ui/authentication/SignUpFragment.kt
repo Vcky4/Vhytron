@@ -33,6 +33,10 @@ class SignUpFragment : Fragment() {
         binding.signUpBt.setOnClickListener {
             findNavController().navigate(R.id.action_sign_up_to_nav_home)
         }
+
+        binding.loginTxBt.setOnClickListener {
+            findNavController().navigate(R.id.action_sign_up_to_login)
+        }
     }
 
 }
