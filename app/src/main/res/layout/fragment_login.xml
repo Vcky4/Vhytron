@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.authentication.SignUpFragment">
+    tools:context=".ui.authentication.LoginFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
@@ -53,7 +53,8 @@
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             app:boxCornerRadiusTopEnd="20dp"
-            android:layout_marginVertical="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
             app:passwordToggleEnabled="true"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
@@ -69,25 +70,6 @@
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            app:boxCornerRadiusTopEnd="20dp"
-            app:boxCornerRadiusBottomEnd="20dp"
-            app:boxCornerRadiusTopStart="20dp"
-            app:passwordToggleEnabled="true"
-            android:padding="5dp"
-            app:boxCornerRadiusBottomStart="20dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/c_password_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/confirm_password"
-                android:padding="10dp"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 
@@ -137,5 +119,6 @@
         android:textColor="@color/gold"
         android:layout_marginVertical="18dp"
         android:focusable="true" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
