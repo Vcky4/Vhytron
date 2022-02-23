@@ -1,6 +1,8 @@
 package com.vhytron.ui.authentication
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +32,8 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        textTextWatcher()
+
         binding.loginBt.setOnClickListener {
             findNavController().navigate(R.id.action_login_to_nav_home)
         }
@@ -37,5 +41,22 @@ class LoginFragment : Fragment() {
         binding.signUpTxBt.setOnClickListener {
             findNavController().navigate(R.id.action_login_to_sign_up)
         }
+    }
+
+    private fun textTextWatcher(){
+        val watcher: TextWatcher = object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val s0 = binding.emailText.text.toString()
+                val s1 = binding.passwordText.text.toString()
+                binding.loginBt.isEnabled = !(s0.isEmpty() || s1.isEmpty())
+            }
+
+            override fun afterTextChanged(p0: Editable?) {}
+        }
+
+        binding.emailText.addTextChangedListener(watcher)
+        binding.passwordText.addTextChangedListener(watcher)
     }
 }
