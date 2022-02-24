@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "708234086079",
+    "project_id": "vhytron-fd3b4",
+    "storage_bucket": "vhytron-fd3b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708234086079:android:3387c72dc16344f84a280a",
+        "android_client_info": {
+          "package_name": "com.vhytron"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708234086079-16f95onsuphm52klltfks8l0trkie4c9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vhytron",
+            "certificate_hash": "69b197e47e8b324326e8d005b6bc2d26732a3eb0"
+          }
+        },
+        {
+          "client_id": "708234086079-ciu6r5o72uvulmtnvtjv1lvb5l0retrm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfzXqwS228YsTZWg5xOQcMB2YKdNAvw-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708234086079-ciu6r5o72uvulmtnvtjv1lvb5l0retrm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
