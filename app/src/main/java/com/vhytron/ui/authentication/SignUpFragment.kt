@@ -1,6 +1,8 @@
 package com.vhytron.ui.authentication
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
 
@@ -41,12 +44,19 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         textTextWatcher()
 
-        binding.signUpBt.setOnClickListener {
-            findNavController().navigate(R.id.action_sign_up_to_nav_home)
-        }
+
 
         binding.loginTxBt.setOnClickListener {
             findNavController().navigate(R.id.action_sign_up_to_login)
+        }
+        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
+                    ConnectivityManager
+            ).isNetworkAvailable()){
+            binding.signUpBt.setOnClickListener {
+                signUp(binding.emailText.text.toString(), binding.passwordText.text.toString())
+            }
+        }else{
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -87,6 +97,9 @@ class SignUpFragment : Fragment() {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
                     Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
                 }
+            }
+            .addOnFailureListener{exception ->
+                Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
     }
 

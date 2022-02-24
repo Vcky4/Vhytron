@@ -1,16 +1,22 @@
 package com.vhytron.ui.authentication
 
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentLoginBinding
 
@@ -48,12 +54,17 @@ class LoginFragment : Fragment() {
 
         textTextWatcher()
 
-        binding.loginBt.setOnClickListener {
-            findNavController().navigate(R.id.action_login_to_nav_home)
-        }
-
         binding.signUpTxBt.setOnClickListener {
             findNavController().navigate(R.id.action_login_to_sign_up)
+        }
+
+        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
+                    ConnectivityManager).isNetworkAvailable()){
+            binding.loginBt.setOnClickListener {
+                login(binding.emailText.text.toString(), binding.passwordText.text.toString())
+            }
+        }else{
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -72,5 +83,22 @@ class LoginFragment : Fragment() {
 
         binding.emailText.addTextChangedListener(watcher)
         binding.passwordText.addTextChangedListener(watcher)
+    }
+
+    private fun login(email: String, password: String){
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    Log.d(TAG, "loginWithEmailPassword:Successful")
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_login_to_nav_home)
+                }else{
+                    Log.w(TAG, "loginWithEmailPassword:failed", task.exception)
+                    Toast.makeText(context, "authentication failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener{exception ->
+                Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
+            }
     }
 }
