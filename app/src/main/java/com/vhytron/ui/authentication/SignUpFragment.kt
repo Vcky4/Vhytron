@@ -37,15 +37,6 @@ class SignUpFragment : Fragment() {
         return binding.root
     }
 
-     override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        if(currentUser != null){
-
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         textTextWatcher()
@@ -67,12 +58,10 @@ class SignUpFragment : Fragment() {
                 val s0 = binding.emailText.text.toString()
                 val s1 = binding.passwordText.text.toString()
                 val s2 = binding.cPasswordText.text.toString()
-                binding.signUpBt.isEnabled = !(s0.isEmpty() || s1.isEmpty() || s2.isEmpty())
+                binding.signUpBt.isEnabled = !(s0.isEmpty() || s1.isEmpty() || s2.isEmpty() || s1 != s2)
 
                 if (s1 != s2){
                     binding.cPasswordText.error = "Password does not match"
-                }else{
-//                    binding.cPasswordText.
                 }
             }
 

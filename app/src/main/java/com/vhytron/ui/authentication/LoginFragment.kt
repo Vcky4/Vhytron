@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vhytron.R
 import com.vhytron.databinding.FragmentLoginBinding
 
@@ -28,8 +30,17 @@ class LoginFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-
+        auth = Firebase.auth
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            findNavController().navigate(R.id.action_login_to_nav_home)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

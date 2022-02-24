@@ -76,7 +76,6 @@
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusBottomEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:passwordToggleEnabled="true"
             android:padding="5dp"
             app:boxCornerRadiusBottomStart="20dp">
 
