@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.vhytron.R
 import com.vhytron.databinding.FragmentLoginBinding
 
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
+    private lateinit var auth: FirebaseAuth
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.

@@ -1,19 +1,26 @@
 package com.vhytron.ui.authentication
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
 
 class SignUpFragment : Fragment() {
 
     private var _binding: FragmentSignUpBinding? = null
+    private lateinit var auth: FirebaseAuth
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -25,8 +32,18 @@ class SignUpFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-
+        // Initialize Firebase Auth
+        auth = Firebase.auth
         return binding.root
+    }
+
+     override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,6 +68,12 @@ class SignUpFragment : Fragment() {
                 val s1 = binding.passwordText.text.toString()
                 val s2 = binding.cPasswordText.text.toString()
                 binding.signUpBt.isEnabled = !(s0.isEmpty() || s1.isEmpty() || s2.isEmpty())
+
+                if (s1 != s2){
+                    binding.cPasswordText.error = "Password does not match"
+                }else{
+//                    binding.cPasswordText.
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {}
@@ -59,6 +82,23 @@ class SignUpFragment : Fragment() {
         binding.emailText.addTextChangedListener(watcher)
         binding.passwordText.addTextChangedListener(watcher)
         binding.cPasswordText.addTextChangedListener(watcher)
+    }
+
+    private fun signUp(email: String, password: String){
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isComplete){
+                    Log.d(TAG, "createUserWithEmail:success")
+                    //display successful
+                    Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show()
+                    //navigate to home
+                    findNavController().navigate(R.id.action_sign_up_to_nav_home)
+                }else{
+                    //if sign in fails, display message to user
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
 }
