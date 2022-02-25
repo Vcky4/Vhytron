@@ -1,26 +1,19 @@
 package com.vhytron
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.vhytron.databinding.ActivityMainBinding
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.gallery.GalleryFragment
@@ -50,22 +43,31 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_slideshow
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener{ _, destination, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            if (destination.id == R.id.sign_up || destination.id == R.id.login){
-                drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
-                supportActionBar?.hide()
-                binding.appBarMain.fab.visibility = GONE
-            }else{
-                drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-                supportActionBar?.show()
-                binding.appBarMain.fab.visibility = VISIBLE
+            when (destination.id) {
+                R.id.sign_up, R.id.login -> {
+                    drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
+                    supportActionBar?.hide()
+                    binding.appBarMain.fab.visibility = GONE
+                }
+                R.id.nav_home, R.id.nav_gallery -> {
+                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+                    supportActionBar?.show()
+                    binding.appBarMain.fab.visibility = VISIBLE
+                    binding.appBarMain.tabs.visibility = VISIBLE
+                }
+                else -> {
+                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+                    supportActionBar?.show()
+                    binding.appBarMain.tabs.visibility = GONE
+                }
             }
         }
 
