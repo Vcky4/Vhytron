@@ -14,7 +14,7 @@
     <color name="silver_dark">#a9b0b4</color>
     <color name="silver_white">#C1FFFDFD</color>
     <color name="text_color">#7A7A7A</color>
-    <color name="gold">#FF9800</color>
-    <color name="gold_light">#FBBE05</color>
+    <color name="gold">#E5B80B</color>
+    <color name="gold_light">#FFD451</color>
     <color name="window">#B4B2AF</color>
 </resources>
