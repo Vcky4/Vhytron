@@ -22,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import com.vhytron.databinding.ActivityMainBinding
+import com.vhytron.ui.ViewPagerAdapter
+import com.vhytron.ui.gallery.GalleryFragment
+import com.vhytron.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,6 +68,12 @@ class MainActivity : AppCompatActivity() {
                 binding.appBarMain.fab.visibility = VISIBLE
             }
         }
+
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+        adapter.addFragment(HomeFragment(), "Home")
+        adapter.addFragment(GalleryFragment(), "Gallery")
+        binding.appBarMain.viewPager.adapter = adapter
+        binding.appBarMain.tabs.setupWithViewPager(binding.appBarMain.viewPager)
     }
 
 
