@@ -1,6 +1,8 @@
 package com.vhytron.ui.home
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,28 +38,28 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.requireActivity().setActionBar(binding.toolbar)
+        val builder = AlertDialog.Builder(context)
+        val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
+        builder.setView(profileBinding.root)
+        val profileAlert = builder.create()
+        profileAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        binding.profilePic.setOnClickListener {
+            profileAlert.show()
+        }
+
+
+//        this.requireActivity().setActionBar(binding.toolbar)
 
         val adapter = ViewPagerAdapter(childFragmentManager)
         adapter.addFragment(TodosFragment(), "Todos")
         adapter.addFragment(ChatsFragment(), "Chats")
         binding.viewPager.adapter = adapter
         binding.tabs.setupWithViewPager(binding.viewPager)
-    }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        val builder = AlertDialog.Builder(context)
-        val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
-        builder.setView(profileBinding.root)
-        val profileAlert = builder.create()
-
-        binding.profilePic.setOnClickListener {
-            profileAlert.show()
-        }
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
