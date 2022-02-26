@@ -15,9 +15,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.vhytron.databinding.ActivityMainBinding
-import com.vhytron.ui.ViewPagerAdapter
-import com.vhytron.ui.gallery.GalleryFragment
-import com.vhytron.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,28 +51,20 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.sign_up, R.id.login -> {
                     drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
-                    supportActionBar?.hide()
-                    binding.appBarMain.fab.visibility = GONE
+                    binding.appBarMain.appBarCard.visibility = GONE
                 }
-                R.id.nav_home, R.id.nav_gallery -> {
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow ->{
+                    binding.appBarMain.appBarCard.visibility = GONE
                     drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-                    supportActionBar?.show()
-                    binding.appBarMain.fab.visibility = VISIBLE
-                    binding.appBarMain.tabs.visibility = VISIBLE
                 }
                 else -> {
                     drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-                    supportActionBar?.show()
-                    binding.appBarMain.tabs.visibility = GONE
+                    binding.appBarMain.appBarCard.visibility = VISIBLE
                 }
             }
         }
 
-        val adapter = ViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(HomeFragment(), "Home")
-        adapter.addFragment(GalleryFragment(), "Gallery")
-        binding.appBarMain.viewPager.adapter = adapter
-        binding.appBarMain.tabs.setupWithViewPager(binding.appBarMain.viewPager)
+
     }
 
 

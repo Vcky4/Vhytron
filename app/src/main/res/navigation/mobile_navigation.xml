@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.vhytron.ui.gallery.GalleryFragment"
+        android:name="com.vhytron.ui.chats.ChatsFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.vhytron.ui.slideshow.SlideshowFragment"
+        android:name="com.vhytron.ui.todos.TodosFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 

@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vhytron.databinding.FragmentHomeBinding
+import com.vhytron.ui.ViewPagerAdapter
+import com.vhytron.ui.chats.ChatsFragment
+import com.vhytron.ui.todos.TodosFragment
 
 class HomeFragment : Fragment() {
 
@@ -25,9 +28,19 @@ class HomeFragment : Fragment() {
             ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        this.requireActivity().setActionBar(binding.toolbar)
+
+        val adapter = ViewPagerAdapter(childFragmentManager)
+        adapter.addFragment(TodosFragment(), "Todos")
+        adapter.addFragment(ChatsFragment(), "Chats")
+        binding.viewPager.adapter = adapter
+        binding.tabs.setupWithViewPager(binding.viewPager)
     }
 
     override fun onDestroyView() {
