@@ -1,5 +1,6 @@
 package com.vhytron.ui.home
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vhytron.databinding.FragmentHomeBinding
+import com.vhytron.databinding.ProfileAlertBinding
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
@@ -41,6 +43,20 @@ class HomeFragment : Fragment() {
         adapter.addFragment(ChatsFragment(), "Chats")
         binding.viewPager.adapter = adapter
         binding.tabs.setupWithViewPager(binding.viewPager)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        val builder = AlertDialog.Builder(context)
+        val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
+        builder.setView(profileBinding.root)
+        val profileAlert = builder.create()
+
+        binding.profilePic.setOnClickListener {
+            profileAlert.show()
+        }
+
     }
 
     override fun onDestroyView() {
