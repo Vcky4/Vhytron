@@ -23,4 +23,9 @@
     <style name="Theme.Vhytron.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Vhytron.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="WrapContentDialog" parent="Theme.AppCompat.DayNight.Dialog"
+        >
+        <item name="windowMinWidthMajor">0%</item>
+    </style>
 </resources>

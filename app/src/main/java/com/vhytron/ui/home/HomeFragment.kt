@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.vhytron.R
 import com.vhytron.databinding.FragmentHomeBinding
 import com.vhytron.databinding.ProfileAlertBinding
 import com.vhytron.ui.ViewPagerAdapter
@@ -38,7 +40,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context, R.style.WrapContentDialog)
         val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
         builder.setView(profileBinding.root)
         val profileAlert = builder.create()
