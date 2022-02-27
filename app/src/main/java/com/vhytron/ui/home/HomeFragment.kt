@@ -10,6 +10,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vhytron.R
 import com.vhytron.databinding.FragmentHomeBinding
 import com.vhytron.databinding.ProfileAlertBinding
@@ -20,6 +24,8 @@ import com.vhytron.ui.todos.TodosFragment
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
+    private lateinit var auth: FirebaseAuth
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -32,6 +38,7 @@ class HomeFragment : Fragment() {
     ): View {
         val homeViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
+        auth = Firebase.auth
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -59,6 +66,10 @@ class HomeFragment : Fragment() {
         binding.viewPager.adapter = adapter
         binding.tabs.setupWithViewPager(binding.viewPager)
 
+        profileBinding.logOutBt.setOnClickListener {
+            auth.signOut()
+            findNavController().navigate(R.id.action_nav_home_to_login)
+        }
 
     }
 
