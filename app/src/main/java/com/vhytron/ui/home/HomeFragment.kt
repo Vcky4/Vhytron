@@ -69,6 +69,7 @@ class HomeFragment : Fragment() {
         profileBinding.logOutBt.setOnClickListener {
             auth.signOut()
             findNavController().navigate(R.id.action_nav_home_to_login)
+            profileAlert.dismiss()
         }
 
     }
