@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="30dp"
     android:layout_gravity="center"
-    app:cardCornerRadius="30dp"
+    app:cardCornerRadius="28dp"
     tools:ignore="HardcodedText"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
