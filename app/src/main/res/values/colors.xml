@@ -12,9 +12,9 @@
     
     <color name="silver">#c0c0c0</color>
     <color name="silver_dark">#a9b0b4</color>
-    <color name="silver_white">#C1FFFDFD</color>
+    <color name="silver_white">#CDFFFDFD</color>
     <color name="text_color">#7A7A7A</color>
     <color name="gold">#E5B80B</color>
     <color name="gold_light">#FFD451</color>
-    <color name="window">#B4B2AF</color>
+    <color name="window">#D3A9B0B4</color>
 </resources>

@@ -7,6 +7,7 @@
     tools:context=".ui.chats.ChatScreenFragment">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/toolbar_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,5 +44,13 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="10dp"
+        android:paddingTop="5dp"
+        tools:listitem="@layout/chat_item"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
