@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
                     binding.appBarMain.appBarCard.visibility = GONE
                 }
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow ->{
+                R.id.nav_home, R.id.chat_screen ->{
                     binding.appBarMain.appBarCard.visibility = GONE
                     drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
                 }

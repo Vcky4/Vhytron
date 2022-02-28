@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -47,6 +49,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().setActionBar(binding.toolbar)
+
         val builder = AlertDialog.Builder(context, R.style.WrapContentDialog)
         val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
         builder.setView(profileBinding.root)
@@ -60,11 +64,14 @@ class HomeFragment : Fragment() {
 
 //        this.requireActivity().setActionBar(binding.toolbar)
 
-        val adapter = ViewPagerAdapter(childFragmentManager)
+        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         adapter.addFragment(TodosFragment(), "Todos")
         adapter.addFragment(ChatsFragment(), "Chats")
         binding.viewPager.adapter = adapter
-        binding.tabs.setupWithViewPager(binding.viewPager)
+        TabLayoutMediator(binding.tabs, binding.viewPager){ tab, position ->
+            tab.text = adapter.getPageTitle(position)
+            binding.viewPager.setCurrentItem(tab.position, true)
+        }.attach()
 
         profileBinding.logOutBt.setOnClickListener {
             auth.signOut()

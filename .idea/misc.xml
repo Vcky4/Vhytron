@@ -20,13 +20,18 @@
         <entry key="app/src/main/res/drawable/transperent.xml" value="0.103" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/chat_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.209375" />
+        <entry key="app/src/main/res/layout/fragment_charts.xml" value="0.13451086956521738" />
+        <entry key="app/src/main/res/layout/fragment_chat_screen.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_gallery.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_slideshow.xml" value="0.209375" />
+        <entry key="app/src/main/res/layout/fragment_todos.xml" value="0.13451086956521738" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/people_item.xml" value="0.2" />
         <entry key="app/src/main/res/layout/profile_alert.xml" value="0.22" />
         <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.209375" />
         <entry key="app/src/main/res/menu/main.xml" value="0.209375" />
