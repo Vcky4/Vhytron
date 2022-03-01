@@ -14,6 +14,7 @@ import com.vhytron.databinding.FragmentChartsBinding
 class ChatsFragment : Fragment() {
 
     private var _binding: FragmentChartsBinding? = null
+    private lateinit var  chatsViewModel: ChatsViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -24,7 +25,7 @@ class ChatsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val chatsViewModel =
+        chatsViewModel =
             ViewModelProvider(this)[ChatsViewModel::class.java]
 
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
@@ -37,26 +38,16 @@ class ChatsFragment : Fragment() {
         val adapter = PeopleAdapter()
         binding.chartRv.layoutManager = LinearLayoutManager(activity)
         binding.chartRv.adapter = adapter
-        adapter.setUpPeople(listOf(
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Abasiefon", "Designer"),
-            PeopleModel(R.drawable.profile, "Ubongabasi Ndak", "Designer"),
-            PeopleModel(R.drawable.profile, "Uduak Ime", "Secretary"),
-            PeopleModel(R.drawable.profile, "Salomie", "Marketer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer"),
-            PeopleModel(R.drawable.profile, "Victor", "Mobile developer")
-        ))
+
+        chatsViewModel.people.observe(viewLifecycleOwner) {
+            adapter.setUpPeople(it)
+        }
 
         adapter.setOnItemClickListener {
-            findNavController().navigate(R.id.action_nav_home_to_chat_screen)
+            val bundle = Bundle().apply {
+                putSerializable("chats", it)
+            }
+            findNavController().navigate(R.id.action_nav_home_to_chat_screen, bundle)
         }
     }
 

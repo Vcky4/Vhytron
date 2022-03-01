@@ -1,6 +1,8 @@
 package com.vhytron.ui.chats
 
-data class PeopleModel(val image: Int, val name: String, val title: String){
+import java.io.Serializable
+
+data class PeopleModel(val image: Int, val name: String, val title: String): Serializable{
 
 
 //    fun toMap(): Map<String, Any?>{

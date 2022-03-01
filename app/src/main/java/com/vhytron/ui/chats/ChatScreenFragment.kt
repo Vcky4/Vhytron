@@ -1,6 +1,7 @@
 package com.vhytron.ui.chats
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,14 @@ class ChatScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val bundle = arguments
+        if (bundle == null){
+            Log.e("chats", "chats did not receive people information")
+            return
+        }
+
+        val args = ChatsFragmentArgs.fromBundle(bundle)
+
         binding.chatRv.layoutManager = LinearLayoutManager(activity)
         binding.chatRv.adapter = adapter
         adapter.setUpChats(
@@ -51,7 +60,11 @@ class ChatScreenFragment : Fragment() {
                 ChatModel("so what do we do next?", "1:00pm"),
             )
         )
+        binding.toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
 
+        binding.toolbar.title = args.chats.name
     }
 
 
