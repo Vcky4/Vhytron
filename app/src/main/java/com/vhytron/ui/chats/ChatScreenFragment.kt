@@ -1,14 +1,12 @@
 package com.vhytron.ui.chats
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.vhytron.R
-import com.vhytron.databinding.FragmentChartsBinding
 import com.vhytron.databinding.FragmentChatScreenBinding
 
 
@@ -53,6 +51,8 @@ class ChatScreenFragment : Fragment() {
                 ChatModel("so what do we do next?", "1:00pm"),
             )
         )
+
     }
+
 
 }

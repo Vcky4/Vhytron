@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="12dp"
-    android:paddingTop="120dp"
     tools:context=".ui.chats.ChatsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,6 +13,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/people_item"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

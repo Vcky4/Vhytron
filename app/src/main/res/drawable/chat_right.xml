@@ -8,5 +8,5 @@
         android:topLeftRadius="16dp"
         android:bottomRightRadius="16dp"/>
     <solid
-        android:color="@color/silver_white"/>
+        android:color="@color/window"/>
 </shape>

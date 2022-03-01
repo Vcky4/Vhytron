@@ -4,22 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.chats.ChatScreenFragment">
+    tools:context=".ui.chats.ChatScreenFragment"
+    tools:ignore="HardcodedText">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/toolbar_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="8dp"
-        app:cardCornerRadius="20dp">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_bg2">
+            android:background="@drawable/gradient_bg2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -42,15 +37,44 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-    </com.google.android.material.card.MaterialCardView>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_card"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingHorizontal="10dp"
+        app:layout_constraintBottom_toTopOf="@id/message_input"
         android:paddingTop="5dp"
+        android:scrollbars="vertical"
         tools:listitem="@layout/chat_item"/>
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/message_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="6"
+        android:background="@drawable/circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginVertical="15dp"
+        android:hint="Type a message"
+        android:gravity="center_vertical"
+        android:paddingVertical="5dp"
+        android:scrollbars="vertical"
+        android:layout_marginHorizontal="8dp"
+        android:paddingHorizontal="15dp"
+        app:layout_constraintEnd_toStartOf="@id/send_bt"/>
+
+    <ImageButton
+        android:id="@+id/send_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_send_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/transparent"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/message_input"
+        android:layout_marginHorizontal="20dp"
+        android:contentDescription="send button" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

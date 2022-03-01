@@ -1,5 +1,6 @@
 package com.vhytron.ui.chats
 
+import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -22,11 +23,12 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
             if (position % 2 == 0){
                 binding.card.setBackgroundResource(R.drawable.chart_left)
                 binding.layout.setPadding(10, 10, 100, 10)
-                binding.card.setHorizontalGravity(Gravity.START)
+//                binding.chat.setTextColor(Color.parseColor("#FFFFFFFF"))
+//                binding.time.setTextColor(Color.parseColor("#FFFFFFFF"))
             }else{
                 binding.card.setBackgroundResource(R.drawable.chat_right)
                 binding.layout.setPadding(100, 10, 10, 10)
-                binding.card.setHorizontalGravity(Gravity.END)
+                binding.layout.setHorizontalGravity(Gravity.END)
             }
         }
         }
