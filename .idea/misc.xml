@@ -11,6 +11,8 @@
         <entry key="app/src/main/res/drawable/gradient_bg2.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/gradient_night.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/gredient_bg.xml" value="0.103" />
+        <entry key="app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.103" />
+        <entry key="app/src/main/res/drawable/ic_baseline_keyboard_arrow_right_24.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/ic_menu_camera.xml" value="0.103" />
@@ -35,6 +37,8 @@
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout/people_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/profile_alert.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/todo_item_item.xml" value="0.16" />
+        <entry key="app/src/main/res/layout/todo_items.xml" value="0.2" />
         <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.209375" />
         <entry key="app/src/main/res/menu/main.xml" value="0.209375" />
       </map>
