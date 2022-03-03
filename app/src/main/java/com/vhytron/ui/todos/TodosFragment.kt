@@ -1,5 +1,8 @@
 package com.vhytron.ui.todos
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.vhytron.R
+import com.vhytron.databinding.AddTodoBinding
 import com.vhytron.databinding.FragmentTodosBinding
+import com.vhytron.databinding.ProfileAlertBinding
 
 class TodosFragment : Fragment() {
 
@@ -51,7 +57,18 @@ class TodosFragment : Fragment() {
                 TodoModel(list, "No due date","Design"),
             )
         )
-        adapter.setOnItemClickListener {  }
+
+        val builder = AlertDialog.Builder(context, R.style.WrapContentDialog)
+        val addTodoBinding = AddTodoBinding.inflate(layoutInflater)
+        builder.setView(addTodoBinding.root)
+        val todoAlert = builder.create()
+        todoAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        adapter.setOnItemClickListener {}
+
+        adapter.setOnAddButtonClickListener {
+            todoAlert.show()
+        }
     }
 
     override fun onDestroyView() {

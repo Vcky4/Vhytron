@@ -27,6 +27,7 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
             adapter.setUpTodo(todos.list)
         }
         val card = binding.topLayout
+        val add = binding.addBt
         fun expand(){
             if (binding.todoRy.visibility == GONE){
                 binding.todoRy.visibility = VISIBLE
@@ -65,6 +66,8 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
         holder.bindItems(todo, position)
         holder.card.setOnClickListener {
             holder.expand()
+        }
+        holder.add.setOnClickListener {
             onItemClickListener?.let { it(todo) }
         }
     }
@@ -72,6 +75,9 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
     private var onItemClickListener: ((TodoModel) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (TodoModel) -> Unit){
+        onItemClickListener = listener
+    }
+    fun setOnAddButtonClickListener(listener: (TodoModel) -> Unit){
         onItemClickListener = listener
     }
     override fun getItemCount(): Int {
