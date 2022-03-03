@@ -23,6 +23,7 @@
         <entry key="app/src/main/res/drawable/text_gradient.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/transperent.xml" value="0.103" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/add_todo.xml" value="0.25" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/chat_item.xml" value="0.22" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.209375" />
