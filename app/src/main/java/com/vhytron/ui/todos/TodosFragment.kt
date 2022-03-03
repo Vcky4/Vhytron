@@ -37,18 +37,18 @@ class TodosFragment : Fragment() {
         binding.todoRy.adapter = adapter
 
         val list = mutableListOf(
-            TodosData("complete this task", true, "4 march", "2 march"),
-            TodosData("complete this task", false, "4 march", "2 march"),
-            TodosData("complete this task", true, "4 march", "2 march"),
-            TodosData("complete this task", true, "4 march", "2 march"),
-            TodosData("complete this task", false, "4 march", "2 march"),
+            TodosData("complete this task", true, "4 march", "2 march","Victor"),
+            TodosData("complete this task", false, "4 march", "2 march","Victor"),
+            TodosData("complete this task", true, "4 march", "2 march","Victor"),
+            TodosData("complete this task", true, "4 march", "2 march","Victor"),
+            TodosData("complete this task", false, "4 march", "2 march","Victor"),
         )
         adapter.setUpTodo(
             listOf(
-                TodoModel(list, "Today"),
-                TodoModel(list, "Overdue"),
-                TodoModel(list, "Next"),
-                TodoModel(list, "No due date"),
+                TodoModel(list, "Today","Design"),
+                TodoModel(list, "Overdue","Design"),
+                TodoModel(list, "Next","Design"),
+                TodoModel(list, "No due date","Design"),
             )
         )
         adapter.setOnItemClickListener {  }
