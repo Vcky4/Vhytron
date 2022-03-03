@@ -1,6 +1,5 @@
 package com.vhytron.ui.todos
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -17,9 +16,12 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
     inner class TodoViewHolder(private val binding: TodoItemsBinding):
         RecyclerView.ViewHolder(binding.root){
         private val adapter = TodoRyAdapter()
-        fun bindItems(todos: TodoModel){
+        fun bindItems(todos: TodoModel, position: Int){
             binding.day.text = todos.day
-
+            if (position == 0){
+                binding.todoRy.visibility = VISIBLE
+                binding.drop.setBackgroundResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+            }
             binding.todoRy.adapter = adapter
             binding.todoRy.layoutManager = LinearLayoutManager(activity)
             adapter.setUpTodo(todos.list)
@@ -60,8 +62,7 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val todo = todoList[position]
-        holder.bindItems(todo)
-
+        holder.bindItems(todo, position)
         holder.card.setOnClickListener {
             holder.expand()
             onItemClickListener?.let { it(todo) }

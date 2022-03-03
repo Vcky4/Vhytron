@@ -48,9 +48,9 @@
                     app:tabGravity="fill"
                     android:paddingHorizontal="18dp"
                     android:paddingBottom="5dp"
-                    app:tabIndicatorColor="@color/gold"
+                    app:tabIndicatorColor="@color/silver_white"
                     app:tabMode="fixed"
-                    app:tabSelectedTextColor="@color/gold" />
+                    app:tabSelectedTextColor="@color/silver_white" />
 
             </com.google.android.material.appbar.AppBarLayout>
 
