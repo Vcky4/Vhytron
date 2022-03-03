@@ -9,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vhytron.R
 import com.vhytron.databinding.AddTodoBinding
 import com.vhytron.databinding.FragmentTodosBinding
 import com.vhytron.databinding.ProfileAlertBinding
+import com.vhytron.ui.home.DummyData
 
 class TodosFragment : Fragment() {
 
@@ -42,21 +44,8 @@ class TodosFragment : Fragment() {
         binding.todoRy.layoutManager = LinearLayoutManager(activity)
         binding.todoRy.adapter = adapter
 
-        val list = mutableListOf(
-            TodosData("complete this task", true, "4 march", "2 march","Victor"),
-            TodosData("complete this task", false, "4 march", "2 march","Victor"),
-            TodosData("complete this task", true, "4 march", "2 march","Victor"),
-            TodosData("complete this task", true, "4 march", "2 march","Victor"),
-            TodosData("complete this task", false, "4 march", "2 march","Victor"),
-        )
-        adapter.setUpTodo(
-            listOf(
-                TodoModel(list, "Today","Design"),
-                TodoModel(list, "Overdue","Design"),
-                TodoModel(list, "Next","Design"),
-                TodoModel(list, "No due date","Design"),
-            )
-        )
+
+        adapter.setUpTodo(DummyData.todos)
 
         val builder = AlertDialog.Builder(context, R.style.WrapContentDialog)
         val addTodoBinding = AddTodoBinding.inflate(layoutInflater)
@@ -69,6 +58,11 @@ class TodosFragment : Fragment() {
         adapter.setOnAddButtonClickListener {
             todoAlert.show()
         }
+        adapter.setOnProfileClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("chats", it.assigner)
+            }
+            findNavController().navigate(R.id.action_nav_home_to_chat_screen, bundle)        }
     }
 
     override fun onDestroyView() {

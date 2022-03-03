@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vhytron.R
 import com.vhytron.databinding.TodoItemsBinding
+import com.vhytron.ui.chats.PeopleModel
 
 class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosAdapter.TodoViewHolder>() {
     private val todoList = mutableListOf<TodoModel>()
 
     inner class TodoViewHolder(private val binding: TodoItemsBinding):
         RecyclerView.ViewHolder(binding.root){
-        private val adapter = TodoRyAdapter()
+         val adapter = TodoRyAdapter()
         fun bindItems(todos: TodoModel, position: Int){
             binding.day.text = todos.day
             if (position == 0){
@@ -25,6 +26,7 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
             binding.todoRy.adapter = adapter
             binding.todoRy.layoutManager = LinearLayoutManager(activity)
             adapter.setUpTodo(todos.list)
+
         }
         val card = binding.topLayout
         val add = binding.addBt
@@ -42,13 +44,13 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
 
     fun setUpTodo(todo: List<TodoModel>){
         when{
-            this.todoList.isEmpty() ->{
+            todoList.isEmpty() ->{
                 todoList.addAll(todo)
             }
-            this.todoList.size < todo.size ->{
+            todoList.size < todo.size ->{
                 todoList.add(todo.last())
             }
-            this.todoList.size > todo.size ->{
+            todoList.size > todo.size ->{
                 todoList.clear()
                 todoList.addAll(todo)
             }
@@ -70,9 +72,13 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
         holder.add.setOnClickListener {
             onItemClickListener?.let { it(todo) }
         }
+        holder.adapter.setOnItemClickListener { todos ->
+            onRyItemClickListener?.let { it(todos) }
+        }
     }
 
     private var onItemClickListener: ((TodoModel) -> Unit)? = null
+    private var onRyItemClickListener: ((TodosData) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (TodoModel) -> Unit){
         onItemClickListener = listener
@@ -80,6 +86,10 @@ class TodosAdapter(val activity: FragmentActivity?): RecyclerView.Adapter<TodosA
     fun setOnAddButtonClickListener(listener: (TodoModel) -> Unit){
         onItemClickListener = listener
     }
+    fun setOnProfileClickListener(listener: (TodosData) -> Unit){
+        onRyItemClickListener = listener
+    }
+
     override fun getItemCount(): Int {
         return todoList.size
     }

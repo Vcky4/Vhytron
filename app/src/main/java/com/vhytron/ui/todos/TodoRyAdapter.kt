@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.vhytron.databinding.TodoItemItemBinding
+import com.vhytron.ui.chats.PeopleModel
 
 class TodoRyAdapter: RecyclerView.Adapter<TodoRyAdapter.TodoRYViewHolder>() {
     private val todoList = mutableListOf<TodosData>()
@@ -13,11 +14,12 @@ class TodoRyAdapter: RecyclerView.Adapter<TodoRyAdapter.TodoRYViewHolder>() {
             RecyclerView.ViewHolder(binding.root){
                 @SuppressLint("SetTextI18n")
                 fun bindItem(todo: TodosData){
-                    binding.checkbox.isChecked = todo.checked
                     binding.taskName.text = todo.taskName
-                    binding.startDate.text = "Start: ${todo.startDate}"
-                    binding.dueDate.text = "Due: ${todo.dueDate}"
+                    binding.dueDate.text = todo.dueDate
+                    binding.startDate.text = todo.startDate
+                    binding.checkbox.isChecked = todo.checked
                 }
+        val profile = binding.profilePic
             }
 
     fun setUpTodo(todo: List<TodosData>){
@@ -44,8 +46,16 @@ class TodoRyAdapter: RecyclerView.Adapter<TodoRyAdapter.TodoRYViewHolder>() {
     override fun onBindViewHolder(holder: TodoRYViewHolder, position: Int) {
         val todo = todoList[position]
         holder.bindItem(todo)
+        holder.profile.setOnClickListener {
+            onItemClickListener?.let { it(todo) }
+        }
     }
 
+    private var onItemClickListener: ((TodosData) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (TodosData) -> Unit){
+        onItemClickListener = listener
+    }
     override fun getItemCount(): Int {
         return todoList.size
     }
