@@ -11,6 +11,8 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -67,6 +69,8 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     Toast.makeText(context, "please choose a job tile", Toast.LENGTH_LONG).show()
                 }else{
                     signUp(binding.emailText.text.toString(), binding.passwordText.text.toString())
+                    binding.signUpLoading.visibility = VISIBLE
+                    binding.signUpBt.isEnabled = false
                 }
             }
         }else{
@@ -89,23 +93,29 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(
-            "/users/$userName/$userId" to postValues
+            "/users/$userId" to postValues
         )
 
         database.updateChildren(childUpdates)
             .addOnSuccessListener {
                 // Write was successful!
-                Toast.makeText(context, "posted!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "new user add", Toast.LENGTH_SHORT).show()
+                //navigate to home
+                findNavController().navigate(R.id.action_sign_up_to_nav_home)
                 // ...
             }
             .addOnFailureListener {
                 // Write failed
-                Toast.makeText(context, "post failed!", Toast.LENGTH_SHORT).show()
+                binding.signUpLoading.visibility = GONE
+                binding.signUpBt.isEnabled = true
+                FirebaseAuth.getInstance().currentUser?.delete()
+                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
                 // ...
             }
 
     }
 
+    
     private fun textTextWatcher(){
         val watcher: TextWatcher = object: TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -145,17 +155,19 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun signUp(email: String, password: String){
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if (task.isComplete){
+                if (task.isSuccessful){
                     Log.d(TAG, "createUserWithEmail:success")
+                    //save user
+                    auth.currentUser?.let {
+                        addUser(binding.nameText.text.toString(), binding.userNameText.text.toString(),
+                            binding.postSpinner.selectedItem.toString(), it.uid)
+                    }
                     //display successful
                     Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show()
-                    //save user
-                    addUser(binding.nameText.text.toString(), binding.userNameText.text.toString(),
-                    binding.postSpinner.selectedItem.toString(), auth.currentUser.toString())
-                    //navigate to home
-                    findNavController().navigate(R.id.action_sign_up_to_nav_home)
                 }else{
                     //if sign in fails, display message to user
+                    binding.signUpLoading.visibility = GONE
+                    binding.signUpBt.isEnabled = true
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
                     Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
                 }
