@@ -59,7 +59,7 @@ object DummyData {
         TeamsData("Technician", "4")
     )
 
-    val titles = arrayOf("Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
+    val titles = arrayOf("choose job title", "Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
 
     val newTeam = arrayOf("Join a Team", "Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
 

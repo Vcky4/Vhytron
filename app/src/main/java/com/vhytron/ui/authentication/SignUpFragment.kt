@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -19,8 +21,9 @@ import com.google.firebase.ktx.Firebase
 import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
+import com.vhytron.ui.home.DummyData
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentSignUpBinding? = null
     private lateinit var auth: FirebaseAuth
@@ -58,6 +61,11 @@ class SignUpFragment : Fragment() {
         }else{
             Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
         }
+
+        val spinnerAdapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item, DummyData.titles)
+        binding.postSpinner.adapter = spinnerAdapter
+        binding.postSpinner.onItemSelectedListener = this
     }
 
     private fun textTextWatcher(){
@@ -102,5 +110,9 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
     }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {}
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {}
 
 }
