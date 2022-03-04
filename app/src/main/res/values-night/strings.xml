@@ -7,4 +7,6 @@
     <string name="already_have_an_account">Already have an account?</string>
     <string name="login">Login</string>
     <string name="do_not_have_an_account_yet">Do not have an account yet?</string>
+    <string name="first_and_last_name">First and Last Name</string>
+    <string name="username">Username</string>
 </resources>
