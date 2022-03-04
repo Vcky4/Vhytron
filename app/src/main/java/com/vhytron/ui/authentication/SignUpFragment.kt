@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vhytron.Network
 import com.vhytron.R
@@ -27,6 +29,8 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentSignUpBinding? = null
     private lateinit var auth: FirebaseAuth
+    private val database: DatabaseReference = Firebase.database.reference
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
