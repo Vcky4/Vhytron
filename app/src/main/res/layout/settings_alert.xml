@@ -36,7 +36,7 @@
             android:layout_margin="15dp"/>
 
         <ImageView
-            android:id="@+id/edit_profile"
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
