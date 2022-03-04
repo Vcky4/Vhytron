@@ -23,6 +23,7 @@ import com.vhytron.R
 import com.vhytron.databinding.EditProfileAlertBinding
 import com.vhytron.databinding.FragmentHomeBinding
 import com.vhytron.databinding.ProfileAlertBinding
+import com.vhytron.databinding.SettingsAlertBinding
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
@@ -68,6 +69,22 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         editProfileBuilder.setView(editProfileBinding.root)
         val editProfileAlert = editProfileBuilder.create()
         editProfileAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        //setting alert
+        val settingsBuilder = AlertDialog.Builder(context, R.style.WrapContentDialog)
+        val settingsBinding = SettingsAlertBinding.inflate(layoutInflater)
+        settingsBuilder.setView(settingsBinding.root)
+        val settingsAlert = settingsBuilder.create()
+        settingsAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        profileBinding.settings.setOnClickListener {
+            settingsAlert.show()
+        }
+
+        settingsBinding.back.setOnClickListener {
+            settingsAlert.dismiss()
+        }
+
 
         //set edit profile button on click listener
         profileBinding.editProfile.setOnClickListener {
