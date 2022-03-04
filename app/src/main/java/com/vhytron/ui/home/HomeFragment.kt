@@ -1,29 +1,24 @@
 package com.vhytron.ui.home
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vhytron.R
-import com.vhytron.databinding.EditProfileAlertBinding
-import com.vhytron.databinding.FragmentHomeBinding
-import com.vhytron.databinding.ProfileAlertBinding
-import com.vhytron.databinding.SettingsAlertBinding
+import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
@@ -77,10 +72,33 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val settingsAlert = settingsBuilder.create()
         settingsAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        //teams alert
+        val teamsBuilder = AlertDialog.Builder(context, R.style.WrapContentDialog)
+        val teamsBinding = TeamsAlertBinding.inflate(layoutInflater)
+        teamsBuilder.setView(teamsBinding.root)
+        val teamsAlert = teamsBuilder.create()
+        teamsAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        //set teams on click listener
+        profileBinding.teams.setOnClickListener {
+            teamsAlert.show()
+        }
+
+        val teamAdapter = TeamsAdapter()
+        teamsBinding.teamRy.layoutManager = LinearLayoutManager(activity)
+        teamsBinding.teamRy.adapter = teamAdapter
+        teamAdapter.setUpTeams(DummyData.teams)
+        //navigate back
+        settingsBinding.back.setOnClickListener {
+            settingsAlert.dismiss()
+        }
+
+        //set settings on click listener
         profileBinding.settings.setOnClickListener {
             settingsAlert.show()
         }
 
+        //navigate back
         settingsBinding.back.setOnClickListener {
             settingsAlert.dismiss()
         }
@@ -92,11 +110,17 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         
         //title array
-        val titles = arrayOf("Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
         //create spinner adapter
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, titles)
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, DummyData.titles)
         editProfileBinding.titleSpinner.adapter = spinnerAdapter
         editProfileBinding.titleSpinner.onItemSelectedListener = this
+
+        val teamSpinnerAdapter = ArrayAdapter(requireContext(),
+            android.R.layout.simple_spinner_dropdown_item, DummyData.newTeam)
+
+        teamsBinding.teamSpinner.adapter = teamSpinnerAdapter
+        teamsBinding.teamSpinner.onItemSelectedListener = this
+
         binding.profilePic.setOnClickListener {
             profileAlert.show()
         }
@@ -127,7 +151,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {}
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+
+    }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 }

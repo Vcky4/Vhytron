@@ -53,5 +53,16 @@ object DummyData {
         TodoModel(todosData, "No due date","Design"),
     )
 
+    val teams =  listOf(
+        TeamsData("Designers", "4"),
+        TeamsData("Developer", "4"),
+        TeamsData("Technician", "4")
+    )
+
+    val titles = arrayOf("Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
+
+    val newTeam = arrayOf("Join a Team", "Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
+
+
 
 }
