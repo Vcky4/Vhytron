@@ -1,5 +1,6 @@
 package com.vhytron.ui.authentication
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.ConnectivityManager
@@ -23,6 +24,7 @@ import com.google.firebase.ktx.Firebase
 import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
+import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.home.DummyData
 
 class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -77,6 +79,33 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.postSpinner.onItemSelectedListener = this
     }
 
+
+    private fun addUser(name: String, userName: String, title: String, userId: String) {
+        //            _key.ifEmpty {
+//            database.child("devotional").push().key
+//        }
+
+        val user = PeopleModel(R.drawable.ic_baseline_person_24, name,title,userName)
+        val postValues = user.toMap()
+
+        val childUpdates = hashMapOf<String, Any>(
+            "/users/$userName/$userId" to postValues
+        )
+
+        database.updateChildren(childUpdates)
+            .addOnSuccessListener {
+                // Write was successful!
+                Toast.makeText(context, "posted!", Toast.LENGTH_SHORT).show()
+                // ...
+            }
+            .addOnFailureListener {
+                // Write failed
+                Toast.makeText(context, "post failed!", Toast.LENGTH_SHORT).show()
+                // ...
+            }
+
+    }
+
     private fun textTextWatcher(){
         val watcher: TextWatcher = object: TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -120,6 +149,9 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     Log.d(TAG, "createUserWithEmail:success")
                     //display successful
                     Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show()
+                    //save user
+                    addUser(binding.nameText.text.toString(), binding.userNameText.text.toString(),
+                    binding.postSpinner.selectedItem.toString(), auth.currentUser.toString())
                     //navigate to home
                     findNavController().navigate(R.id.action_sign_up_to_nav_home)
                 }else{
