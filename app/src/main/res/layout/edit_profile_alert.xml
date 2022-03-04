@@ -64,39 +64,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/layout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:paddingHorizontal="20dp"-->
-<!--            android:paddingVertical="10dp"-->
-<!--            android:orientation="vertical"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/profile_name">-->
-
-<!--            <com.google.android.material.textview.MaterialTextView-->
-<!--                android:id="@+id/teams"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Teams"-->
-<!--                android:gravity="center"-->
-<!--                android:clickable="true"-->
-<!--                android:focusable="true"-->
-<!--                android:textSize="25sp"/>-->
-<!--            <com.google.android.material.textview.MaterialTextView-->
-<!--                android:id="@+id/settings"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Settings"-->
-<!--                android:clickable="true"-->
-<!--                android:gravity="center"-->
-<!--                android:focusable="true"-->
-<!--                android:layout_marginVertical="10dp"-->
-<!--                android:textSize="25sp"/>-->
-
-<!--        </LinearLayout>-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_bt"

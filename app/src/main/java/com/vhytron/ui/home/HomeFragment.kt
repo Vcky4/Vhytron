@@ -1,6 +1,7 @@
 package com.vhytron.ui.home
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,13 +20,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vhytron.R
+import com.vhytron.databinding.EditProfileAlertBinding
 import com.vhytron.databinding.FragmentHomeBinding
 import com.vhytron.databinding.ProfileAlertBinding
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var auth: FirebaseAuth
@@ -51,12 +55,31 @@ class HomeFragment : Fragment() {
 
         requireActivity().setActionBar(binding.toolbar)
 
+        //profile alert
         val builder = AlertDialog.Builder(context, R.style.WrapContentDialog)
         val profileBinding = ProfileAlertBinding.inflate(layoutInflater)
         builder.setView(profileBinding.root)
         val profileAlert = builder.create()
         profileAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        //edit profile alert
+        val editProfileBuilder = AlertDialog.Builder(context, R.style.WrapContentDialog)
+        val editProfileBinding = EditProfileAlertBinding.inflate(layoutInflater)
+        editProfileBuilder.setView(editProfileBinding.root)
+        val editProfileAlert = editProfileBuilder.create()
+        editProfileAlert?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        //set edit profile button on click listener
+        profileBinding.editProfile.setOnClickListener {
+            editProfileAlert.show()
+        }
+        
+        //title array
+        val titles = arrayOf("Developer", "Secretary", "Marketer", "Designer", "Technician", "Blockchain", "Idea Owner")
+        //create spinner adapter
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, titles)
+        editProfileBinding.titleSpinner.adapter = spinnerAdapter
+        editProfileBinding.titleSpinner.onItemSelectedListener = this
         binding.profilePic.setOnClickListener {
             profileAlert.show()
         }
@@ -86,4 +109,8 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {}
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {}
 }
