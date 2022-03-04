@@ -56,7 +56,12 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     ConnectivityManager
             ).isNetworkAvailable()){
             binding.signUpBt.setOnClickListener {
-                signUp(binding.emailText.text.toString(), binding.passwordText.text.toString())
+                if (binding.postSpinner.selectedItemPosition == 0){
+                    binding.postSpinner.requestFocus()
+                    Toast.makeText(context, "please choose a job tile", Toast.LENGTH_LONG).show()
+                }else{
+                    signUp(binding.emailText.text.toString(), binding.passwordText.text.toString())
+                }
             }
         }else{
             Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
@@ -76,11 +81,22 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 val s0 = binding.emailText.text.toString()
                 val s1 = binding.passwordText.text.toString()
                 val s2 = binding.cPasswordText.text.toString()
-                binding.signUpBt.isEnabled = !(s0.isEmpty() || s1.isEmpty() || s2.isEmpty() || s1 != s2)
+                val s3 = binding.userNameText.text.toString()
+                val s4 = binding.nameText.text.toString()
+                binding.signUpBt.isEnabled = !(s0.isEmpty() || s1.isEmpty() || s2.isEmpty() ||
+                        s1 != s2 || s3.isEmpty() || s4.isEmpty())
 
                 if (s1 != s2){
                     binding.cPasswordText.error = "Password does not match"
                 }
+
+                if (s3.isEmpty()){
+                    binding.userNameText.error = "Please choose a userName"
+                }
+                if (s4.isEmpty()){
+                    binding.userNameText.error = "Field must not be empty"
+                }
+
             }
 
             override fun afterTextChanged(p0: Editable?) {}
@@ -89,6 +105,8 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.emailText.addTextChangedListener(watcher)
         binding.passwordText.addTextChangedListener(watcher)
         binding.cPasswordText.addTextChangedListener(watcher)
+        binding.nameText.addTextChangedListener(watcher)
+        binding.userNameText.addTextChangedListener(watcher)
     }
 
     private fun signUp(email: String, password: String){
