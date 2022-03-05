@@ -179,6 +179,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                         profileBinding.profilePic.setImageResource(image)
                                         editProfileBinding.profilePic.setImageResource(image)
                                         profileBinding.profileName.text = name
+                                        profileBinding.userName.text = userName
+                                        profileBinding.title.text = title
 
 
                                         homeViewModel.addDetails(name, userName, title, image)
