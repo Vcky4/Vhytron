@@ -2,17 +2,23 @@ package com.vhytron.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +32,7 @@ import com.vhytron.R
 import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
+import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.todos.TodosFragment
 
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -38,6 +45,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var editProfileBinding: EditProfileAlertBinding
     private lateinit var settingsBinding: SettingsAlertBinding
     private lateinit var teamsBinding: TeamsAlertBinding
+    private val ref = database.child("users").ref
+    private val pickImage = 1
+    private  var imageUri: Uri? = null
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -155,13 +166,87 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             profileAlert.dismiss()
         }
 
+        val getContent = registerForActivityResult(ActivityResultContracts.GetContent())  { uri: Uri? ->
+            editProfileBinding.profilePic.setImageURI(uri)
+        imageUri = uri// Handle the returned Uri
+        }
+
+
+        editProfileBinding.editImage.setOnClickListener {
+            getContent.launch("image/*")
+
+        }
+
+        editProfileBinding.saveBt.setOnClickListener {
+//            editProfile((editProfileBinding.profilePic.drawable as BitmapDrawable).bitmap)
+            val inputStream = imageUri?.let { it1 -> activity?.contentResolver?.openInputStream(it1) }
+            val drawable = Drawable.createFromStream(inputStream, imageUri.toString())
+            editProfile(drawable, editProfileBinding.profileName.text.toString(),
+                editProfileBinding.titleSpinner.selectedItem.toString(),
+            editProfileAlert)
+        }
+
+    }
+
+//    private fun getBitmap(uri: Uri) : Bitmap?{
+//        try {
+//            val  parcelFileDescriptor = content
+//        }
+//
+//    }
+    
+    
+    private fun editProfile(image: Drawable, name: String, title: String, alertDialog: AlertDialog){
+            val user = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (dataValues in dataSnapshot.children) {
+                        auth.currentUser.let {
+                            if (dataValues.key == it?.uid){
+                                val user = PeopleModel(image, name,title,dataValues.child("userName").value.toString())
+                                val postValues = user.toMap()
+
+                                val childUpdates = hashMapOf<String, Any>(
+                                    "/users/${it?.uid}" to postValues
+                                )
+
+                                database.updateChildren(childUpdates)
+                                    .addOnSuccessListener {
+                                        // Write was successful!
+                                        Toast.makeText(context, "new user add", Toast.LENGTH_SHORT).show()
+                                        //navigate to home
+                                        editProfileBinding.saveLoading.visibility = View.GONE
+                                        editProfileBinding.saveBt.isEnabled = true
+                                        alertDialog.dismiss()
+                                        // ...
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        // Write failed
+                                        editProfileBinding.saveLoading.visibility = View.GONE
+                                        editProfileBinding.saveBt.isEnabled = true
+                                        Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
+                                        // ...
+                                    }
+                            }
+                        }
+                    }
+
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // handle error
+                    editProfileBinding.saveLoading.visibility = View.GONE
+                    Toast.makeText(context, "unable to update events", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+            ref.addListenerForSingleValueEvent(user)
+
 
     }
 
 
     @SuppressLint("SetTextI18n")
     private fun update(){
-        val ref = database.child("users").ref
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
@@ -171,13 +256,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 if (it != null) {
                                     if (dataValues.key.toString() == it.uid){
                                         val userName = dataValues.child("userName").value.toString()
-                                        val image = dataValues.child("image").value.toString().toInt()
+                                        val image = dataValues.child("image").value.toString().toInt().toDrawable()
                                         val title = dataValues.child("title").value.toString()
                                         val name = dataValues.child("name").value.toString()
 
-                                        binding.profilePic.setImageResource(image)
-                                        profileBinding.profilePic.setImageResource(image)
-                                        editProfileBinding.profilePic.setImageResource(image)
+                                        binding.profilePic.setImageDrawable(image)
+                                        profileBinding.profilePic.setImageDrawable(image)
+                                        editProfileBinding.profilePic.setImageDrawable(image)
                                         profileBinding.profileName.text = name
                                         profileBinding.userName.text = userName
                                         profileBinding.title.text = title

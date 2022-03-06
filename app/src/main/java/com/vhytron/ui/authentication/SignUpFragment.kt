@@ -1,9 +1,9 @@
 package com.vhytron.ui.authentication
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +17,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -89,7 +91,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            database.child("devotional").push().key
 //        }
 
-        val user = PeopleModel(R.drawable.ic_baseline_person_24, name,title,userName)
+        val user = PeopleModel(R.drawable.profile.toDrawable(), name,title,userName)
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(

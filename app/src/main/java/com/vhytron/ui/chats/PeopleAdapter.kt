@@ -14,7 +14,7 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
 
             fun bindItem(people: PeopleModel){
                 binding.name.text = people.name
-                binding.profilePic.setImageResource(people.image)
+                binding.profilePic.setImageURI(people.image)
                 binding.title.text = people.title
             }
 
