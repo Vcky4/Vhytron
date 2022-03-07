@@ -3,7 +3,6 @@ package com.vhytron.ui.authentication
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,14 +16,15 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
@@ -36,6 +36,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var _binding: FragmentSignUpBinding? = null
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
+    private val storageRef = Firebase.storage.reference.child("profile")
 
 
     // This property is only valid between onCreateView and
@@ -91,7 +92,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            database.child("devotional").push().key
 //        }
 
-        val user = PeopleModel(R.drawable.profile.toDrawable(), name,title,userName)
+        val user = PeopleModel(R.drawable.profile.toDrawable().toBitmap(), name,title,userName)
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(

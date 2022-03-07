@@ -5,9 +5,9 @@ import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -28,11 +28,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
 import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
-import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.todos.TodosFragment
 
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -40,6 +40,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
+    private val storageRef = Firebase.storage.reference
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var profileBinding: ProfileAlertBinding
     private lateinit var editProfileBinding: EditProfileAlertBinding
@@ -47,7 +48,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var teamsBinding: TeamsAlertBinding
     private val ref = database.child("users").ref
     private val pickImage = 1
-    private  var imageUri: Uri? = null
+    private  var bitmap: Bitmap? = null
 
 
     // This property is only valid between onCreateView and
@@ -167,8 +168,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         val getContent = registerForActivityResult(ActivityResultContracts.GetContent())  { uri: Uri? ->
-            editProfileBinding.profilePic.setImageURI(uri)
-        imageUri = uri// Handle the returned Uri
+            // Handle the returned Uri
+            bitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
+            editProfileBinding.profilePic.setImageBitmap(bitmap)
+//            val inputStream = uri?.let { it1 -> activity?.contentResolver?.openInputStream(it1) }
+//            val drawable = Drawable.createFromStream(inputStream, uri.toString())
+//            imageUri?.let { activity?.let { it1 -> ImageDecoder.createSource(it1.contentResolver, it) } }
         }
 
 
@@ -179,68 +184,74 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         editProfileBinding.saveBt.setOnClickListener {
 //            editProfile((editProfileBinding.profilePic.drawable as BitmapDrawable).bitmap)
-            val inputStream = imageUri?.let { it1 -> activity?.contentResolver?.openInputStream(it1) }
-            val drawable = Drawable.createFromStream(inputStream, imageUri.toString())
-            editProfile(drawable, editProfileBinding.profileName.text.toString(),
+            editProfile(bitmap, editProfileBinding.profileName.text.toString(),
                 editProfileBinding.titleSpinner.selectedItem.toString(),
             editProfileAlert)
+
+            update()
+            editProfileAlert.dismiss()
         }
 
     }
 
-//    private fun getBitmap(uri: Uri) : Bitmap?{
-//        try {
-//            val  parcelFileDescriptor = content
-//        }
+
+    
+    
+    private fun editProfile(image: Bitmap?, name: String, title: String, alertDialog: AlertDialog){
+//            val user = object : ValueEventListener {
+//                override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                    for (dataValues in dataSnapshot.children) {
+//                        auth.currentUser.let {
+//                            if (dataValues.key == it?.uid){
+//                                val user = PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), name,title,dataValues.child("userName").value.toString())
+//                                val postValues = user.toMap()
 //
-//    }
-    
-    
-    private fun editProfile(image: Drawable, name: String, title: String, alertDialog: AlertDialog){
-            val user = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (dataValues in dataSnapshot.children) {
-                        auth.currentUser.let {
-                            if (dataValues.key == it?.uid){
-                                val user = PeopleModel(image, name,title,dataValues.child("userName").value.toString())
-                                val postValues = user.toMap()
-
-                                val childUpdates = hashMapOf<String, Any>(
-                                    "/users/${it?.uid}" to postValues
-                                )
-
-                                database.updateChildren(childUpdates)
-                                    .addOnSuccessListener {
-                                        // Write was successful!
-                                        Toast.makeText(context, "new user add", Toast.LENGTH_SHORT).show()
-                                        //navigate to home
-                                        editProfileBinding.saveLoading.visibility = View.GONE
-                                        editProfileBinding.saveBt.isEnabled = true
-                                        alertDialog.dismiss()
-                                        // ...
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        // Write failed
-                                        editProfileBinding.saveLoading.visibility = View.GONE
-                                        editProfileBinding.saveBt.isEnabled = true
-                                        Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
-                                        // ...
-                                    }
-                            }
-                        }
-                    }
-
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // handle error
-                    editProfileBinding.saveLoading.visibility = View.GONE
-                    Toast.makeText(context, "unable to update events", Toast.LENGTH_SHORT).show()
-
-                }
+//                                val childUpdates = hashMapOf<String, Any>(
+//                                    "/users/${it?.uid}" to postValues
+//                                )
+//
+//                                database.updateChildren(childUpdates)
+//                                    .addOnSuccessListener {
+//                                        // Write was successful!
+//                                        Toast.makeText(context, "new user add", Toast.LENGTH_SHORT).show()
+//                                        //navigate to home
+//                                        editProfileBinding.saveLoading.visibility = View.GONE
+//                                        editProfileBinding.saveBt.isEnabled = true
+//                                        alertDialog.dismiss()
+//                                        // ...
+//                                    }
+//                                    .addOnFailureListener { exception ->
+//                                        // Write failed
+//                                        editProfileBinding.saveLoading.visibility = View.GONE
+//                                        editProfileBinding.saveBt.isEnabled = true
+//                                        Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
+//                                        // ...
+//                                    }
+//                            }
+//                        }
+//                    }
+//
+//                }
+//
+//                override fun onCancelled(databaseError: DatabaseError) {
+//                    // handle error
+//                    editProfileBinding.saveLoading.visibility = View.GONE
+//                    Toast.makeText(context, "unable to update events", Toast.LENGTH_SHORT).show()
+//
+//                }
+//            }
+//            ref.addListenerForSingleValueEvent(user)
+        val userRef = ref.child("${auth.currentUser.let { it?.uid }}")
+        userRef.child("name").setValue(name)
+        userRef.child("image").setValue(listOf(image))
+        userRef.child("title").setValue(title)
+            .addOnSuccessListener {
+                Toast.makeText(context, "user updated", Toast.LENGTH_SHORT).show()
             }
-            ref.addListenerForSingleValueEvent(user)
+            .addOnFailureListener {
+                Toast.makeText(context, "update fail", Toast.LENGTH_SHORT).show()
 
+            }
 
     }
 
@@ -256,19 +267,20 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 if (it != null) {
                                     if (dataValues.key.toString() == it.uid){
                                         val userName = dataValues.child("userName").value.toString()
-                                        val image = dataValues.child("image").value.toString().toInt().toDrawable()
+                                        val image = dataValues.child("image").value.toString().toUri()
                                         val title = dataValues.child("title").value.toString()
                                         val name = dataValues.child("name").value.toString()
 
-                                        binding.profilePic.setImageDrawable(image)
-                                        profileBinding.profilePic.setImageDrawable(image)
-                                        editProfileBinding.profilePic.setImageDrawable(image)
+
+                                        binding.profilePic.setImageURI(image)
+                                        profileBinding.profilePic.setImageURI(image)
+                                        editProfileBinding.profilePic.setImageURI(image)
                                         profileBinding.profileName.text = name
                                         profileBinding.userName.text = userName
                                         profileBinding.title.text = title
 
 
-                                        homeViewModel.addDetails(name, userName, title, image)
+//                                        homeViewModel.addDetails(name, userName, title, image)
                                     }
                                 }
                             }
