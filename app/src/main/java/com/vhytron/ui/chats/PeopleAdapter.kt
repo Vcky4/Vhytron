@@ -1,20 +1,19 @@
 package com.vhytron.ui.chats
 
 import android.view.LayoutInflater
-import android.view.OnReceiveContentListener
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.vhytron.databinding.PeopleItemBinding
 
 class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
-    private val peopleList = mutableListOf<PeopleModel>()
+    private val peopleList = mutableListOf<ContactModel>()
 
     inner class PeopleViewHolder(private val binding: PeopleItemBinding):
         RecyclerView.ViewHolder(binding.root){
 
-            fun bindItem(people: PeopleModel){
+            fun bindItem(people: ContactModel){
                 binding.name.text = people.name
-//                binding.profilePic.setImageBitmap(people.image)
+                binding.profilePic.setImageBitmap(people.bitmap)
                 binding.title.text = people.title
             }
 
@@ -22,7 +21,7 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
 
     }
 
-    fun setUpPeople(people: List<PeopleModel>){
+    fun setUpPeople(people: List<ContactModel>){
         when {
             this.peopleList.isEmpty() ->{
                 this.peopleList.addAll(people)
@@ -52,9 +51,9 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
         }
     }
 
-    private var onItemClickListener: ((PeopleModel) -> Unit)? = null
+    private var onItemClickListener: ((ContactModel) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (PeopleModel) -> Unit){
+    fun setOnItemClickListener(listener: (ContactModel) -> Unit){
         onItemClickListener = listener
     }
 

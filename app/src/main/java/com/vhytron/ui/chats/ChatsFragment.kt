@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -41,7 +42,7 @@ class ChatsFragment : Fragment() {
             ViewModelProvider(this)[ChatsViewModel::class.java]
 
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
-
+        auth = Firebase.auth
         return binding.root
     }
 

@@ -1,6 +1,10 @@
 package com.vhytron.ui.home
 
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
+import com.vhytron.R
 import com.vhytron.ui.chats.ChatModel
+import com.vhytron.ui.chats.ContactModel
 import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.todos.TodoModel
 import com.vhytron.ui.todos.TodosData
@@ -20,21 +24,21 @@ object DummyData {
     )
 
     val people =  mutableListOf(
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Abasiefon", "Designer", "chats"),
-        PeopleModel("", "Ubongabasi Ndak", "Designer", "chats"),
-        PeopleModel("", "Uduak Ime", "Secretary", "chats"),
-        PeopleModel("", "Salomie", "Marketer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats"),
-        PeopleModel("", "Victor", "Mobile developer", "chats")
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Abasiefon", "Designer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Ubongabasi Ndak", "Designer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Uduak Ime", "Secretary", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Salomie", "Marketer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
+        ContactModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats")
     )
 
     private val todosData = mutableListOf(
