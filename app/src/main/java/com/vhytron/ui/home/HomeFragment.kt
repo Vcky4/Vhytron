@@ -2,22 +2,20 @@ package com.vhytron.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -35,20 +33,20 @@ import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
 
+
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentHomeBinding? = null
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
-    private val storageRef = Firebase.storage.reference
+    private val storageRef = Firebase.storage.reference.child("profileImage")
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var profileBinding: ProfileAlertBinding
     private lateinit var editProfileBinding: EditProfileAlertBinding
     private lateinit var settingsBinding: SettingsAlertBinding
     private lateinit var teamsBinding: TeamsAlertBinding
     private val ref = database.child("users").ref
-    private val pickImage = 1
-    private  var bitmap: Bitmap? = null
+    private  var imageUri: Uri? = null
 
 
     // This property is only valid between onCreateView and
@@ -169,8 +167,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         val getContent = registerForActivityResult(ActivityResultContracts.GetContent())  { uri: Uri? ->
             // Handle the returned Uri
-            bitmap = MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
-            editProfileBinding.profilePic.setImageBitmap(bitmap)
+            imageUri = uri
+            if (uri != null) {
+                uploadImageToFirebase(uri)
+            }
 //            val inputStream = uri?.let { it1 -> activity?.contentResolver?.openInputStream(it1) }
 //            val drawable = Drawable.createFromStream(inputStream, uri.toString())
 //            imageUri?.let { activity?.let { it1 -> ImageDecoder.createSource(it1.contentResolver, it) } }
@@ -184,7 +184,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         editProfileBinding.saveBt.setOnClickListener {
 //            editProfile((editProfileBinding.profilePic.drawable as BitmapDrawable).bitmap)
-            editProfile(bitmap, editProfileBinding.profileName.text.toString(),
+            editProfile(editProfileBinding.profileName.text.toString(),
                 editProfileBinding.titleSpinner.selectedItem.toString(),
             editProfileAlert)
 
@@ -194,10 +194,27 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     }
 
+    private fun uploadImageToFirebase(fileUri: Uri) {
+        editProfileBinding.imageLoading.visibility = VISIBLE
+        val fileName = "${auth.currentUser?.uid}.jpg"
+        val refStorage = storageRef.child(fileName)
 
+        refStorage.putFile(fileUri)
+            .addOnSuccessListener {
+                val oneMegaByte: Long = 1024 * 1024
+                it.storage.getBytes(oneMegaByte).addOnSuccessListener { bytes ->
+                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    editProfileBinding.profilePic.setImageBitmap(bmp)
+                    editProfileBinding.imageLoading.visibility = GONE
+                }
+            }
+            .addOnFailureListener { e ->
+                print(e.message)
+            }
+
+    }
     
-    
-    private fun editProfile(image: Bitmap?, name: String, title: String, alertDialog: AlertDialog){
+    private fun editProfile(name: String, title: String, alertDialog: AlertDialog){
 //            val user = object : ValueEventListener {
 //                override fun onDataChange(dataSnapshot: DataSnapshot) {
 //                    for (dataValues in dataSnapshot.children) {
@@ -243,7 +260,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            ref.addListenerForSingleValueEvent(user)
         val userRef = ref.child("${auth.currentUser.let { it?.uid }}")
         userRef.child("name").setValue(name)
-        userRef.child("image").setValue(listOf(image))
         userRef.child("title").setValue(title)
             .addOnSuccessListener {
                 Toast.makeText(context, "user updated", Toast.LENGTH_SHORT).show()
@@ -267,14 +283,22 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 if (it != null) {
                                     if (dataValues.key.toString() == it.uid){
                                         val userName = dataValues.child("userName").value.toString()
-                                        val image = dataValues.child("image").value.toString().toUri()
                                         val title = dataValues.child("title").value.toString()
                                         val name = dataValues.child("name").value.toString()
+                                        val oneMegaByte: Long = 1024 * 1024
 
-
-                                        binding.profilePic.setImageURI(image)
-                                        profileBinding.profilePic.setImageURI(image)
-                                        editProfileBinding.profilePic.setImageURI(image)
+                                        storageRef.child("${auth.currentUser?.uid}.jpg").getBytes(oneMegaByte)
+                                            .addOnSuccessListener { bytes ->
+                                            if (bytes != null){
+                                                val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                                binding.profilePic.setImageBitmap(image)
+                                                profileBinding.profilePic.setImageBitmap(image)
+                                                editProfileBinding.profilePic.setImageBitmap(image)
+                                            }
+                                        }
+                                            .addOnFailureListener { e ->
+                                                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                                            }
                                         profileBinding.profileName.text = name
                                         profileBinding.userName.text = userName
                                         profileBinding.title.text = title

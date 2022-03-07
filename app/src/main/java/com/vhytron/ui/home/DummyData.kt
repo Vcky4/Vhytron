@@ -1,8 +1,5 @@
 package com.vhytron.ui.home
 
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
-import com.vhytron.R
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.todos.TodoModel
@@ -23,29 +20,29 @@ object DummyData {
     )
 
     val people =  mutableListOf(
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Abasiefon", "Designer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Ubongabasi Ndak", "Designer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Uduak Ime", "Secretary", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Salomie", "Marketer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),
-        PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats")
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Abasiefon", "Designer", "chats"),
+        PeopleModel("", "Ubongabasi Ndak", "Designer", "chats"),
+        PeopleModel("", "Uduak Ime", "Secretary", "chats"),
+        PeopleModel("", "Salomie", "Marketer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats"),
+        PeopleModel("", "Victor", "Mobile developer", "chats")
     )
 
     private val todosData = mutableListOf(
-        TodosData("complete this task", true, "4 march", "2 march",PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5),"Victor", "Mobile developer", "chats")),
-        TodosData("complete this task", false, "4 march", "2 march",PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats")),
-        TodosData("complete this task", true, "4 march", "2 march",PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5),"Victor", "Mobile developer", "chats")),
-        TodosData("complete this task", true, "4 march", "2 march",PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5),"Victor", "Mobile developer", "chats")),
-        TodosData("complete this task", false, "4 march", "2 march",PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats")),
+        TodosData("complete this task", true, "4 march", "2 march",PeopleModel("","Victor", "Mobile developer", "chats")),
+        TodosData("complete this task", false, "4 march", "2 march",PeopleModel("", "Victor", "Mobile developer", "chats")),
+        TodosData("complete this task", true, "4 march", "2 march",PeopleModel("","Victor", "Mobile developer", "chats")),
+        TodosData("complete this task", true, "4 march", "2 march",PeopleModel("","Victor", "Mobile developer", "chats")),
+        TodosData("complete this task", false, "4 march", "2 march",PeopleModel("", "Victor", "Mobile developer", "chats")),
     )
 
     val todos = mutableListOf(

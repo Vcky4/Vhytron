@@ -14,7 +14,7 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
 
             fun bindItem(people: PeopleModel){
                 binding.name.text = people.name
-                binding.profilePic.setImageBitmap(people.image)
+//                binding.profilePic.setImageBitmap(people.image)
                 binding.title.text = people.title
             }
 

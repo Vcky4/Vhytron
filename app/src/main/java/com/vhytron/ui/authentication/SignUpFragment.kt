@@ -92,7 +92,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            database.child("devotional").push().key
 //        }
 
-        val user = PeopleModel(R.drawable.profile.toDrawable().toBitmap(), name,title,userName)
+        val user = PeopleModel("", name,title,userName)
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(
