@@ -302,6 +302,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                         profileBinding.profileName.text = name
                                         profileBinding.userName.text = userName
                                         profileBinding.title.text = title
+                                        editProfileBinding.profileName.setText(name)
 
 
 //                                        homeViewModel.addDetails(name, userName, title, image)
