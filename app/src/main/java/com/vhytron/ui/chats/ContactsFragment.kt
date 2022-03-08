@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -45,8 +46,14 @@ class ContactsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         update()
+
+        adapter.setOnItemClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("chats", it)
+            }
+            findNavController().navigate(R.id.action_contact_screen_to_chat_screen, bundle)
+        }
 
     }
 

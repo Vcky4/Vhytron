@@ -65,6 +65,7 @@ class ChatScreenFragment : Fragment() {
         }
 
         binding.toolbar.title = args.chats.name
+        binding.profilePic.setImageBitmap(args.chats.image)
     }
 
 

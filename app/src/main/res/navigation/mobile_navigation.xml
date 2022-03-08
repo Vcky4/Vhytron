@@ -113,5 +113,15 @@
         android:id="@+id/contact_screen"
         android:name="com.vhytron.ui.chats.ContactsFragment"
         android:label="Select contact"
-        tools:layout="@layout/fragment_contact"/>
+        tools:layout="@layout/fragment_contact">
+        <action
+            android:id="@+id/action_contact_screen_to_chat_screen"
+            app:destination="@id/chat_screen"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/contact_screen"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>
