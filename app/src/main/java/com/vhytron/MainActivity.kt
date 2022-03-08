@@ -46,23 +46,23 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-
-            when (destination.id) {
-                R.id.sign_up, R.id.login -> {
-                    drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
-                    binding.appBarMain.appBarCard.visibility = GONE
-                }
-                R.id.nav_home, R.id.chat_screen ->{
-                    binding.appBarMain.appBarCard.visibility = GONE
-                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-                }
-                else -> {
-                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
-                    binding.appBarMain.appBarCard.visibility = VISIBLE
-                }
-            }
-        }
+//        navController.addOnDestinationChangedListener { _, destination, _ ->
+//
+//            when (destination.id) {
+//                R.id.sign_up, R.id.login -> {
+//                    drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
+//                    binding.appBarMain.appBarCard.visibility = GONE
+//                }
+//                R.id.nav_home, R.id.chat_screen ->{
+//                    binding.appBarMain.appBarCard.visibility = GONE
+//                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+//                }
+//                else -> {
+//                    drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
+//                    binding.appBarMain.appBarCard.visibility = VISIBLE
+//                }
+//            }
+//        }
 
 
     }

@@ -7,7 +7,7 @@ import java.io.Serializable
 
 //this model contains every other model in it
 data class PeopleModel(
-    val image: String, val name: String, val title: String,
+    val image: Bitmap, val name: String, val title: String,
     val userName: String):
     Serializable{
 

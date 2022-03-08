@@ -28,6 +28,7 @@ import com.google.firebase.storage.ktx.storage
 import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.databinding.FragmentSignUpBinding
+import com.vhytron.ui.chats.ContactModel
 import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.home.DummyData
 
@@ -92,7 +93,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            database.child("devotional").push().key
 //        }
 
-        val user = PeopleModel("", name,title,userName)
+        val user = ContactModel("", name,title,userName)
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(

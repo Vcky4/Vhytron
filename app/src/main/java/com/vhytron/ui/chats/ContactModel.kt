@@ -5,7 +5,7 @@ import com.google.firebase.database.Exclude
 import java.io.Serializable
 
 class ContactModel(
-                   val bitmap: Bitmap, val name: String, val title: String,
+                   val bitmap: String, val name: String, val title: String,
                    val userName: String):
     Serializable {
 

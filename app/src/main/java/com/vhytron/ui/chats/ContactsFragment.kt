@@ -6,8 +6,12 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -19,7 +23,7 @@ import com.vhytron.R
 import com.vhytron.databinding.FragmentContactBinding
 
 
-class ContactFragment : Fragment() {
+class ContactsFragment : Fragment() {
 
     private lateinit var binding: FragmentContactBinding
     private val adapter = PeopleAdapter()
@@ -42,50 +46,62 @@ class ContactFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.contactRy.layoutManager = LinearLayoutManager(activity)
-        binding.contactRy.adapter = adapter
+        update()
 
     }
 
     @SuppressLint("SetTextI18n")
-    private fun update(){
+    private fun update() {
         val childEventListener = object : ChildEventListener {
-            val list = mutableListOf<ContactModel>()
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        binding.contactLoading.visibility = VISIBLE
+                        val list = mutableListOf<PeopleModel>()
                         for (dataValues in dataSnapshot.children) {
                             auth.currentUser.let {
                                 if (it != null) {
-                                    if (dataValues.key.toString() == it.uid){
-                                        val userName = dataValues.child("userName").value.toString()
-                                        val title = dataValues.child("title").value.toString()
-                                        val name = dataValues.child("name").value.toString()
-                                        val oneMegaByte: Long = 1024 * 1024
+                                    val userName =
+                                        dataValues.child("userName").value.toString()
+                                    val title =
+                                        dataValues.child("title").value.toString()
+                                    val name = dataValues.child("name").value.toString()
 
-                                        storageRef.child("${auth.currentUser?.uid}.jpg").getBytes(oneMegaByte)
-                                            .addOnSuccessListener { bytes ->
-                                                if (bytes != null){
-                                                    val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                                                  list.add(ContactModel(image, name, title, userName))
-                                                }
+
+                                    val oneMegaByte: Long = 1024 * 1024
+                                    storageRef.child("${dataValues.key.toString()}.jpg")
+                                        .getBytes(oneMegaByte).addOnSuccessListener { bytes ->
+                                            if (bytes != null) {
+                                                val image = BitmapFactory.decodeByteArray(
+                                                    bytes, 0, bytes.size)
+                                                list.add(PeopleModel(
+                                                    image, name, title, userName))
+                                                binding.contactRy.layoutManager = LinearLayoutManager(activity)
+                                                binding.contactRy.adapter = adapter
+                                                adapter.setUpPeople(list)
+                                                binding.contactLoading.visibility = GONE
                                             }
-                                            .addOnFailureListener { e ->
-                                                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                                            }
-                                        adapter.setUpPeople(list)
-                                    }
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(context, e.message, Toast.LENGTH_LONG)
+                                                .show()
+                                        }
+
+//                                    list.add(PeopleModel(
+//                                        R.drawable.profile.toDrawable().toBitmap(20,20), name, title, userName))
+//                                    binding.contactLoading.visibility = GONE
+
                                 }
                             }
                         }
-
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
                         // handle error
                     }
                 }
-                ref.addListenerForSingleValueEvent(menuListener)            }
+                ref.addListenerForSingleValueEvent(menuListener)
+            }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
             }
@@ -101,4 +117,5 @@ class ContactFragment : Fragment() {
         ref.addChildEventListener(childEventListener)
 
     }
+
 }

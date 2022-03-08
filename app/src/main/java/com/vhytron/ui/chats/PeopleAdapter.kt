@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.vhytron.databinding.PeopleItemBinding
 
 class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
-    private val peopleList = mutableListOf<ContactModel>()
+    private val peopleList = mutableListOf<PeopleModel>()
 
     inner class PeopleViewHolder(private val binding: PeopleItemBinding):
         RecyclerView.ViewHolder(binding.root){
 
-            fun bindItem(people: ContactModel){
+            fun bindItem(people: PeopleModel){
                 binding.name.text = people.name
-                binding.profilePic.setImageBitmap(people.bitmap)
+                binding.profilePic.setImageBitmap(people.image)
                 binding.title.text = people.title
             }
 
@@ -21,7 +21,7 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
 
     }
 
-    fun setUpPeople(people: List<ContactModel>){
+    fun setUpPeople(people: List<PeopleModel>){
         when {
             this.peopleList.isEmpty() ->{
                 this.peopleList.addAll(people)
@@ -51,9 +51,9 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
         }
     }
 
-    private var onItemClickListener: ((ContactModel) -> Unit)? = null
+    private var onItemClickListener: ((PeopleModel) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (ContactModel) -> Unit){
+    fun setOnItemClickListener(listener: (PeopleModel) -> Unit){
         onItemClickListener = listener
     }
 

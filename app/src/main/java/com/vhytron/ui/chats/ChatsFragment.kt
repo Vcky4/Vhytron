@@ -1,6 +1,5 @@
 package com.vhytron.ui.chats
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -61,6 +60,10 @@ class ChatsFragment : Fragment() {
                 putSerializable("chats", it)
             }
             findNavController().navigate(R.id.action_nav_home_to_chat_screen, bundle)
+        }
+
+        binding.newChatBt.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_home_to_contact_screen)
         }
     }
     private fun getImages(){

@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.chats.ContactFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.chats.ContactsFragment">
+
+  <com.google.android.material.appbar.AppBarLayout
+      android:id="@+id/toolbar_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/gradient_bg2"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="Select contact"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24">
+
+    </androidx.appcompat.widget.Toolbar>
+  </com.google.android.material.appbar.AppBarLayout>
+
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/contact_ry"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
       android:scrollbars="vertical"
       tools:listitem="@layout/people_item"/>
 
-</FrameLayout>
+  <ProgressBar
+      android:id="@+id/contact_loading"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:visibility="gone"
+      app:layout_constraintStart_toStartOf="@id/contact_ry"
+      app:layout_constraintTop_toTopOf="@id/contact_ry"
+      app:layout_constraintBottom_toBottomOf="@id/contact_ry"
+      app:layout_constraintEnd_toEndOf="@id/contact_ry"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

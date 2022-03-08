@@ -26,6 +26,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_nav_home_to_contact_screen"
+            app:destination="@id/contact_screen"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@animator/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -42,6 +49,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument android:name="chats"
             app:argType="com.vhytron.ui.chats.PeopleModel"/>
+
     </fragment>
 
     <fragment
@@ -101,4 +109,9 @@
         android:name="com.vhytron.ui.chats.ChatScreenFragment"
         android:label="Chats"
         tools:layout="@layout/fragment_chat_screen"/>
+    <fragment
+        android:id="@+id/contact_screen"
+        android:name="com.vhytron.ui.chats.ContactsFragment"
+        android:label="Select contact"
+        tools:layout="@layout/fragment_contact"/>
 </navigation>
