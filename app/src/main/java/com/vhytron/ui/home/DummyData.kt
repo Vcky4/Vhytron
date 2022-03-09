@@ -10,18 +10,18 @@ import com.vhytron.ui.todos.TodoModel
 import com.vhytron.ui.todos.TodosData
 
 object DummyData {
-    val chats = mutableListOf(
-        ChatModel("thanks for your message I really appreciate", "1:00pm"),
-        ChatModel("its fine any time", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-        ChatModel("so what do we do next?", "1:00pm"),
-    )
+//    val chats = mutableListOf(
+//        ChatModel("thanks for your message I really appreciate", "1:00pm"),
+//        ChatModel("its fine any time", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//        ChatModel("so what do we do next?", "1:00pm"),
+//    )
 
     val people =  mutableListOf(
         PeopleModel(R.drawable.profile.toDrawable().toBitmap(5,5), "Victor", "Mobile developer", "chats"),

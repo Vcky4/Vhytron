@@ -67,7 +67,7 @@ class ContactsFragment : Fragment() {
                         val list = mutableListOf<PeopleModel>()
                         for (dataValues in dataSnapshot.children) {
                             auth.currentUser.let {
-                                if (it != null) {
+                                if (it != null && dataValues.key != it.uid) {
                                     val userName =
                                         dataValues.child("userName").value.toString()
                                     val title =
