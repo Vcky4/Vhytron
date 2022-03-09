@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -32,14 +33,19 @@ class ContactsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        chatsViewModel.update()
+        chatsViewModel.updatePeople()
 
+        //set up recycler
         chatsViewModel.people.observe(viewLifecycleOwner){
-            binding.contactLoading.visibility = VISIBLE
             binding.contactRy.layoutManager = LinearLayoutManager(activity)
             binding.contactRy.adapter = adapter
             adapter.setUpPeople(it)
             binding.contactLoading.visibility = GONE
+        }
+
+        //display errors
+        chatsViewModel.error.observe(viewLifecycleOwner){
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
         adapter.setOnItemClickListener {

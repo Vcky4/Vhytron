@@ -1,7 +1,9 @@
 package com.vhytron.ui.chats
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -21,20 +23,23 @@ class ChatsViewModel : ViewModel() {
 
     private val database: DatabaseReference = Firebase.database.reference
     private val storageRef = Firebase.storage.reference.child("profileImage")
-    private val ref = database.child("users").ref
+    private val uRef = database.child("users").ref
+    private val cRef = database.child("chats").ref
     private val auth: FirebaseAuth = Firebase.auth
-
-
 
     private val _user = MutableLiveData<String>()
     private val _people = MutableLiveData<MutableList<PeopleModel>>()
+    private val _chats = MutableLiveData<MutableList<ChatModel>>()
     private val _error = MutableLiveData<String>()
+
+
     val error: LiveData<String> = _error
     val people: LiveData<MutableList<PeopleModel>> = _people
+    val chats: LiveData<MutableList<ChatModel>> = _chats
 
 
     @SuppressLint("SetTextI18n")
-    fun update() {
+    fun updatePeople() {
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
@@ -78,7 +83,63 @@ class ChatsViewModel : ViewModel() {
                         // handle error
                     }
                 }
-                ref.addListenerForSingleValueEvent(menuListener)
+                uRef.addListenerForSingleValueEvent(menuListener)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        }
+        uRef.addChildEventListener(childEventListener)
+    }
+
+        @SuppressLint("SetTextI18n")
+    fun updateChats(friend: String) {
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val menuListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val list = mutableListOf<ChatModel>()
+                        for (dataValues in dataSnapshot.children) {
+                            auth.currentUser.let {
+                                if (it != null) {
+                                    uRef.child(it.uid).child("userName")
+                                        .get().addOnSuccessListener{ data ->
+                                        if (dataValues.key.toString()
+                                                .contains(data.value.toString()) &&
+                                            dataValues.key.toString().contains(friend)) {
+                                            Log.d(TAG, dataValues.key.toString())
+
+                                            dataValues.children.forEach { snapshot ->
+                                                val message = snapshot.child("message").value.toString()
+                                                val sender = snapshot.child("userName")
+                                                    .value.toString()
+                                                val time = snapshot.child("time")
+                                                    .value.toString()
+                                                list.add(ChatModel(sender, message, time))
+                                                _chats.value = list
+                                            }
+                                        }
+                                    }
+                                        .addOnFailureListener { e ->
+                                            _error.value = e.message
+                                        }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // handle error
+                    }
+                }
+                cRef.addListenerForSingleValueEvent(menuListener)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -92,7 +153,7 @@ class ChatsViewModel : ViewModel() {
 
         }
 
-        ref.addChildEventListener(childEventListener)
+        cRef.addChildEventListener(childEventListener)
 
     }
 }

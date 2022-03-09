@@ -33,6 +33,7 @@ class ChatScreenFragment : Fragment() {
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
+    private lateinit var chatsViewModel: ChatsViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,7 +44,7 @@ class ChatScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        val chatsViewModel =
+        chatsViewModel =
             ViewModelProvider(this)[ChatsViewModel::class.java]
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
@@ -59,11 +60,15 @@ class ChatScreenFragment : Fragment() {
             Log.e("chats", "chats did not receive people information")
             return
         }
-
         val args = ChatsFragmentArgs.fromBundle(bundle)
 
-        binding.chatRv.layoutManager = LinearLayoutManager(activity)
-        binding.chatRv.adapter = adapter
+        chatsViewModel.updateChats(args.chats.userName)
+        chatsViewModel.chats.observe(viewLifecycleOwner){
+            binding.chatRv.layoutManager = LinearLayoutManager(activity)
+            binding.chatRv.adapter = adapter
+            adapter.setUpChats(it)
+        }
+
         binding.toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
@@ -75,6 +80,7 @@ class ChatScreenFragment : Fragment() {
             if (binding.messageInput.text?.isNotEmpty() == true){
                 createChats(args, binding.messageInput.text.toString())
                 binding.messageInput.text?.clear()
+                chatsViewModel.updateChats(args.chats.userName)
             }
         }
     }
@@ -94,15 +100,10 @@ class ChatScreenFragment : Fragment() {
                         val postValues = chat.toMap()
 
                         val childUpdates = hashMapOf<String, Any>(
-                            "/chats/$user${args.chats.userName}/$key" to postValues
+                            "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
                         )
 
                         database.updateChildren(childUpdates)
-                            .addOnSuccessListener {
-                                // Write was successful!
-                                Toast.makeText(context, "message", Toast.LENGTH_SHORT).show()
-
-                            }
                             .addOnFailureListener { exception ->
                                 // Write failed
                                 Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG)
@@ -133,74 +134,5 @@ class ChatScreenFragment : Fragment() {
 
         binding.messageInput.addTextChangedListener(watcher)
     }
-
-
-
-//    @SuppressLint("SetTextI18n")
-//    private fun update() {
-//        val childEventListener = object : ChildEventListener {
-//            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-//                val menuListener = object : ValueEventListener {
-//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                        val list = mutableListOf<PeopleModel>()
-//                        for (dataValues in dataSnapshot.children) {
-//                            auth.currentUser.let {
-//                                if (it != null && dataValues.key != it.uid) {
-//                                    val userName =
-//                                        dataValues.child("userName").value.toString()
-//                                    val title =
-//                                        dataValues.child("title").value.toString()
-//                                    val name = dataValues.child("name").value.toString()
-//
-//
-//                                    val oneMegaByte: Long = 1024 * 1024
-//                                    storageRef.child("${dataValues.key.toString()}.jpg")
-//                                        .getBytes(oneMegaByte).addOnSuccessListener { bytes ->
-//                                            if (bytes != null) {
-//                                                val image = BitmapFactory.decodeByteArray(
-//                                                    bytes, 0, bytes.size)
-//                                                list.add(PeopleModel(
-//                                                    image, name, title, userName))
-//                                                binding.contactRy.layoutManager = LinearLayoutManager(activity)
-//                                                binding.contactRy.adapter = adapter
-//                                                adapter.setUpPeople(list)
-//                                                binding.contactLoading.visibility = View.GONE
-//                                            }
-//                                        }
-//                                        .addOnFailureListener { e ->
-//                                            Toast.makeText(context, e.message, Toast.LENGTH_LONG)
-//                                                .show()
-//                                        }
-//
-////                                    list.add(PeopleModel(
-////                                        R.drawable.profile.toDrawable().toBitmap(20,20), name, title, userName))
-////                                    binding.contactLoading.visibility = GONE
-//
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    override fun onCancelled(databaseError: DatabaseError) {
-//                        // handle error
-//                    }
-//                }
-//                ref.addListenerForSingleValueEvent(menuListener)
-//            }
-//
-//            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-//            }
-//
-//            override fun onChildRemoved(snapshot: DataSnapshot) {}
-//
-//            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-//
-//            override fun onCancelled(error: DatabaseError) {}
-//
-//        }
-//
-//        ref.addChildEventListener(childEventListener)
-//
-//    }
 
 }
