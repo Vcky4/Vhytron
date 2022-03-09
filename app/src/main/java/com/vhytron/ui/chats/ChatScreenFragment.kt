@@ -80,20 +80,21 @@ class ChatScreenFragment : Fragment() {
     }
 
     private fun createChats(args: ChatsFragmentArgs, message: String) {
+        val key = database.child("chats").push().key
+        if (key == null) {
+            Log.w(ContentValues.TAG, "couldn't get push key for chats")
+            return
+        }
         auth.currentUser.let {
             if (it != null) {
                 database.child("users")
                     .child(it.uid).child("userName").get().addOnSuccessListener { user ->
                         val chat = ChatModel(user.value.toString(), message, "2:30pm")
-//                val key = database.child("chats").push().key
-//                if (key == null) {
-//                    Log.w(ContentValues.TAG, "couldn't get push key for chats")
-//                    return
-//                }
+
                         val postValues = chat.toMap()
 
                         val childUpdates = hashMapOf<String, Any>(
-                            "/chats/${args.chats.userName}" to postValues
+                            "/chats/$user${args.chats.userName}/$key" to postValues
                         )
 
                         database.updateChildren(childUpdates)
