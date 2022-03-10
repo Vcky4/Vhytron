@@ -172,41 +172,43 @@ class ChatsViewModel : ViewModel() {
                             auth.currentUser.let { user ->
                                 if (user != null) {
                                     uRef.get().addOnSuccessListener { data ->
-                                        dataValues.children.forEach { snapshot ->
-                                            val sender = snapshot.child("userName")
-                                                .value.toString()
-                                            val time = snapshot.child("time")
-                                                .value.toString()
-                                            val friend = data.child("userName")
-                                                .value.toString().split(" ")
-                                                .filter { it != sender }.joinToString { "" }
-                                            val oneMegaByte: Long = 1024 * 1024
-                                            storageRef.child("${friend}.jpg")
-                                                .getBytes(oneMegaByte)
-                                                .addOnSuccessListener { bytes ->
-                                                    if (bytes != null) {
-                                                        val image =
-                                                            BitmapFactory.decodeByteArray(
-                                                                bytes, 0, bytes.size
+                                        data.children.forEach { me ->
+                                            dataValues.children.forEach { snapshot ->
+                                                val sender = me.child("userName")
+                                                    .value.toString()
+                                                val time = snapshot.child("time")
+                                                    .value.toString()
+                                                val friend = dataValues.key.toString().split(" ")
+                                                    .filter { it != sender }.joinToString("")
+                                                Log.d("keyChat", data.value.toString())
+
+                                                val oneMegaByte: Long = 1024 * 1024
+                                                storageRef.child("${friend}.jpg")
+                                                    .getBytes(oneMegaByte)
+                                                    .addOnSuccessListener { bytes ->
+                                                        if (bytes != null) {
+                                                            val image =
+                                                                BitmapFactory.decodeByteArray(
+                                                                    bytes, 0, bytes.size
+                                                                )
+                                                            recentChats.add(
+                                                                PeopleModel(
+                                                                    image,
+                                                                    me.child("name").value.toString(),
+                                                                    me.child("title").value.toString(),
+                                                                    sender
+                                                                )
                                                             )
-                                                        recentChats.add(
-                                                            PeopleModel(
-                                                                image,
-                                                                data.child("name").value.toString(),
-                                                                data.child("title").value.toString(),
-                                                                sender
-                                                            )
-                                                        )
-                                                        _recentChats.value = recentChats
+                                                            _recentChats.value = recentChats
+                                                        }
                                                     }
-                                                }
-                                                .addOnFailureListener { e ->
-                                                    _error.value = e.message
-                                                }
+                                                    .addOnFailureListener { e ->
+                                                        _error.value = e.message
+                                                    }
+
+                                            }
 
                                         }
-
-
                                     }
                                         .addOnFailureListener { e ->
                                             _error.value = e.message
@@ -236,6 +238,55 @@ class ChatsViewModel : ViewModel() {
 
         cRef.addChildEventListener(childEventListener)
 
+    }
+
+
+    fun get() {
+        auth.currentUser.let { user ->
+            uRef.get().addOnSuccessListener { currentUser ->
+                val me = currentUser.child(user?.uid.toString()).child("userName").value.toString()
+                cRef.get().addOnSuccessListener { c ->
+                    c.children.forEach { chatsL ->
+                        val chat = chatsL.key.toString()
+                        val friend = chat.split(" ").filter { it != me }.joinToString("")
+                        val recentChats = mutableListOf<PeopleModel>()
+
+                        currentUser.children.forEach { thisUser ->
+                            Log.d("chats/friend", thisUser.child("userName").value.toString())
+                            if (friend == thisUser.child("userName").value.toString()) {
+
+                                val oneMegaByte: Long = 1024 * 1024
+                                storageRef.child("${friend}.jpg")
+                                    .getBytes(oneMegaByte)
+                                    .addOnSuccessListener { bytes ->
+                                        if (bytes != null) {
+                                            val image =
+                                                BitmapFactory.decodeByteArray(
+                                                    bytes, 0, bytes.size
+                                                )
+                                            recentChats.add(
+                                                PeopleModel(
+                                                    image,
+                                                    thisUser.child("name").value.toString(),
+                                                    thisUser.child("title").value.toString(),
+                                                    friend
+                                                )
+                                            )
+                                            _recentChats.value = recentChats
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        _error.value = e.message
+                                    }
+                            }
+                        }
+
+
+                    }
+                }
+
+            }
+        }
     }
 
 }

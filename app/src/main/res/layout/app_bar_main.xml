@@ -31,8 +31,7 @@
                         android:clickable="true"
                         android:layout_gravity="end"
                         android:layout_alignParentEnd="true"
-                        android:focusable="true"
-                        android:src="@drawable/profile" />
+                        android:focusable="true" />
 
                 </androidx.appcompat.widget.Toolbar>
 

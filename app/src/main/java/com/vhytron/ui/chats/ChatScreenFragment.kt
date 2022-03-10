@@ -104,7 +104,7 @@ class ChatScreenFragment : Fragment() {
                                 val postValues = chat.toMap()
 
                                 val childUpdates = hashMapOf<String, Any>(
-                                    "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
+                                    "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postValues
                                 )
 
                                 database.updateChildren(childUpdates)
@@ -167,8 +167,8 @@ class ChatScreenFragment : Fragment() {
                                                     )
                                                         .show()
                                                 }
-                                        } else if (dd.key.toString() != "${user.value.toString()}${args.chats.userName}"
-                                            || dd.key.toString() != "${args.chats.userName}${user.value.toString()}"
+                                        } else if (dd.key.toString() != "${user.value.toString()} ${args.chats.userName}"
+                                            || dd.key.toString() != "${args.chats.userName} ${user.value.toString()}"
                                         ) {
                                             val chat =
                                                 ChatModel(
@@ -180,7 +180,7 @@ class ChatScreenFragment : Fragment() {
                                             val postValues = chat.toMap()
 
                                             val childUpdates = hashMapOf<String, Any>(
-                                                "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
+                                                "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postValues
                                             )
 
                                             database.updateChildren(childUpdates)
