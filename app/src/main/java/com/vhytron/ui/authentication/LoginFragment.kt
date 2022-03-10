@@ -61,7 +61,7 @@ class LoginFragment : Fragment() {
         if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
                     ConnectivityManager).isNetworkAvailable()){
             binding.loginBt.setOnClickListener {
-                login(binding.emailText.text.toString(), binding.passwordText.text.toString())
+                login(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
             }
         }else{
             Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()

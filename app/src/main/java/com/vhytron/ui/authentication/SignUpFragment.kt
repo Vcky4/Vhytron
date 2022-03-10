@@ -72,7 +72,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     binding.postSpinner.requestFocus()
                     Toast.makeText(context, "please choose a job tile", Toast.LENGTH_LONG).show()
                 }else{
-                    signUp(binding.emailText.text.toString(), binding.passwordText.text.toString())
+                    signUp(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
                     binding.signUpLoading.visibility = VISIBLE
                     binding.signUpBt.isEnabled = false
                 }
@@ -125,7 +125,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val s0 = binding.emailText.text.toString()
+                val s0 = binding.emailText.text.toString().trim()
                 val s1 = binding.passwordText.text.toString()
                 val s2 = binding.cPasswordText.text.toString()
                 val s3 = binding.userNameText.text.toString()
@@ -163,8 +163,8 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     Log.d(TAG, "createUserWithEmail:success")
                     //save user
                     auth.currentUser?.let {
-                        addUser(binding.nameText.text.toString(), binding.userNameText.text.toString(),
-                            binding.postSpinner.selectedItem.toString(), it.uid)
+                        addUser(binding.nameText.text.toString().trim(), binding.userNameText.text.toString().trim(),
+                            binding.postSpinner.selectedItem.toString().trim(), it.uid)
                     }
                     //display successful
                     Toast.makeText(context, "Sign up successful", Toast.LENGTH_SHORT).show()

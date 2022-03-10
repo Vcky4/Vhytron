@@ -48,11 +48,14 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PeopleAdapter()
-        binding.chartRv.layoutManager = LinearLayoutManager(activity)
-        binding.chartRv.adapter = adapter
-
-        chatsViewModel.people.observe(viewLifecycleOwner) {
+        chatsViewModel.getRecentChats()
+        chatsViewModel.recentChats.observe(viewLifecycleOwner) {
+            binding.chartRv.layoutManager = LinearLayoutManager(activity)
+            binding.chartRv.adapter = adapter
             adapter.setUpPeople(it)
+        }
+        chatsViewModel.error.observe(viewLifecycleOwner){
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
         adapter.setOnItemClickListener {
@@ -66,18 +69,7 @@ class ChatsFragment : Fragment() {
             findNavController().navigate(R.id.action_nav_home_to_contact_screen)
         }
     }
-    private fun getImages(){
-        val oneMegaByte: Long = 1024 * 1024
-        storageRef.child("${auth.currentUser?.uid}.jpg").getBytes(oneMegaByte)
-            .addOnSuccessListener { bytes ->
-                if (bytes != null){
-                    val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-            }
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

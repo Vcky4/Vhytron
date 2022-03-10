@@ -30,11 +30,13 @@ class ChatsViewModel : ViewModel() {
     private val _user = MutableLiveData<String>()
     private val _people = MutableLiveData<MutableList<PeopleModel>>()
     private val _chats = MutableLiveData<MutableList<ChatModel>>()
+    private val _recentChats = MutableLiveData<MutableList<PeopleModel>>()
     private val _error = MutableLiveData<String>()
 
 
     val error: LiveData<String> = _error
     val people: LiveData<MutableList<PeopleModel>> = _people
+    val recentChats: LiveData<MutableList<PeopleModel>> = _recentChats
     val chats: LiveData<MutableList<ChatModel>> = _chats
 
 
@@ -56,23 +58,23 @@ class ChatsViewModel : ViewModel() {
 
 
                                     val oneMegaByte: Long = 1024 * 1024
-                                    storageRef.child("${dataValues.key.toString()}.jpg")
+                                    storageRef.child("${userName}.jpg")
                                         .getBytes(oneMegaByte).addOnSuccessListener { bytes ->
                                             if (bytes != null) {
                                                 val image = BitmapFactory.decodeByteArray(
-                                                    bytes, 0, bytes.size)
-                                                list.add(PeopleModel(
-                                                    image, name, title, userName))
+                                                    bytes, 0, bytes.size
+                                                )
+                                                list.add(
+                                                    PeopleModel(
+                                                        image, name, title, userName
+                                                    )
+                                                )
                                                 _people.value = list
                                             }
                                         }
                                         .addOnFailureListener { e ->
                                             _error.value = e.message
                                         }
-
-//                                    list.add(PeopleModel(
-//                                        R.drawable.profile.toDrawable().toBitmap(20,20), name, title, userName))
-//                                    binding.contactLoading.visibility = GONE
 
                                 }
                             }
@@ -99,7 +101,7 @@ class ChatsViewModel : ViewModel() {
         uRef.addChildEventListener(childEventListener)
     }
 
-        @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n")
     fun updateChats(friend: String) {
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -110,22 +112,101 @@ class ChatsViewModel : ViewModel() {
                             auth.currentUser.let {
                                 if (it != null) {
                                     uRef.child(it.uid).child("userName")
-                                        .get().addOnSuccessListener{ data ->
-                                        if (dataValues.key.toString()
-                                                .contains(data.value.toString()) &&
-                                            dataValues.key.toString().contains(friend)) {
-                                            Log.d(TAG, dataValues.key.toString())
+                                        .get().addOnSuccessListener { data ->
+                                            if (dataValues.key.toString()
+                                                    .contains(data.value.toString()) &&
+                                                dataValues.key.toString().contains(friend)
+                                            ) {
+                                                Log.d(TAG, dataValues.key.toString())
 
-                                            dataValues.children.forEach { snapshot ->
-                                                val message = snapshot.child("message").value.toString()
-                                                val sender = snapshot.child("userName")
-                                                    .value.toString()
-                                                val time = snapshot.child("time")
-                                                    .value.toString()
-                                                list.add(ChatModel(sender, message, time))
-                                                _chats.value = list
+                                                dataValues.children.forEach { snapshot ->
+                                                    val message =
+                                                        snapshot.child("message").value.toString()
+                                                    val sender = snapshot.child("userName")
+                                                        .value.toString()
+                                                    val time = snapshot.child("time")
+                                                        .value.toString()
+                                                    list.add(ChatModel(sender, message, time))
+                                                    _chats.value = list
+                                                }
                                             }
                                         }
+                                        .addOnFailureListener { e ->
+                                            _error.value = e.message
+                                        }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // handle error
+                    }
+                }
+                cRef.addListenerForSingleValueEvent(menuListener)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        }
+
+        cRef.addChildEventListener(childEventListener)
+
+    }
+
+
+    fun getRecentChats() {
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val menuListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val recentChats = mutableListOf<PeopleModel>()
+                        for (dataValues in dataSnapshot.children) {
+                            auth.currentUser.let { user ->
+                                if (user != null) {
+                                    uRef.get().addOnSuccessListener { data ->
+                                        dataValues.children.forEach { snapshot ->
+                                            val sender = snapshot.child("userName")
+                                                .value.toString()
+                                            val time = snapshot.child("time")
+                                                .value.toString()
+                                            val friend = data.child("userName")
+                                                .value.toString().split(" ")
+                                                .filter { it != sender }.joinToString { "" }
+                                            val oneMegaByte: Long = 1024 * 1024
+                                            storageRef.child("${friend}.jpg")
+                                                .getBytes(oneMegaByte)
+                                                .addOnSuccessListener { bytes ->
+                                                    if (bytes != null) {
+                                                        val image =
+                                                            BitmapFactory.decodeByteArray(
+                                                                bytes, 0, bytes.size
+                                                            )
+                                                        recentChats.add(
+                                                            PeopleModel(
+                                                                image,
+                                                                data.child("name").value.toString(),
+                                                                data.child("title").value.toString(),
+                                                                sender
+                                                            )
+                                                        )
+                                                        _recentChats.value = recentChats
+                                                    }
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    _error.value = e.message
+                                                }
+
+                                        }
+
+
                                     }
                                         .addOnFailureListener { e ->
                                             _error.value = e.message
@@ -156,4 +237,5 @@ class ChatsViewModel : ViewModel() {
         cRef.addChildEventListener(childEventListener)
 
     }
+
 }

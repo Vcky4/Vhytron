@@ -209,20 +209,23 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun uploadImageToFirebase(fileUri: Uri) {
         editProfileBinding.imageLoading.visibility = VISIBLE
-        val fileName = "${auth.currentUser?.uid}.jpg"
-        val refStorage = storageRef.child(fileName)
+        ref.child(auth.currentUser?.uid.toString()).child("userName")
+            .get().addOnSuccessListener{ user ->
+                val fileName = "${user.value.toString()}.jpg"
+                val refStorage = storageRef.child(fileName)
 
-        refStorage.putFile(fileUri)
-            .addOnSuccessListener {
-                val oneMegaByte: Long = 1024 * 1024
-                it.storage.getBytes(oneMegaByte).addOnSuccessListener { bytes ->
-                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    editProfileBinding.profilePic.setImageBitmap(bmp)
-                    editProfileBinding.imageLoading.visibility = GONE
-                }
-            }
-            .addOnFailureListener { e ->
-                print(e.message)
+                refStorage.putFile(fileUri)
+                    .addOnSuccessListener {
+                        val oneMegaByte: Long = 1024 * 1024
+                        it.storage.getBytes(oneMegaByte).addOnSuccessListener { bytes ->
+                            val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            editProfileBinding.profilePic.setImageBitmap(bmp)
+                            editProfileBinding.imageLoading.visibility = GONE
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        print(e.message)
+                    }
             }
 
     }

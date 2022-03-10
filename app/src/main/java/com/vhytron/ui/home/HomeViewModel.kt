@@ -52,7 +52,7 @@ class HomeViewModel : ViewModel() {
                                         val name = dataValues.child("name").value.toString()
                                         val oneMegaByte: Long = 1024 * 1024
 
-                                        storageRef.child("${auth.currentUser?.uid}.jpg").getBytes(oneMegaByte)
+                                        storageRef.child("${userName}.jpg").getBytes(oneMegaByte)
                                             .addOnSuccessListener { bytes ->
                                                 if (bytes != null){
                                                     val image = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
