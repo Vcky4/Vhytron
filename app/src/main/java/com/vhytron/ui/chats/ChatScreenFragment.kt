@@ -30,6 +30,7 @@ class ChatScreenFragment : Fragment() {
     private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
     private lateinit var chatsViewModel: ChatsViewModel
+    private val linearLayoutManager = LinearLayoutManager(activity)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -58,9 +59,12 @@ class ChatScreenFragment : Fragment() {
         }
         val args = ChatsFragmentArgs.fromBundle(bundle)
 
+        linearLayoutManager.stackFromEnd = true
+
         chatsViewModel.updateChats(args.chats.userName)
         chatsViewModel.chats.observe(viewLifecycleOwner) {
-            binding.chatRv.layoutManager = LinearLayoutManager(activity)
+//            linearLayoutManager.reverseLayout = true
+            binding.chatRv.layoutManager = linearLayoutManager
             binding.chatRv.adapter = adapter
             adapter.setUpChats(it)
         }
@@ -76,12 +80,6 @@ class ChatScreenFragment : Fragment() {
             if (binding.messageInput.text?.isNotEmpty() == true) {
                 createChats(args, binding.messageInput.text.toString())
                 binding.messageInput.text?.clear()
-                chatsViewModel.updateChats(args.chats.userName)
-                chatsViewModel.chats.observe(viewLifecycleOwner) {
-                    binding.chatRv.layoutManager = LinearLayoutManager(activity)
-                    binding.chatRv.adapter = adapter
-                    adapter.setUpChats(it)
-                }
             }
         }
     }
@@ -98,98 +96,121 @@ class ChatScreenFragment : Fragment() {
                 database.child("users")
                     .child(it.uid).child("userName").get().addOnSuccessListener { user ->
                         database.get().addOnSuccessListener { data ->
-                            if (!(data.child("chats").exists())){
-                                    Log.d("message", "got here right1")
-                                    val chat =
-                                        ChatModel(user.value.toString().trim(), message, "2:30pm")
-                                    Log.d("message", "got here right")
-                                    val postValues = chat.toMap()
+                            if (!(data.child("chats").exists())) {
+                                Log.d("message", "got here right1")
+                                val chat =
+                                    ChatModel(user.value.toString().trim(), message, "2:30pm")
+                                Log.d("message", "got here right")
+                                val postValues = chat.toMap()
 
-                                    val childUpdates = hashMapOf<String, Any>(
-                                        "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
-                                    )
+                                val childUpdates = hashMapOf<String, Any>(
+                                    "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
+                                )
 
-                                    database.updateChildren(childUpdates)
-                                        .addOnFailureListener { exception ->
-                                            // Write failed
-                                            Toast.makeText(
-                                                context,
-                                                exception.localizedMessage,
-                                                Toast.LENGTH_LONG
+                                database.updateChildren(childUpdates)
+                                    .addOnSuccessListener {
+                                        chatsViewModel.updateChats(args.chats.userName)
+                                        chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+//                                                linearLayoutManager.reverseLayout = true
+                                            linearLayoutManager.stackFromEnd = true
+                                            binding.chatRv.layoutManager = linearLayoutManager
+                                            binding.chatRv.adapter = adapter
+                                            adapter.setUpChats(chatList)
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        // Write failed
+                                        Toast.makeText(
+                                            context,
+                                            exception.localizedMessage,
+                                            Toast.LENGTH_LONG
+                                        )
+                                            .show()
+                                    }
+
+                            } else {
+                                ref.get().addOnSuccessListener { chatData ->
+                                    //do this if it's the first chat
+                                    chatData.children.forEach { dd ->
+                                        if (dd.key.toString().contains(user.value.toString()) &&
+                                            dd.key.toString().contains(args.chats.userName)
+                                        ) {
+                                            Log.d("key", dd.key.toString())
+
+                                            val chat =
+                                                ChatModel(user.value.toString(), message, "2:30pm")
+
+                                            val postValues = chat.toMap()
+
+                                            val childUpdates = hashMapOf<String, Any>(
+                                                "/chats/${dd.key.toString()}/$key" to postValues
                                             )
-                                                .show()
-                                            // ...
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(context, e.message, Toast.LENGTH_LONG)
-                                                .show()
-                                        }
 
-                            }
-                        }
+                                            database.updateChildren(childUpdates)
+                                                .addOnSuccessListener {
+                                                    chatsViewModel.updateChats(args.chats.userName)
+                                                    chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+//                                                        linearLayoutManager.reverseLayout = true
+                                                        linearLayoutManager.stackFromEnd = true
+                                                        binding.chatRv.layoutManager =
+                                                            linearLayoutManager
+                                                        binding.chatRv.adapter = adapter
+                                                        adapter.setUpChats(chatList)
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // Write failed
+                                                    Toast.makeText(
+                                                        context,
+                                                        exception.localizedMessage,
+                                                        Toast.LENGTH_LONG
+                                                    )
+                                                        .show()
+                                                }
+                                        } else if (dd.key.toString() != "${user.value.toString()}${args.chats.userName}"
+                                            || dd.key.toString() != "${args.chats.userName}${user.value.toString()}"
+                                        ) {
+                                            val chat =
+                                                ChatModel(
+                                                    user.value.toString().trim(),
+                                                    message,
+                                                    "2:30pm"
+                                                )
+                                            Log.d("message", "got here right")
+                                            val postValues = chat.toMap()
 
-                        ref.get().addOnSuccessListener { chatData ->
-                            //do this if it's the first chat
-                            chatData.children.forEach { dd ->
-                                if (dd.key.toString().contains(user.value.toString()) &&
-                                    dd.key.toString().contains(args.chats.userName)
-                                ) {
-                                    Log.d("key", dd.key.toString())
-
-                                    val chat =
-                                        ChatModel(user.value.toString(), message, "2:30pm")
-
-                                    val postValues = chat.toMap()
-
-                                    val childUpdates = hashMapOf<String, Any>(
-                                        "/chats/${dd.key.toString()}/$key" to postValues
-                                    )
-
-                                    database.updateChildren(childUpdates)
-                                        .addOnFailureListener { exception ->
-                                            // Write failed
-                                            Toast.makeText(
-                                                context,
-                                                exception.localizedMessage,
-                                                Toast.LENGTH_LONG
+                                            val childUpdates = hashMapOf<String, Any>(
+                                                "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
                                             )
-                                                .show()
-                                            // ...
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(context, e.message, Toast.LENGTH_LONG)
-                                                .show()
-                                        }
-                                } else if (dd.key.toString() != "${user.value.toString()}${args.chats.userName}"
-                                    || dd.key.toString() != "${args.chats.userName}${user.value.toString()}"
-                                    ) {
-                                    val chat =
-                                        ChatModel(user.value.toString().trim(), message, "2:30pm")
-                                    Log.d("message", "got here right")
-                                    val postValues = chat.toMap()
 
-                                    val childUpdates = hashMapOf<String, Any>(
-                                        "/chats/${user.value.toString()}${args.chats.userName}/$key" to postValues
-                                    )
-
-                                    database.updateChildren(childUpdates)
-                                        .addOnFailureListener { exception ->
-                                            // Write failed
-                                            Toast.makeText(
-                                                context,
-                                                exception.localizedMessage,
-                                                Toast.LENGTH_LONG
-                                            )
-                                                .show()
-                                            // ...
+                                            database.updateChildren(childUpdates)
+                                                .addOnSuccessListener {
+                                                    chatsViewModel.updateChats(args.chats.userName)
+                                                    chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+//                                                        linearLayoutManager.reverseLayout = true
+                                                        linearLayoutManager.stackFromEnd = true
+                                                        binding.chatRv.layoutManager =
+                                                            linearLayoutManager
+                                                        binding.chatRv.adapter = adapter
+                                                        adapter.setUpChats(chatList)
+                                                    }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // Write failed
+                                                    Toast.makeText(
+                                                        context,
+                                                        exception.localizedMessage,
+                                                        Toast.LENGTH_LONG
+                                                    )
+                                                        .show()
+                                                }
                                         }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(context, e.message, Toast.LENGTH_LONG)
-                                                .show()
-                                        }
+                                    }
                                 }
+
                             }
                         }
+
                     }
             }
         }
