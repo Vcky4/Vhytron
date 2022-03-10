@@ -127,9 +127,9 @@ class ChatsViewModel : ViewModel() {
                                                     val time = snapshot.child("time")
                                                         .value.toString()
                                                     list.add(ChatModel(sender, message, time))
-                                                    _chats.value = list
                                                 }
                                             }
+                                            _chats.value = list
                                         }
                                         .addOnFailureListener { e ->
                                             _error.value = e.message
@@ -137,6 +137,7 @@ class ChatsViewModel : ViewModel() {
                                 }
                             }
                         }
+
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -160,96 +161,20 @@ class ChatsViewModel : ViewModel() {
         cRef.addChildEventListener(childEventListener)
 
     }
+
+
 
 
     fun getRecentChats() {
-        val childEventListener = object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val recentChats = mutableListOf<PeopleModel>()
-                        for (dataValues in dataSnapshot.children) {
-                            auth.currentUser.let { user ->
-                                if (user != null) {
-                                    uRef.get().addOnSuccessListener { data ->
-                                        data.children.forEach { me ->
-                                            dataValues.children.forEach { snapshot ->
-                                                val sender = me.child("userName")
-                                                    .value.toString()
-                                                val time = snapshot.child("time")
-                                                    .value.toString()
-                                                val friend = dataValues.key.toString().split(" ")
-                                                    .filter { it != sender }.joinToString("")
-                                                Log.d("keyChat", data.value.toString())
-
-                                                val oneMegaByte: Long = 1024 * 1024
-                                                storageRef.child("${friend}.jpg")
-                                                    .getBytes(oneMegaByte)
-                                                    .addOnSuccessListener { bytes ->
-                                                        if (bytes != null) {
-                                                            val image =
-                                                                BitmapFactory.decodeByteArray(
-                                                                    bytes, 0, bytes.size
-                                                                )
-                                                            recentChats.add(
-                                                                PeopleModel(
-                                                                    image,
-                                                                    me.child("name").value.toString(),
-                                                                    me.child("title").value.toString(),
-                                                                    sender
-                                                                )
-                                                            )
-                                                            _recentChats.value = recentChats
-                                                        }
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        _error.value = e.message
-                                                    }
-
-                                            }
-
-                                        }
-                                    }
-                                        .addOnFailureListener { e ->
-                                            _error.value = e.message
-                                        }
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // handle error
-                    }
-                }
-                cRef.addListenerForSingleValueEvent(menuListener)
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-
-        }
-
-        cRef.addChildEventListener(childEventListener)
-
-    }
-
-
-    fun get() {
         auth.currentUser.let { user ->
             uRef.get().addOnSuccessListener { currentUser ->
                 val me = currentUser.child(user?.uid.toString()).child("userName").value.toString()
                 cRef.get().addOnSuccessListener { c ->
+                    val recentChats = mutableListOf<PeopleModel>()
                     c.children.forEach { chatsL ->
                         val chat = chatsL.key.toString()
                         val friend = chat.split(" ").filter { it != me }.joinToString("")
-                        val recentChats = mutableListOf<PeopleModel>()
+
 
                         currentUser.children.forEach { thisUser ->
                             Log.d("chats/friend", thisUser.child("userName").value.toString())

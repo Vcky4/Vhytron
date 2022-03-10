@@ -167,12 +167,13 @@ class ChatScreenFragment : Fragment() {
                                                     )
                                                         .show()
                                                 }
-                                        } else if (dd.key.toString() != "${user.value.toString()} ${args.chats.userName}"
-                                            || dd.key.toString() != "${args.chats.userName} ${user.value.toString()}"
-                                        ) {
+                                        }
+                                        if (!chatData.child("${user.value.toString()} ${args.chats.userName}").exists() &&
+                                            !chatData.child("${args.chats.userName} ${user.value.toString()}").exists()){
+                                                    Log.d("problem", chatData.child("${user.value.toString()} ${args.chats.userName}").exists().toString() )
                                             val chat =
                                                 ChatModel(
-                                                    user.value.toString().trim(),
+                                                    user.value.toString(),
                                                     message,
                                                     "2:30pm"
                                                 )

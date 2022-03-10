@@ -48,7 +48,7 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PeopleAdapter()
-        chatsViewModel.get()
+        chatsViewModel.getRecentChats()
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {
             binding.chartRv.layoutManager = LinearLayoutManager(activity)
             binding.chartRv.adapter = adapter
