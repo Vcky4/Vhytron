@@ -1,0 +1,81 @@
+0000000000000000000000000000000000000000 e4ff0b1b4192a39059078f7ede75874d7b1ec8d7 vicksoson <okon.victor.u@gmail.com> 1645584516 +0100	commit (initial): first commit
+e4ff0b1b4192a39059078f7ede75874d7b1ec8d7 7c3bb5411a9d82b8c7be5810ab240ab8036324a7 vicksoson <okon.victor.u@gmail.com> 1645613122 +0100	commit: feet - theme
+7c3bb5411a9d82b8c7be5810ab240ab8036324a7 73665b57cd9d75070601198add1a85b5c6473919 vicksoson <okon.victor.u@gmail.com> 1645615782 +0100	commit: fixes - sign up
+73665b57cd9d75070601198add1a85b5c6473919 fec2202e2daa94bb4c0187b237500e36fb0b7f6b vicksoson <okon.victor.u@gmail.com> 1645618714 +0100	commit: feet - login
+fec2202e2daa94bb4c0187b237500e36fb0b7f6b 41d6895723d7308ecca2f890e8e524e75bb57423 vicksoson <okon.victor.u@gmail.com> 1645619029 +0100	commit: feet - add login to navigation graph
+41d6895723d7308ecca2f890e8e524e75bb57423 d5fed730b42e30b060b342f80104be0a3e69b867 vicksoson <okon.victor.u@gmail.com> 1645619364 +0100	commit: fix - login and sign up UI
+d5fed730b42e30b060b342f80104be0a3e69b867 2b87ff46b59afc655adcc3a29f93b30ba04265d4 vicksoson <okon.victor.u@gmail.com> 1645620573 +0100	commit: feet - login class
+2b87ff46b59afc655adcc3a29f93b30ba04265d4 e787f30695eb974499746571dd2114d7411643d1 vicksoson <okon.victor.u@gmail.com> 1645620822 +0100	commit: feet - hide bar to login screen
+e787f30695eb974499746571dd2114d7411643d1 0203a124bdf349d1dd1c22eb5df62560fccaab78 vicksoson <okon.victor.u@gmail.com> 1645623487 +0100	commit: feet - hide bar to login screen
+0203a124bdf349d1dd1c22eb5df62560fccaab78 52851853688af62ccf8d5629760e9f159c96da55 vicksoson <okon.victor.u@gmail.com> 1645623630 +0100	commit: fix - login and sign up button visibility
+52851853688af62ccf8d5629760e9f159c96da55 67124d3f606181dc59f34ee86f752bc1b75f059a vicksoson <okon.victor.u@gmail.com> 1645625581 +0100	commit: fix - login and sign up progress visibility
+67124d3f606181dc59f34ee86f752bc1b75f059a 2e23fcff72e92dde1b77806ee39dfba65693bb1d vicksoson <okon.victor.u@gmail.com> 1645661595 +0100	commit: feet - firebase added
+2e23fcff72e92dde1b77806ee39dfba65693bb1d 67376fc1f1518240cba1225df7db0f3ae13b37a3 vicksoson <okon.victor.u@gmail.com> 1645700999 +0100	commit: fix gradle
+67376fc1f1518240cba1225df7db0f3ae13b37a3 884b434a8e47bf95812f8323f564277cd54e5208 vicksoson <okon.victor.u@gmail.com> 1645701576 +0100	commit: feet - login to home if already sign in
+884b434a8e47bf95812f8323f564277cd54e5208 c1d6831655c1ce66a42f848f1715326e0fd10df1 vicksoson <okon.victor.u@gmail.com> 1645701659 +0100	commit: fix - sign up UI confirm password ui
+c1d6831655c1ce66a42f848f1715326e0fd10df1 43c7bc8ddc14856ebd7cc1e12bbe328d99daeb1e vicksoson <okon.victor.u@gmail.com> 1645722789 +0100	commit: feet - login and sign up implementation
+43c7bc8ddc14856ebd7cc1e12bbe328d99daeb1e 9e779ef9f0cc88be51581eae5d8ff5379929288e vicksoson <okon.victor.u@gmail.com> 1645790844 +0100	commit: feet - tool bar style
+9e779ef9f0cc88be51581eae5d8ff5379929288e 0a0713bb0fc6715619eb21ce4f58ec10456a7095 vicksoson <okon.victor.u@gmail.com> 1645801480 +0100	commit: feet - viewPager adapter
+0a0713bb0fc6715619eb21ce4f58ec10456a7095 ba61384e6d36b0768bae88c851b5139fc538e9cd vicksoson <okon.victor.u@gmail.com> 1645803367 +0100	commit: feet - viewPager adapter
+ba61384e6d36b0768bae88c851b5139fc538e9cd 852cef5bf1066c715de474e1aabdf10ec28fd780 vicksoson <okon.victor.u@gmail.com> 1645806266 +0100	commit: feet - tab layout
+852cef5bf1066c715de474e1aabdf10ec28fd780 b3012c336b0af919883032c5b4593cbf9949b0d7 vicksoson <okon.victor.u@gmail.com> 1645878273 +0100	commit: fix home action bar
+b3012c336b0af919883032c5b4593cbf9949b0d7 b8e6fd482630b65a85850540725136c1c4906243 vicksoson <okon.victor.u@gmail.com> 1645889763 +0100	commit: feet - profile alert dialog
+b8e6fd482630b65a85850540725136c1c4906243 99078bd7e9779a98a97623e4a855800fa5a9203a vicksoson <okon.victor.u@gmail.com> 1645904557 +0100	commit: fix - home action bar
+99078bd7e9779a98a97623e4a855800fa5a9203a 23144656dd40ba4ee678c7a75568a321362d3c91 vicksoson <okon.victor.u@gmail.com> 1645943069 +0100	commit: fix - profile alert UI
+23144656dd40ba4ee678c7a75568a321362d3c91 f5b75200205905a9a5bd2271dc4a2222314e08ca vicksoson <okon.victor.u@gmail.com> 1645945027 +0100	commit: fix - profile alert width
+f5b75200205905a9a5bd2271dc4a2222314e08ca 66ea8a9ac008798d2d9f7664cb7094082492983d vicksoson <okon.victor.u@gmail.com> 1645945429 +0100	commit: feet - vhytron text on home action bar
+66ea8a9ac008798d2d9f7664cb7094082492983d fb71d456ee573f46f0df0a605bf533ed036fb0c0 vicksoson <okon.victor.u@gmail.com> 1645945754 +0100	commit: feet - log out
+fb71d456ee573f46f0df0a605bf533ed036fb0c0 9fd2d5fab28209f3fd3946af7cdbbde0e50601c6 vicksoson <okon.victor.u@gmail.com> 1645945858 +0100	commit: fix - login and sign up button color changed to gold
+9fd2d5fab28209f3fd3946af7cdbbde0e50601c6 1c76ea003b475c538425ee11ec64d8b4d7f4adc8 vicksoson <okon.victor.u@gmail.com> 1645946041 +0100	commit: fix - dismiss alert after logout
+1c76ea003b475c538425ee11ec64d8b4d7f4adc8 f083d9f635e2b6fbbc6582a8230333fffc56cdd1 vicksoson <okon.victor.u@gmail.com> 1646059340 +0100	commit: fix - action bar size
+f083d9f635e2b6fbbc6582a8230333fffc56cdd1 96a5768fa15d74b334df5a3d5c3a1e8aade3c93d vicksoson <okon.victor.u@gmail.com> 1646065594 +0100	commit: fixes UI
+96a5768fa15d74b334df5a3d5c3a1e8aade3c93d 7103b9c869dd81f758e5fc4122eea2e846565b51 vicksoson <okon.victor.u@gmail.com> 1646071795 +0100	commit: feet - chat adapter
+7103b9c869dd81f758e5fc4122eea2e846565b51 55f2d5f3f72f1e3367a97d9387aee2829ce8cf72 vicksoson <okon.victor.u@gmail.com> 1646094261 +0100	commit: fixes UI
+55f2d5f3f72f1e3367a97d9387aee2829ce8cf72 22b42d49ec245505da4bdbd3cc72cfaf4745b4f1 vicksoson <okon.victor.u@gmail.com> 1646145547 +0100	commit: fix - chat screen action bar name
+22b42d49ec245505da4bdbd3cc72cfaf4745b4f1 ce5c64d8fe855f8510adad49f4c694fb5c338aaf vicksoson <okon.victor.u@gmail.com> 1646233012 +0100	commit: feet - new drawables for todo screen
+ce5c64d8fe855f8510adad49f4c694fb5c338aaf 40f387823f69cf846014cebcfbecf2ebe5057056 vicksoson <okon.victor.u@gmail.com> 1646311308 +0100	commit: fixes UI
+40f387823f69cf846014cebcfbecf2ebe5057056 e8110d7dda81f74af9e7524b9b196332a96806db vicksoson <okon.victor.u@gmail.com> 1646312896 +0100	commit: feet add assignee to UI
+e8110d7dda81f74af9e7524b9b196332a96806db cdb6c0a43993ca3f8e36331c3687698cded6f722 vicksoson <okon.victor.u@gmail.com> 1646315546 +0100	commit: feet - add task UI
+cdb6c0a43993ca3f8e36331c3687698cded6f722 ecd5f4069929655ae901476f2ef09c29e76d4a1a vicksoson <okon.victor.u@gmail.com> 1646317966 +0100	commit: fix - add task UI
+ecd5f4069929655ae901476f2ef09c29e76d4a1a 38f8eefa205c121b994b2cd500445d2c9922e30f vicksoson <okon.victor.u@gmail.com> 1646327053 +0100	commit: fix - assignee click to chat
+38f8eefa205c121b994b2cd500445d2c9922e30f d065b84248ecd74799fc642b862de16776e8aa17 vicksoson <okon.victor.u@gmail.com> 1646390118 +0100	commit: feet - edit profile alert
+d065b84248ecd74799fc642b862de16776e8aa17 df7c046e1d770363b804d833e80d33b857981425 vicksoson <okon.victor.u@gmail.com> 1646392573 +0100	commit: feet - edit profile alert UI implementation
+df7c046e1d770363b804d833e80d33b857981425 90070f94ade75ec597faa8cdbddef0da785f530b vicksoson <okon.victor.u@gmail.com> 1646393847 +0100	commit: feet - setting UI
+90070f94ade75ec597faa8cdbddef0da785f530b 1f190eba162d5a32b1c41289765ccbb5661d2be3 vicksoson <okon.victor.u@gmail.com> 1646393934 +0100	commit: fix - setting UI
+1f190eba162d5a32b1c41289765ccbb5661d2be3 0c9beaff489fb5fe45254e24fbc0fe0135b2aa7b vicksoson <okon.victor.u@gmail.com> 1646393951 +0100	commit: fix - setting UI
+0c9beaff489fb5fe45254e24fbc0fe0135b2aa7b 5c7e95356d812f0a375ce78b29ce76591126fcb5 vicksoson <okon.victor.u@gmail.com> 1646394559 +0100	commit: feet - setting UI implementation
+5c7e95356d812f0a375ce78b29ce76591126fcb5 91dc24573331d5bacb4e2623e5edba9077b4dfbc vicksoson <okon.victor.u@gmail.com> 1646395321 +0100	commit: feet - teams UI
+91dc24573331d5bacb4e2623e5edba9077b4dfbc ee4bbbc843928a77044553acd8dea42916472f55 vicksoson <okon.victor.u@gmail.com> 1646395837 +0100	commit: fix - teams UI
+ee4bbbc843928a77044553acd8dea42916472f55 c11f78855f66b94ca319ba47a0577b805ddbd6d8 vicksoson <okon.victor.u@gmail.com> 1646396383 +0100	commit: feet - team date and adapter
+c11f78855f66b94ca319ba47a0577b805ddbd6d8 0faee2106b782d83e3dbefe980cdf365ad824f66 vicksoson <okon.victor.u@gmail.com> 1646397579 +0100	commit: feet - teams UI implementation
+0faee2106b782d83e3dbefe980cdf365ad824f66 8327f558da301fdf7c030e55e237ce2de20f7bc3 vicksoson <okon.victor.u@gmail.com> 1646398376 +0100	commit: update/fix - sign up UI
+8327f558da301fdf7c030e55e237ce2de20f7bc3 9f66e140afbb0cddf70466e1e7551d8fdf1b444b vicksoson <okon.victor.u@gmail.com> 1646398726 +0100	commit: update/feet - sign up UI implementaion
+9f66e140afbb0cddf70466e1e7551d8fdf1b444b a562869f4e518f3d8db8e6207b5bb0c8d804835a vicksoson <okon.victor.u@gmail.com> 1646400071 +0100	commit: update/feet/fix - sign up
+a562869f4e518f3d8db8e6207b5bb0c8d804835a 0a63a872fecab3b95ba1221ddfeb13a723ced098 vicksoson <okon.victor.u@gmail.com> 1646405331 +0100	commit: feet - firebase database
+0a63a872fecab3b95ba1221ddfeb13a723ced098 2d4c6b7dde89b5442e7090ab46f88582b70f93f8 vicksoson <okon.victor.u@gmail.com> 1646406341 +0100	commit: feet - save user
+2d4c6b7dde89b5442e7090ab46f88582b70f93f8 7c2f8757169a5c2cb8b2ebc15fdaa6b65967db5f vicksoson <okon.victor.u@gmail.com> 1646434718 +0100	commit: fix - save user
+7c2f8757169a5c2cb8b2ebc15fdaa6b65967db5f 83aae1e3079307d13cdc0e424cc41f2d06b70726 vicksoson <okon.victor.u@gmail.com> 1646434739 +0100	commit: feet - read user data
+83aae1e3079307d13cdc0e424cc41f2d06b70726 ad7001b2b94bc0630f3180f0286dbb12a928e62c vicksoson <okon.victor.u@gmail.com> 1646434856 +0100	commit: fix - home profile border
+ad7001b2b94bc0630f3180f0286dbb12a928e62c b34442743d28f7eb1d46aee6fe71b7f8437e3241 vicksoson <okon.victor.u@gmail.com> 1646435127 +0100	commit: fix - profile drawable
+b34442743d28f7eb1d46aee6fe71b7f8437e3241 34ee047eb2b958eaebbe3f31a9ff35543bd81bc6 vicksoson <okon.victor.u@gmail.com> 1646500996 +0100	commit: feet/fix - profile UI - added username and title
+34ee047eb2b958eaebbe3f31a9ff35543bd81bc6 9fe058039007aa30a6653f2fc9140cdba5faf146 vicksoson <okon.victor.u@gmail.com> 1646501091 +0100	commit: fix - profile UI - default name to user
+9fe058039007aa30a6653f2fc9140cdba5faf146 58c2eca4a9fe791221f61a802622688cf00063e7 vicksoson <okon.victor.u@gmail.com> 1646501225 +0100	commit: fix - profile - implement username and title
+58c2eca4a9fe791221f61a802622688cf00063e7 83561a449f14aac7329a940500dac02da247a7bf vicksoson <okon.victor.u@gmail.com> 1646605719 +0100	commit: fixes/feet/updates
+83561a449f14aac7329a940500dac02da247a7bf 576a03696f5f84dc9ac3be36ba07a7b96c06d546 vicksoson <okon.victor.u@gmail.com> 1646642531 +0100	commit: fix - profile - implement storage image
+576a03696f5f84dc9ac3be36ba07a7b96c06d546 01d35ef4cadde1976712c8b072a9535581ce3ccf vicksoson <okon.victor.u@gmail.com> 1646668212 +0100	commit: fixes - profile - implement storage image
+01d35ef4cadde1976712c8b072a9535581ce3ccf 16c72f31e2c7b40469c21c0fb36f3b993c9575a6 vicksoson <okon.victor.u@gmail.com> 1646668380 +0100	commit: fixes - profile - edit name text
+16c72f31e2c7b40469c21c0fb36f3b993c9575a6 413a86b29809aaf297cdc2d09798b0d214c399d1 vicksoson <okon.victor.u@gmail.com> 1646672071 +0100	commit: feet - add chat button and not chats text
+413a86b29809aaf297cdc2d09798b0d214c399d1 6cdd8609628f09b644ea4625287ffc893a5b357d vicksoson <okon.victor.u@gmail.com> 1646673889 +0100	commit: feet - add chat screen
+6cdd8609628f09b644ea4625287ffc893a5b357d 91283d0d14f1795d9c119d2f8f73c4361ed26e44 vicksoson <okon.victor.u@gmail.com> 1646780038 +0100	commit: fix - add chat screen
+91283d0d14f1795d9c119d2f8f73c4361ed26e44 fac4a59ccb19e27514a30aa691139e658443b2d3 vicksoson <okon.victor.u@gmail.com> 1646780136 +0100	commit: fix - contact progress bar constraint
+fac4a59ccb19e27514a30aa691139e658443b2d3 a57ea64733506ef409eb30cde57fdf25de40f90e vicksoson <okon.victor.u@gmail.com> 1646781876 +0100	commit: fix - contact to chat screen navigation
+a57ea64733506ef409eb30cde57fdf25de40f90e 8192b0e61940b2ea246e1817ee88e8fe6b9b020f vicksoson <okon.victor.u@gmail.com> 1646846482 +0100	commit: refactor - home codes
+8192b0e61940b2ea246e1817ee88e8fe6b9b020f 188e6a21cc400f245d6b697ead7c2d276c729d3a vicksoson <okon.victor.u@gmail.com> 1646846706 +0100	commit: fix - home view model
+188e6a21cc400f245d6b697ead7c2d276c729d3a e78f473d8702221fc7851390bdc70b6e0a732b0e vicksoson <okon.victor.u@gmail.com> 1646850410 +0100	commit: fix - contact refactor
+e78f473d8702221fc7851390bdc70b6e0a732b0e 3b1259265d9ebfb36e894286b03e68e7a3be2772 vicksoson <okon.victor.u@gmail.com> 1646854486 +0100	commit: fix - chat
+3b1259265d9ebfb36e894286b03e68e7a3be2772 1917e2df665e65abdfa63aa9b8da7406545589f4 vicksoson <okon.victor.u@gmail.com> 1646918756 +0100	commit: fix - trim login and sign up texts
+1917e2df665e65abdfa63aa9b8da7406545589f4 3a365e12ef1e2e6f904823f4d8441a0cf97c9a34 vicksoson <okon.victor.u@gmail.com> 1646921717 +0100	commit: fix - chat screen chat oder
+3a365e12ef1e2e6f904823f4d8441a0cf97c9a34 527922a895361352ce448d7acb81babd4fff4436 vicksoson <okon.victor.u@gmail.com> 1646931638 +0100	commit: feet - display recent chat
+527922a895361352ce448d7acb81babd4fff4436 dac8336833edfd47481b595fdbf689783da77e05 vicksoson <okon.victor.u@gmail.com> 1646935400 +0100	commit: fixes - chat
+dac8336833edfd47481b595fdbf689783da77e05 a324e6c1d6ed7bdea61694f411ffe5ba1ce42e85 vicksoson <okon.victor.u@gmail.com> 1647232455 +0100	commit: feet - create chat dao and entity
+                                                                                                                                                     
