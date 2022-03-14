@@ -58,14 +58,16 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_login_to_sign_up)
         }
 
-        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
-                    ConnectivityManager).isNetworkAvailable()){
-            binding.loginBt.setOnClickListener {
-                login(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
-            }
-        }else{
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+        binding.loginBt.setOnClickListener {
+            login(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
         }
+
+//        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
+//                    ConnectivityManager).isNetworkAvailable()){
+//
+//        }else{
+//            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private fun textTextWatcher(){

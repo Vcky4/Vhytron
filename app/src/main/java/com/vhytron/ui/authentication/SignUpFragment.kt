@@ -64,22 +64,25 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.loginTxBt.setOnClickListener {
             findNavController().navigate(R.id.action_sign_up_to_login)
         }
-        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
-                    ConnectivityManager
-            ).isNetworkAvailable()){
-            binding.signUpBt.setOnClickListener {
-                if (binding.postSpinner.selectedItemPosition == 0){
-                    binding.postSpinner.requestFocus()
-                    Toast.makeText(context, "please choose a job tile", Toast.LENGTH_LONG).show()
-                }else{
-                    signUp(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
-                    binding.signUpLoading.visibility = VISIBLE
-                    binding.signUpBt.isEnabled = false
-                }
+
+        binding.signUpBt.setOnClickListener {
+            if (binding.postSpinner.selectedItemPosition == 0){
+                binding.postSpinner.requestFocus()
+                Toast.makeText(context, "please choose a job tile", Toast.LENGTH_LONG).show()
+            }else{
+                signUp(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
+                binding.signUpLoading.visibility = VISIBLE
+                binding.signUpBt.isEnabled = false
             }
-        }else{
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
         }
+
+
+//        if (Network(activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as
+//                    ConnectivityManager
+//            ).isNetworkAvailable()){
+//        }else{
+//            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+//        }
 
         val spinnerAdapter = ArrayAdapter(requireContext(),
             android.R.layout.simple_spinner_dropdown_item, DummyData.titles)
