@@ -10,10 +10,10 @@ import java.io.Serializable
 //this model contains every other model in it
 @Entity(tableName = "people")
 data class PeopleModel(
-    val image: String,
-    val name: String,
-    val title: String,
-    @PrimaryKey val userName: String):
+    val image: String = "",
+    val name: String = "",
+    val title: String = "",
+    @PrimaryKey val userName: String = ""):
     Serializable{
 
     @Exclude

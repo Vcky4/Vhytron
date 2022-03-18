@@ -1,6 +1,5 @@
 package com.vhytron.database
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,5 +9,5 @@ data class UserEntity(
     val name: String,
     val title: String,
     val userName: String,
-    var image: String? = null
+    var image: String = ""
 )

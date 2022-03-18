@@ -126,7 +126,7 @@ class ChatsViewModel : ViewModel() {
                                                         .value.toString()
                                                     val time = snapshot.child("time")
                                                         .value.toString()
-                                                    list.add(ChatModel(sender, message, time))
+                                                    list.add(ChatModel(0,sender, message, time))
                                                 }
                                             }
                                             _chats.value = list

@@ -191,7 +191,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         viewModel.thisUser.observe(viewLifecycleOwner){user ->
 
-            Log.d("Usser", user.image.toString())
+            Log.d("User", user.toString())
             profileBinding.title.text = user.title
             profileBinding.profileName.text = user.name
             editProfileBinding.profileName.setText(user.name)
@@ -199,16 +199,16 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //                    profileBinding.profilePic.setImageBitmap(it.image)
 //                    editProfileBinding.profilePic.setImageBitmap(it.image)
 //                    binding.profilePic.setImageBitmap(it.image)
-            if (user.image?.isEmpty() == true){
+            if (user.image.isEmpty()){
                 editProfileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
                 binding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
                 profileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
             }else{
-                Glide.with(requireContext()).load(user.image?.toUri())
+                Glide.with(requireContext()).load(user.image.toUri())
                     .into(binding.profilePic)
-                Glide.with(requireContext()).load(user.image?.toUri())
+                Glide.with(requireContext()).load(user.image.toUri())
                     .into(editProfileBinding.profilePic)
-                Glide.with(requireContext()).load(user.image?.toUri())
+                Glide.with(requireContext()).load(user.image.toUri())
                     .into(profileBinding.profilePic)
             }
 

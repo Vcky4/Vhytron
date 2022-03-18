@@ -2,6 +2,7 @@ package com.vhytron.database
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.ContentValues
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.View
@@ -18,6 +19,7 @@ import com.vhytron.R
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.ContactModel
 import com.vhytron.ui.chats.PeopleModel
+import com.vhytron.ui.chats.RecentChats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,16 +32,14 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     private val chatRef = database.child("chats").ref
 
     private val _chats = MutableLiveData<MutableList<ChatModel>>()
-    private val _recentChats = MutableLiveData<MutableList<PeopleModel>>()
 
-
-    val recentChats: LiveData<MutableList<PeopleModel>> = _recentChats
+    val recentChats: LiveData<List<RecentChats>>
     val chats: LiveData<MutableList<ChatModel>> = _chats
 
     //get user data
     val readUserData: LiveData<List<UserEntity>>
     //get chats
-    val readChatData: LiveData<List<ChatEntity>>
+    val readChatData: LiveData<List<ChatModel>>
     //get user
     val thisUser: LiveData<UserEntity>
     //get all people
@@ -59,6 +59,11 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     private val chatRepository: Repositories.ChatRepository =
         Repositories.ChatRepository(AppDatabase.getDataBase(application).chatDao())
 
+
+    private val recentChatRepository: Repositories.RecentChatRepository =
+        Repositories.RecentChatRepository(AppDatabase.getDataBase(application).recentChatsDao())
+
+
     private val peopleRepository: Repositories.PeopleRepository =
         Repositories.PeopleRepository(AppDatabase.getDataBase(application).peopleDao())
 
@@ -72,6 +77,8 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
         thisUser = userRepository.getUser(auth.currentUser?.uid.toString())
 
         allPeople = peopleRepository.getAllPeople
+
+        recentChats = recentChatRepository.getAllChats
 
     }
 
@@ -180,7 +187,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
         database.updateChildren(childUpdates)
             .addOnSuccessListener {
                 // Write was successful!
-                _addUser(UserEntity(userId, name, title, userName))
+                _addUser(UserEntity(userId, name, title, userName,""))
                 _signUpSuccessful.value = true
             }
             .addOnFailureListener {
@@ -213,15 +220,17 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
                                     .addOnSuccessListener { image ->
                                     if (image !=null){
 
-                                        recentChats.add(
-                                            PeopleModel(
-                                                image.toString(),
-                                                thisUser.child("name").value.toString(),
-                                                thisUser.child("title").value.toString(),
-                                                friend
+                                        viewModelScope.launch(Dispatchers.IO) {
+                                            recentChatRepository.insertChat(
+                                                RecentChats(0,
+                                                    PeopleModel(
+                                                        image.toString(),
+                                                        thisUser.child("name").value.toString(),
+                                                        thisUser.child("title").value.toString(),
+                                                        friend
+                                                    ))
                                             )
-                                        )
-                                        _recentChats.value = recentChats
+                                        }
                                     }
                                 }
                                     .addOnFailureListener { e ->
@@ -244,7 +253,6 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                        val list = mutableListOf<PeopleModel>()
                         for (dataValues in dataSnapshot.children) {
                             auth.currentUser.let {
                                 if (it != null && dataValues.key != it.uid) {
@@ -293,5 +301,69 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
 
         }
         ref.addChildEventListener(childEventListener)
+    }
+
+
+    fun updateChats(friend: String) {
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val menuListener = object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val list = mutableListOf<ChatModel>()
+                        for (dataValues in dataSnapshot.children) {
+                            auth.currentUser.let {
+                                if (it != null) {
+                                    ref.child(it.uid).child("userName")
+                                        .get().addOnSuccessListener { data ->
+                                            if (dataValues.key.toString()
+                                                    .contains(data.value.toString()) &&
+                                                dataValues.key.toString().contains(friend)
+                                            ) {
+                                                Log.d(ContentValues.TAG, dataValues.key.toString())
+
+                                                dataValues.children.forEach { snapshot ->
+                                                    val message =
+                                                        snapshot.child("message").value.toString()
+                                                    val sender = snapshot.child("userName")
+                                                        .value.toString()
+                                                    val time = snapshot.child("time")
+                                                        .value.toString()
+                                                    viewModelScope.launch(Dispatchers.IO) {
+                                                        chatRepository.insertChat(ChatModel(
+                                                            0, sender, message, time)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .addOnFailureListener { e ->
+                                            _error.value = e.message
+                                        }
+                                }
+                            }
+                        }
+
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // handle error
+                    }
+                }
+                chatRef.addListenerForSingleValueEvent(menuListener)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        }
+
+        chatRef.addChildEventListener(childEventListener)
+
     }
 }

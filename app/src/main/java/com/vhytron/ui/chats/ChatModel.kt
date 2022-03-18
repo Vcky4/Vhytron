@@ -1,8 +1,16 @@
 package com.vhytron.ui.chats
 
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.firebase.database.Exclude
 
-data class ChatModel(val userName: String, val message: String, val time: String){
+@Entity(tableName = "chats")
+data class ChatModel(
+    @PrimaryKey(autoGenerate = true) var id: Int,
+    val userName: String,
+    val message: String,
+    val time: String){
 
     @Exclude
     fun toMap(): Map<String, Any?>{
@@ -13,3 +21,10 @@ data class ChatModel(val userName: String, val message: String, val time: String
         )
     }
 }
+
+@Entity(tableName = "recentChats")
+data class RecentChats(
+    @PrimaryKey(autoGenerate = true) var id: Int,
+    @Embedded(prefix = "people_")
+    val people: PeopleModel = PeopleModel()
+)

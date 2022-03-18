@@ -53,7 +53,13 @@ class ChatsFragment : Fragment() {
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {
             binding.chartRv.layoutManager = LinearLayoutManager(activity)
             binding.chartRv.adapter = adapter
-            adapter.setUpPeople(it)
+            val list = mutableListOf<PeopleModel>()
+            it.forEach {people ->
+
+                list.add(people.people)
+                adapter.setUpPeople(list)
+            }
+
         }
         chatsViewModel.message.observe(viewLifecycleOwner){
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()

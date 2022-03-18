@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.vhytron.database.AppDatabase
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
 
 
@@ -31,7 +33,7 @@ class ChatScreenFragment : Fragment() {
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
-    private lateinit var chatsViewModel: ChatsViewModel
+    private lateinit var chatsViewModel: AppViewModel
     private val linearLayoutManager = LinearLayoutManager(activity)
 
     // This property is only valid between onCreateView and
@@ -44,7 +46,7 @@ class ChatScreenFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         chatsViewModel =
-            ViewModelProvider(this)[ChatsViewModel::class.java]
+            ViewModelProvider(this)[AppViewModel::class.java]
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
         return binding.root
@@ -64,8 +66,8 @@ class ChatScreenFragment : Fragment() {
         linearLayoutManager.stackFromEnd = true
 
         chatsViewModel.updateChats(args.chats.userName)
-        chatsViewModel.chats.observe(viewLifecycleOwner) {
-//            linearLayoutManager.reverseLayout = true
+
+        chatsViewModel.readChatData.observe(viewLifecycleOwner) {
             binding.chatRv.layoutManager = linearLayoutManager
             binding.chatRv.adapter = adapter
             adapter.setUpChats(it)
@@ -102,7 +104,7 @@ class ChatScreenFragment : Fragment() {
                             if (!(data.child("chats").exists())) {
                                 Log.d("message", "got here right1")
                                 val chat =
-                                    ChatModel(user.value.toString().trim(), message, "2:30pm")
+                                    ChatModel(0,user.value.toString().trim(), message, "2:30pm")
                                 Log.d("message", "got here right")
                                 val postValues = chat.toMap()
 
@@ -141,7 +143,7 @@ class ChatScreenFragment : Fragment() {
                                             Log.d("key", dd.key.toString())
 
                                             val chat =
-                                                ChatModel(user.value.toString(), message, "2:30pm")
+                                                ChatModel(0,user.value.toString(), message, "2:30pm")
 
                                             val postValues = chat.toMap()
 
@@ -176,7 +178,7 @@ class ChatScreenFragment : Fragment() {
                                                     Log.d("problem", chatData.child("${user.value.toString()} ${args.chats.userName}").exists().toString() )
                                             val chat =
                                                 ChatModel(
-                                                    user.value.toString(),
+                                                    0,user.value.toString(),
                                                     message,
                                                     "2:30pm"
                                                 )
