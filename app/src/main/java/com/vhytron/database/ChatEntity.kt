@@ -9,6 +9,9 @@ data class ChatEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     val message: String,
-    @Embedded var user: UserEntity
+    @Embedded(prefix = "sender_")
+    var sender: UserEntity,
+    @Embedded(prefix = "receiver")
+    var receiver: UserEntity
 
 )

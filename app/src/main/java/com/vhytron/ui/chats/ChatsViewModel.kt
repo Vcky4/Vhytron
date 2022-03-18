@@ -66,7 +66,7 @@ class ChatsViewModel : ViewModel() {
                                                 )
                                                 list.add(
                                                     PeopleModel(
-                                                        image, name, title, userName
+                                                        "image", name, title, userName
                                                     )
                                                 )
                                                 _people.value = list
@@ -191,7 +191,7 @@ class ChatsViewModel : ViewModel() {
                                                 )
                                             recentChats.add(
                                                 PeopleModel(
-                                                    image,
+                                                    "image",
                                                     thisUser.child("name").value.toString(),
                                                     thisUser.child("title").value.toString(),
                                                     friend

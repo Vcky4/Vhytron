@@ -1,6 +1,7 @@
 package com.vhytron.database
 
 import androidx.lifecycle.LiveData
+import com.vhytron.ui.chats.PeopleModel
 
 class Repositories {
 
@@ -46,6 +47,28 @@ class Repositories {
         // Delete user
         suspend fun deleteChat(chat: ChatEntity) {
             chatsDao.deleteChat(chat)
+        }
+    }
+
+
+    class PeopleRepository(private val peopleDao: PeopleDao){
+
+        //Fetch All the people
+        val getAllPeople: LiveData<List<PeopleModel>> = peopleDao.getAllPeople()
+
+        // Insert new user
+        suspend fun insertPeople(people: PeopleModel) {
+            peopleDao.insertPeople(people)
+        }
+
+        // update user
+        suspend fun updatePeople(people: PeopleModel) {
+            peopleDao.updatePeople(people)
+        }
+
+        // Delete user
+        suspend fun deleteChat(people: PeopleModel) {
+            peopleDao.deletePeople(people)
         }
     }
 }

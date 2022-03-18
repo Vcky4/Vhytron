@@ -17,12 +17,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChartsBinding
 
 class ChatsFragment : Fragment() {
 
     private var _binding: FragmentChartsBinding? = null
-    private lateinit var  chatsViewModel: ChatsViewModel
+    private lateinit var  chatsViewModel: AppViewModel
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
@@ -38,7 +39,7 @@ class ChatsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         chatsViewModel =
-            ViewModelProvider(this)[ChatsViewModel::class.java]
+            ViewModelProvider(this)[AppViewModel::class.java]
 
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
         auth = Firebase.auth
@@ -47,14 +48,14 @@ class ChatsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = PeopleAdapter()
+        val adapter = PeopleAdapter(requireContext())
         chatsViewModel.getRecentChats()
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {
             binding.chartRv.layoutManager = LinearLayoutManager(activity)
             binding.chartRv.adapter = adapter
             adapter.setUpPeople(it)
         }
-        chatsViewModel.error.observe(viewLifecycleOwner){
+        chatsViewModel.message.observe(viewLifecycleOwner){
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 

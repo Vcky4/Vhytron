@@ -205,9 +205,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 profileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
             }else{
                 Glide.with(requireContext()).load(user.image?.toUri())
-                    .into(editProfileBinding.profilePic)
-                Glide.with(requireContext()).load(user.image?.toUri())
                     .into(binding.profilePic)
+                Glide.with(requireContext()).load(user.image?.toUri())
+                    .into(editProfileBinding.profilePic)
                 Glide.with(requireContext()).load(user.image?.toUri())
                     .into(profileBinding.profilePic)
             }

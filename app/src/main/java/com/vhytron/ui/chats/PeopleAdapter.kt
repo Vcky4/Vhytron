@@ -1,11 +1,15 @@
 package com.vhytron.ui.chats
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.vhytron.R
 import com.vhytron.databinding.PeopleItemBinding
 
-class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
+class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
     private val peopleList = mutableListOf<PeopleModel>()
 
     inner class PeopleViewHolder(private val binding: PeopleItemBinding):
@@ -13,7 +17,12 @@ class PeopleAdapter: RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
 
             fun bindItem(people: PeopleModel){
                 binding.name.text = people.name
-                binding.profilePic.setImageBitmap(people.image)
+                if (people.image.isEmpty()){
+                    binding.profilePic.setImageResource(R.drawable.profile)
+                }else{
+                    Glide.with(context).load(people.image.toUri())
+                        .into(binding.profilePic)
+                }
                 binding.title.text = people.title
             }
 

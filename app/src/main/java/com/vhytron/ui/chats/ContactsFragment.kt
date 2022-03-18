@@ -12,22 +12,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentContactBinding
 
 
 class ContactsFragment : Fragment() {
 
     private lateinit var binding: FragmentContactBinding
-    private lateinit var chatsViewModel: ChatsViewModel
-    private val adapter = PeopleAdapter()
+    private lateinit var chatsViewModel: AppViewModel
+    private lateinit var adapter: PeopleAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        chatsViewModel = ViewModelProvider(this)[ChatsViewModel::class.java]
+        chatsViewModel = ViewModelProvider(this)[AppViewModel::class.java]
         binding = FragmentContactBinding.inflate(inflater, container, false)
+        adapter = PeopleAdapter(requireContext())
         return binding.root
     }
 
@@ -36,7 +38,7 @@ class ContactsFragment : Fragment() {
         chatsViewModel.updatePeople()
 
         //set up recycler
-        chatsViewModel.people.observe(viewLifecycleOwner){
+        chatsViewModel.allPeople.observe(viewLifecycleOwner){
             binding.contactRy.layoutManager = LinearLayoutManager(activity)
             binding.contactRy.adapter = adapter
             adapter.setUpPeople(it)
@@ -44,7 +46,7 @@ class ContactsFragment : Fragment() {
         }
 
         //display errors
-        chatsViewModel.error.observe(viewLifecycleOwner){
+        chatsViewModel.message.observe(viewLifecycleOwner){
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
