@@ -8,6 +8,9 @@ class Repositories {
 
         //Fetch All the Users
         val getAllUsers: LiveData<List<UserEntity>> = userDao.getAllUser()
+        fun getUser(userId: String): LiveData<UserEntity>{
+            return userDao.getUser(userId)
+        }
 
         // Insert new user
         suspend fun insertUser(users: UserEntity) {

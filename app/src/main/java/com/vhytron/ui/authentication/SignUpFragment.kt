@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -27,6 +28,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.vhytron.Network
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentSignUpBinding
 import com.vhytron.ui.chats.ContactModel
 import com.vhytron.ui.chats.PeopleModel
@@ -36,8 +38,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentSignUpBinding? = null
     private lateinit var auth: FirebaseAuth
-    private val database: DatabaseReference = Firebase.database.reference
-    private val storageRef = Firebase.storage.reference.child("profile")
+    private lateinit var viewModel: AppViewModel
 
 
     // This property is only valid between onCreateView and
@@ -52,6 +53,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         // Initialize Firebase Auth
         auth = Firebase.auth
+        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
         return binding.root
     }
 
@@ -95,31 +97,22 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         //            _key.ifEmpty {
 //            database.child("devotional").push().key
 //        }
+        viewModel.addUser(userId, name, title, userName)
 
-        val user = ContactModel("", name,title,userName)
-        val postValues = user.toMap()
-
-        val childUpdates = hashMapOf<String, Any>(
-            "/users/$userId" to postValues
-        )
-
-        database.updateChildren(childUpdates)
-            .addOnSuccessListener {
+        viewModel.signUpSuccessful.observe(viewLifecycleOwner){successful ->
+            if (successful){
                 // Write was successful!
                 Toast.makeText(context, "new user add", Toast.LENGTH_SHORT).show()
                 //navigate to home
                 findNavController().navigate(R.id.action_sign_up_to_nav_home)
-                // ...
-            }
-            .addOnFailureListener {
-                // Write failed
+            }else{
                 binding.signUpLoading.visibility = GONE
                 binding.signUpBt.isEnabled = true
-                FirebaseAuth.getInstance().currentUser?.delete()
-                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-                // ...
+                viewModel.message.observe(viewLifecycleOwner){
+                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                }
             }
-
+        }
     }
 
     

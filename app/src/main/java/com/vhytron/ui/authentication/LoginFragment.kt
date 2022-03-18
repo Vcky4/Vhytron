@@ -12,18 +12,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vhytron.Network
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentLoginBinding
 
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private lateinit var auth: FirebaseAuth
+    private lateinit var viewModel: AppViewModel
 
 
     // This property is only valid between onCreateView and
@@ -37,6 +40,7 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         auth = Firebase.auth
+        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
         return binding.root
     }
 
@@ -91,6 +95,7 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful){
+                    viewModel.newLogin()
                     Log.d(TAG, "loginWithEmailPassword:Successful")
                     Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_login_to_nav_home)

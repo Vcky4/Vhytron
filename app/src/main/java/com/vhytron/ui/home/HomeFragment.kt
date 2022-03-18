@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -15,10 +16,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -27,6 +30,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
@@ -40,7 +44,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val database: DatabaseReference = Firebase.database.reference
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("users").ref
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var viewModel: AppViewModel
     private lateinit var profileBinding: ProfileAlertBinding
     private lateinit var editProfileBinding: EditProfileAlertBinding
     private lateinit var settingsBinding: SettingsAlertBinding
@@ -57,7 +61,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
         auth = Firebase.auth
 
         profileBinding = ProfileAlertBinding.inflate(layoutInflater)
@@ -65,7 +69,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         settingsBinding = SettingsAlertBinding.inflate(layoutInflater)
         teamsBinding = TeamsAlertBinding.inflate(layoutInflater)
 
-        homeViewModel.update()
+        viewModel.update()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -165,7 +169,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         val getContent = registerForActivityResult(ActivityResultContracts.GetContent())  { uri: Uri? ->
             // Handle the returned Uri
-            imageUri = uri
             if (uri != null) {
                 uploadImageToFirebase(uri)
             }
@@ -182,26 +185,36 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             editProfile(editProfileBinding.profileName.text.toString(),
                 editProfileBinding.titleSpinner.selectedItem.toString())
 
-            homeViewModel.update()
+            viewModel.update()
             editProfileAlert.dismiss()
         }
 
-        homeViewModel.title.observe(viewLifecycleOwner){
-            profileBinding.title.text = it
+        viewModel.thisUser.observe(viewLifecycleOwner){user ->
+
+            Log.d("Usser", user.image.toString())
+            profileBinding.title.text = user.title
+            profileBinding.profileName.text = user.name
+            editProfileBinding.profileName.setText(user.name)
+            profileBinding.userName.text = user.userName
+//                    profileBinding.profilePic.setImageBitmap(it.image)
+//                    editProfileBinding.profilePic.setImageBitmap(it.image)
+//                    binding.profilePic.setImageBitmap(it.image)
+            if (user.image?.isEmpty() == true){
+                editProfileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+                binding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+                profileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+            }else{
+                Glide.with(requireContext()).load(user.image?.toUri())
+                    .into(editProfileBinding.profilePic)
+                Glide.with(requireContext()).load(user.image?.toUri())
+                    .into(binding.profilePic)
+                Glide.with(requireContext()).load(user.image?.toUri())
+                    .into(profileBinding.profilePic)
+            }
+
         }
-        homeViewModel.name.observe(viewLifecycleOwner){
-            profileBinding.profileName.text = it
-            editProfileBinding.profileName.setText(it)
-        }
-        homeViewModel.userName.observe(viewLifecycleOwner){
-            profileBinding.userName.text = it
-        }
-        homeViewModel.image.observe(viewLifecycleOwner){
-            profileBinding.profilePic.setImageBitmap(it)
-            editProfileBinding.profilePic.setImageBitmap(it)
-            binding.profilePic.setImageBitmap(it)
-        }
-        homeViewModel.error.observe(viewLifecycleOwner){
+
+        viewModel.message.observe(viewLifecycleOwner){
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
@@ -219,8 +232,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         val oneMegaByte: Long = 1024 * 1024
                         it.storage.getBytes(oneMegaByte).addOnSuccessListener { bytes ->
                             val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                            editProfileBinding.profilePic.setImageBitmap(bmp)
-                            editProfileBinding.imageLoading.visibility = GONE
+                            it.storage.downloadUrl.addOnSuccessListener { uri->
+                                imageUri = uri
+                                Glide.with(requireContext())
+                                    .load(uri)
+                                    .into(editProfileBinding.profilePic)
+                                editProfileBinding.imageLoading.visibility = GONE
+                            }
                         }
                     }
                     .addOnFailureListener { e ->
@@ -234,6 +252,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val userRef = ref.child("${auth.currentUser.let { it?.uid }}")
         userRef.child("name").setValue(name)
         userRef.child("title").setValue(title)
+        userRef.child("image").setValue(imageUri.toString())
             .addOnSuccessListener {
                 Toast.makeText(context, "user updated", Toast.LENGTH_SHORT).show()
             }
