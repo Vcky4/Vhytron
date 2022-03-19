@@ -12,15 +12,20 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vhytron.R
+import com.vhytron.database.Repositories
 import com.vhytron.databinding.ChatItemBinding
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class ChatAdapter(val userName: String) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
+class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
+
+    val userRepo: Repositories.UserRepository by inject()
 
     inner class ChatViewHolder(private val binding: ChatItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bindItem(chats: ChatModel) {
-            if (userName == chats.userName) {
+
+            if (userRepo.getAllUsers.userName == chats.userName) {
                 binding.card.setBackgroundResource(R.drawable.chat_right)
                 binding.layout.setPadding(100, 10, 10, 10)
                 binding.layout.setHorizontalGravity(Gravity.END)

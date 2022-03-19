@@ -9,10 +9,10 @@ interface UserDao {
     suspend fun insertUser(user: UserEntity)
 
     @Query("Select * from user")
-    fun getAllUser(): LiveData<List<UserEntity>>
+    fun getAllUser(): UserEntity
 
-    @Query("Select * from user Where userId = :userI")
-    fun getUser(userI: String) : LiveData<UserEntity>
+    @Query("Select * from user")
+    fun getUser() : LiveData<UserEntity>
 
     @Update
     suspend fun updateUser(user: UserEntity)

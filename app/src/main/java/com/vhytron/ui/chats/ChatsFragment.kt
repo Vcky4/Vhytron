@@ -19,11 +19,12 @@ import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChartsBinding
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ChatsFragment : Fragment() {
 
     private var _binding: FragmentChartsBinding? = null
-    private lateinit var  chatsViewModel: AppViewModel
+    private val chatsViewModel: AppViewModel by sharedViewModel()
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
@@ -38,9 +39,6 @@ class ChatsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        chatsViewModel =
-            ViewModelProvider(this)[AppViewModel::class.java]
-
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
         auth = Firebase.auth
         return binding.root

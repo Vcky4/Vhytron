@@ -35,6 +35,8 @@ import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
+import org.koin.androidx.viewmodel.ext.android.sharedStateViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -44,7 +46,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private val database: DatabaseReference = Firebase.database.reference
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("users").ref
-    private lateinit var viewModel: AppViewModel
+    private val viewModel: AppViewModel by sharedViewModel()
     private lateinit var profileBinding: ProfileAlertBinding
     private lateinit var editProfileBinding: EditProfileAlertBinding
     private lateinit var settingsBinding: SettingsAlertBinding
@@ -61,7 +63,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
         auth = Firebase.auth
 
         profileBinding = ProfileAlertBinding.inflate(layoutInflater)

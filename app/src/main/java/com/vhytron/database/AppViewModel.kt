@@ -22,8 +22,10 @@ import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.chats.RecentChats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class AppViewModel(application: Application): AndroidViewModel(application) {
+class AppViewModel: ViewModel(), KoinComponent {
 
     private val auth: FirebaseAuth = Firebase.auth
     private val database: DatabaseReference = Firebase.database.reference
@@ -37,7 +39,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     val chats: LiveData<MutableList<ChatModel>> = _chats
 
     //get user data
-    val readUserData: LiveData<List<UserEntity>>
+    val readUserData: UserEntity
     //get chats
     val readChatData: LiveData<List<ChatModel>>
     //get user
@@ -51,21 +53,18 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
     val message: LiveData<String> = _error
     val signUpSuccessful: LiveData<Boolean> = _signUpSuccessful
 
+
     //declare user repository
-    private val userRepository: Repositories.UserRepository =
-        Repositories.UserRepository(AppDatabase.getDataBase(application).userDao())
+    private val userRepository: Repositories.UserRepository by inject()
 
     //declare merchant repository
-    private val chatRepository: Repositories.ChatRepository =
-        Repositories.ChatRepository(AppDatabase.getDataBase(application).chatDao())
+    private val chatRepository: Repositories.ChatRepository by inject()
 
 
-    private val recentChatRepository: Repositories.RecentChatRepository =
-        Repositories.RecentChatRepository(AppDatabase.getDataBase(application).recentChatsDao())
+    private val recentChatRepository: Repositories.RecentChatRepository by inject()
 
 
-    private val peopleRepository: Repositories.PeopleRepository =
-        Repositories.PeopleRepository(AppDatabase.getDataBase(application).peopleDao())
+    private val peopleRepository: Repositories.PeopleRepository by inject()
 
 
     init {
@@ -74,7 +73,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
         //instantiate merchant
         readChatData = chatRepository.getAllChats
 
-        thisUser = userRepository.getUser(auth.currentUser?.uid.toString())
+        thisUser = userRepository.getUser()
 
         allPeople = peopleRepository.getAllPeople
 
@@ -164,7 +163,7 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
                         user.child("title").toString(),
                         user.child("userName").value.toString(), user.child("image").value.toString()))
 
-                    Log.d("user", readUserData.value.toString())
+                    Log.d("user", readUserData.toString())
                 }
             }
         }

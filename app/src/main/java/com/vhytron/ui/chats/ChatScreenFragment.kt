@@ -24,6 +24,7 @@ import com.google.firebase.storage.ktx.storage
 import com.vhytron.database.AppDatabase
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class ChatScreenFragment : Fragment() {
@@ -34,7 +35,7 @@ class ChatScreenFragment : Fragment() {
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
-    private lateinit var chatsViewModel: AppViewModel
+    private val chatsViewModel: AppViewModel by sharedViewModel()
     private val linearLayoutManager = LinearLayoutManager(activity)
 
     // This property is only valid between onCreateView and
@@ -46,17 +47,10 @@ class ChatScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        chatsViewModel =
-            ViewModelProvider(this)[AppViewModel::class.java]
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
-        var userName = ""
-        chatsViewModel.thisUser.observe(viewLifecycleOwner){
-            userName = it.userName
-            Log.d("adapterUser", userName)
-        }
 
-        adapter = ChatAdapter(userName)
+        adapter = ChatAdapter()
         return binding.root
     }
 

@@ -4,15 +4,20 @@ import androidx.lifecycle.LiveData
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.PeopleModel
 import com.vhytron.ui.chats.RecentChats
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class Repositories {
 
-    class UserRepository(private val userDao: UserDao){
+    class UserRepository: KoinComponent{
+
+        private val db: AppDatabase by inject()
+        private val userDao: UserDao = db.userDao()
 
         //Fetch All the Users
-        val getAllUsers: LiveData<List<UserEntity>> = userDao.getAllUser()
-        fun getUser(userId: String): LiveData<UserEntity>{
-            return userDao.getUser(userId)
+        val getAllUsers: UserEntity = userDao.getAllUser()
+        fun getUser(): LiveData<UserEntity>{
+            return userDao.getUser()
         }
 
         // Insert new user
@@ -31,7 +36,10 @@ class Repositories {
         }
     }
 
-    class ChatRepository(private val chatsDao: ChatsDao){
+    class ChatRepository: KoinComponent{
+
+        private val db: AppDatabase by inject()
+        private val chatsDao: ChatsDao = db.chatDao()
 
         //Fetch All the Users
         val getAllChats: LiveData<List<ChatModel>> = chatsDao.getAllChat()
@@ -52,7 +60,10 @@ class Repositories {
         }
     }
 
-    class RecentChatRepository(private val recentChatsDao: RecentChatsDao){
+    class RecentChatRepository: KoinComponent{
+
+        private val db: AppDatabase by inject()
+        private val recentChatsDao: RecentChatsDao = db.recentChatsDao()
 
         //Fetch All the Users
         val getAllChats: LiveData<List<RecentChats>> = recentChatsDao.getAllChat()
@@ -74,7 +85,10 @@ class Repositories {
     }
 
 
-    class PeopleRepository(private val peopleDao: PeopleDao){
+    class PeopleRepository: KoinComponent{
+
+        private val db: AppDatabase by inject()
+        private val peopleDao: PeopleDao = db.peopleDao()
 
         //Fetch All the people
         val getAllPeople: LiveData<List<PeopleModel>> = peopleDao.getAllPeople()

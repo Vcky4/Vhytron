@@ -14,12 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.vhytron.R
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentContactBinding
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class ContactsFragment : Fragment() {
 
     private lateinit var binding: FragmentContactBinding
-    private lateinit var chatsViewModel: AppViewModel
+    private val chatsViewModel: AppViewModel by sharedViewModel()
     private lateinit var adapter: PeopleAdapter
 
     override fun onCreateView(
@@ -27,7 +28,6 @@ class ContactsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        chatsViewModel = ViewModelProvider(this)[AppViewModel::class.java]
         binding = FragmentContactBinding.inflate(inflater, container, false)
         adapter = PeopleAdapter(requireContext())
         return binding.root
