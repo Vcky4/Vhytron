@@ -206,11 +206,9 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             ref.get().addOnSuccessListener { currentUser ->
                 val me = currentUser.child(user?.uid.toString()).child("userName").value.toString()
                 chatRef.get().addOnSuccessListener { c ->
-                    val recentChats = mutableListOf<PeopleModel>()
                     c.children.forEach { chatsL ->
                         val chat = chatsL.key.toString()
                         val friend = chat.split(" ").filter { it != me }.joinToString("")
-
 
                         currentUser.children.forEach { thisUser ->
                             Log.d("chats/friend", thisUser.child("userName").value.toString())
@@ -219,10 +217,9 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
                                 storageRef.child("${friend}.jpg").downloadUrl
                                     .addOnSuccessListener { image ->
                                     if (image !=null){
-
                                         viewModelScope.launch(Dispatchers.IO) {
                                             recentChatRepository.insertChat(
-                                                RecentChats(0,
+                                                RecentChats(
                                                     PeopleModel(
                                                         image.toString(),
                                                         thisUser.child("name").value.toString(),
@@ -309,7 +306,6 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val list = mutableListOf<ChatModel>()
                         for (dataValues in dataSnapshot.children) {
                             auth.currentUser.let {
                                 if (it != null) {
@@ -329,8 +325,9 @@ class AppViewModel(application: Application): AndroidViewModel(application) {
                                                     val time = snapshot.child("time")
                                                         .value.toString()
                                                     viewModelScope.launch(Dispatchers.IO) {
+                                                        Log.d("chatId", snapshot.key.toString())
                                                         chatRepository.insertChat(ChatModel(
-                                                            0, sender, message, time)
+                                                            snapshot.key.toString(), sender, message, time)
                                                         )
                                                     }
                                                 }

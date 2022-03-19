@@ -49,15 +49,15 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PeopleAdapter(requireContext())
+        binding.chartRv.layoutManager = LinearLayoutManager(activity)
+        binding.chartRv.adapter = adapter
         chatsViewModel.getRecentChats()
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {
-            binding.chartRv.layoutManager = LinearLayoutManager(activity)
-            binding.chartRv.adapter = adapter
             val list = mutableListOf<PeopleModel>()
             it.forEach {people ->
 
                 list.add(people.people)
-                adapter.setUpPeople(list)
+                adapter.differ.submitList(list)
             }
 
         }

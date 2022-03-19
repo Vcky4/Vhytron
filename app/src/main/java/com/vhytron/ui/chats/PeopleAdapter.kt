@@ -4,13 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.vhytron.R
 import com.vhytron.databinding.PeopleItemBinding
 
 class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
-    private val peopleList = mutableListOf<PeopleModel>()
 
     inner class PeopleViewHolder(private val binding: PeopleItemBinding):
         RecyclerView.ViewHolder(binding.root){
@@ -30,20 +31,6 @@ class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAd
 
     }
 
-    fun setUpPeople(people: List<PeopleModel>){
-        when {
-            this.peopleList.isEmpty() ->{
-                this.peopleList.addAll(people)
-            }
-            peopleList.size < people.size ->{
-                this.peopleList.add(people.last())
-            }
-            peopleList.size > people.size ->{
-                this.peopleList.clear()
-                this.peopleList.addAll(people)
-            }
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PeopleViewHolder {
         return PeopleViewHolder(PeopleItemBinding.inflate(LayoutInflater.from(
@@ -51,8 +38,15 @@ class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAd
         ))
     }
 
+    private val differCallback = object : DiffUtil.ItemCallback<PeopleModel>() {
+        override fun areItemsTheSame(oldItem: PeopleModel, newItem: PeopleModel) = oldItem.userName == newItem.userName
+        override fun areContentsTheSame(oldItem: PeopleModel, newItem: PeopleModel) = oldItem == newItem
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+
     override fun onBindViewHolder(holder: PeopleViewHolder, position: Int) {
-        val people = peopleList[position]
+        val people = differ.currentList[position]
         holder.bindItem(people)
 
         holder.card.setOnClickListener {
@@ -67,6 +61,6 @@ class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAd
     }
 
     override fun getItemCount(): Int {
-        return peopleList.size
+        return differ.currentList.size
     }
 }

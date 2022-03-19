@@ -37,11 +37,12 @@ class ContactsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         chatsViewModel.updatePeople()
 
+
         //set up recycler
+        binding.contactRy.layoutManager = LinearLayoutManager(activity)
+        binding.contactRy.adapter = adapter
         chatsViewModel.allPeople.observe(viewLifecycleOwner){
-            binding.contactRy.layoutManager = LinearLayoutManager(activity)
-            binding.contactRy.adapter = adapter
-            adapter.setUpPeople(it)
+            adapter.differ.submitList(it)
             binding.contactLoading.visibility = GONE
         }
 

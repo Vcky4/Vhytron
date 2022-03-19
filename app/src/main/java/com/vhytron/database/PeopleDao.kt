@@ -9,7 +9,7 @@ interface PeopleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPeople(people: PeopleModel)
 
-    @Query("Select * from people")
+    @Query("Select * from people ")
     fun getAllPeople(): LiveData<List<PeopleModel>>
 
     @Update

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -28,7 +29,7 @@ import com.vhytron.databinding.FragmentChatScreenBinding
 class ChatScreenFragment : Fragment() {
 
     private var _binding: FragmentChatScreenBinding? = null
-    private val adapter = ChatAdapter()
+    private lateinit var adapter: ChatAdapter
     private val database: DatabaseReference = Firebase.database.reference
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("chats").ref
@@ -49,6 +50,13 @@ class ChatScreenFragment : Fragment() {
             ViewModelProvider(this)[AppViewModel::class.java]
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
+        var userName = ""
+        chatsViewModel.thisUser.observe(viewLifecycleOwner){
+            userName = it.userName
+            Log.d("adapterUser", userName)
+        }
+
+        adapter = ChatAdapter(userName)
         return binding.root
     }
 
@@ -67,10 +75,10 @@ class ChatScreenFragment : Fragment() {
 
         chatsViewModel.updateChats(args.chats.userName)
 
+        binding.chatRv.layoutManager = linearLayoutManager
+        binding.chatRv.adapter = adapter
         chatsViewModel.readChatData.observe(viewLifecycleOwner) {
-            binding.chatRv.layoutManager = linearLayoutManager
-            binding.chatRv.adapter = adapter
-            adapter.setUpChats(it)
+            adapter.differ.submitList(it)
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -104,7 +112,7 @@ class ChatScreenFragment : Fragment() {
                             if (!(data.child("chats").exists())) {
                                 Log.d("message", "got here right1")
                                 val chat =
-                                    ChatModel(0,user.value.toString().trim(), message, "2:30pm")
+                                    ChatModel(key,user.value.toString().trim(), message, "2:30pm")
                                 Log.d("message", "got here right")
                                 val postValues = chat.toMap()
 
@@ -118,9 +126,7 @@ class ChatScreenFragment : Fragment() {
                                         chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
 //                                                linearLayoutManager.reverseLayout = true
                                             linearLayoutManager.stackFromEnd = true
-                                            binding.chatRv.layoutManager = linearLayoutManager
-                                            binding.chatRv.adapter = adapter
-                                            adapter.setUpChats(chatList)
+                                            adapter.differ.submitList(chatList)
                                         }
                                     }
                                     .addOnFailureListener { exception ->
@@ -143,7 +149,7 @@ class ChatScreenFragment : Fragment() {
                                             Log.d("key", dd.key.toString())
 
                                             val chat =
-                                                ChatModel(0,user.value.toString(), message, "2:30pm")
+                                                ChatModel(key,user.value.toString(), message, "2:30pm")
 
                                             val postValues = chat.toMap()
 
@@ -157,10 +163,7 @@ class ChatScreenFragment : Fragment() {
                                                     chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
 //                                                        linearLayoutManager.reverseLayout = true
                                                         linearLayoutManager.stackFromEnd = true
-                                                        binding.chatRv.layoutManager =
-                                                            linearLayoutManager
-                                                        binding.chatRv.adapter = adapter
-                                                        adapter.setUpChats(chatList)
+                                                        adapter.differ.submitList(chatList)
                                                     }
                                                 }
                                                 .addOnFailureListener { exception ->
@@ -178,7 +181,7 @@ class ChatScreenFragment : Fragment() {
                                                     Log.d("problem", chatData.child("${user.value.toString()} ${args.chats.userName}").exists().toString() )
                                             val chat =
                                                 ChatModel(
-                                                    0,user.value.toString(),
+                                                    key,user.value.toString(),
                                                     message,
                                                     "2:30pm"
                                                 )
@@ -195,10 +198,7 @@ class ChatScreenFragment : Fragment() {
                                                     chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
 //                                                        linearLayoutManager.reverseLayout = true
                                                         linearLayoutManager.stackFromEnd = true
-                                                        binding.chatRv.layoutManager =
-                                                            linearLayoutManager
-                                                        binding.chatRv.adapter = adapter
-                                                        adapter.setUpChats(chatList)
+                                                        adapter.differ.submitList(chatList)
                                                     }
                                                 }
                                                 .addOnFailureListener { exception ->

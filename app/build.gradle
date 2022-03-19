@@ -89,5 +89,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     kapt 'com.github.bumptech.glide:compiler:4.13.0'
 
+    // Koin Dependency Injection
+    implementation "io.insert-koin:koin-android:3.1.2"
+
 
 }

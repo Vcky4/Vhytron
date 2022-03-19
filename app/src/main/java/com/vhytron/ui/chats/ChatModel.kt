@@ -7,7 +7,7 @@ import com.google.firebase.database.Exclude
 
 @Entity(tableName = "chats")
 data class ChatModel(
-    @PrimaryKey(autoGenerate = true) var id: Int,
+    @PrimaryKey val id: String,
     val userName: String,
     val message: String,
     val time: String){
@@ -24,7 +24,7 @@ data class ChatModel(
 
 @Entity(tableName = "recentChats")
 data class RecentChats(
-    @PrimaryKey(autoGenerate = true) var id: Int,
+    @PrimaryKey
     @Embedded(prefix = "people_")
     val people: PeopleModel = PeopleModel()
 )

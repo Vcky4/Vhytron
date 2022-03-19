@@ -102,65 +102,65 @@ class ChatsViewModel : ViewModel() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun updateChats(friend: String) {
-        val childEventListener = object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val list = mutableListOf<ChatModel>()
-                        for (dataValues in dataSnapshot.children) {
-                            auth.currentUser.let {
-                                if (it != null) {
-                                    uRef.child(it.uid).child("userName")
-                                        .get().addOnSuccessListener { data ->
-                                            if (dataValues.key.toString()
-                                                    .contains(data.value.toString()) &&
-                                                dataValues.key.toString().contains(friend)
-                                            ) {
-                                                Log.d(TAG, dataValues.key.toString())
-
-                                                dataValues.children.forEach { snapshot ->
-                                                    val message =
-                                                        snapshot.child("message").value.toString()
-                                                    val sender = snapshot.child("userName")
-                                                        .value.toString()
-                                                    val time = snapshot.child("time")
-                                                        .value.toString()
-                                                    list.add(ChatModel(0,sender, message, time))
-                                                }
-                                            }
-                                            _chats.value = list
-                                        }
-                                        .addOnFailureListener { e ->
-                                            _error.value = e.message
-                                        }
-                                }
-                            }
-                        }
-
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // handle error
-                    }
-                }
-                cRef.addListenerForSingleValueEvent(menuListener)
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-
-        }
-
-        cRef.addChildEventListener(childEventListener)
-
-    }
+//    fun updateChats(friend: String) {
+//        val childEventListener = object : ChildEventListener {
+//            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+//                val menuListener = object : ValueEventListener {
+//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                        val list = mutableListOf<ChatModel>()
+//                        for (dataValues in dataSnapshot.children) {
+//                            auth.currentUser.let {
+//                                if (it != null) {
+//                                    uRef.child(it.uid).child("userName")
+//                                        .get().addOnSuccessListener { data ->
+//                                            if (dataValues.key.toString()
+//                                                    .contains(data.value.toString()) &&
+//                                                dataValues.key.toString().contains(friend)
+//                                            ) {
+//                                                Log.d(TAG, dataValues.key.toString())
+//
+//                                                dataValues.children.forEach { snapshot ->
+//                                                    val message =
+//                                                        snapshot.child("message").value.toString()
+//                                                    val sender = snapshot.child("userName")
+//                                                        .value.toString()
+//                                                    val time = snapshot.child("time")
+//                                                        .value.toString()
+//                                                    list.add(ChatModel(0,sender, message, time))
+//                                                }
+//                                            }
+//                                            _chats.value = list
+//                                        }
+//                                        .addOnFailureListener { e ->
+//                                            _error.value = e.message
+//                                        }
+//                                }
+//                            }
+//                        }
+//
+//                    }
+//
+//                    override fun onCancelled(databaseError: DatabaseError) {
+//                        // handle error
+//                    }
+//                }
+//                cRef.addListenerForSingleValueEvent(menuListener)
+//            }
+//
+//            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+//            }
+//
+//            override fun onChildRemoved(snapshot: DataSnapshot) {}
+//
+//            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+//
+//            override fun onCancelled(error: DatabaseError) {}
+//
+//        }
+//
+//        cRef.addChildEventListener(childEventListener)
+//
+//    }
 
 
 
