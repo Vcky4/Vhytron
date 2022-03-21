@@ -8,14 +8,13 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class FirebaseApp: Application() {
+class MyApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Firebase.database.setPersistenceEnabled(true)
-
+        @OptIn(DelicateCoroutinesApi::class)
         startKoin {
-            androidContext(this@FirebaseApp)
+            androidContext(this@MyApp)
             modules(listOf(appModule))
         }
     }

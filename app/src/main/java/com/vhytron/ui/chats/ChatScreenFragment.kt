@@ -25,6 +25,7 @@ import com.vhytron.database.AppDatabase
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class ChatScreenFragment : Fragment() {
@@ -32,10 +33,9 @@ class ChatScreenFragment : Fragment() {
     private var _binding: FragmentChatScreenBinding? = null
     private lateinit var adapter: ChatAdapter
     private val database: DatabaseReference = Firebase.database.reference
-    private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
-    private val chatsViewModel: AppViewModel by sharedViewModel()
+    private val chatsViewModel: AppViewModel by viewModel()
     private val linearLayoutManager = LinearLayoutManager(activity)
 
     // This property is only valid between onCreateView and
@@ -50,7 +50,7 @@ class ChatScreenFragment : Fragment() {
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
 
-        adapter = ChatAdapter()
+        adapter = ChatAdapter("")
         return binding.root
     }
 
@@ -73,6 +73,7 @@ class ChatScreenFragment : Fragment() {
         binding.chatRv.adapter = adapter
         chatsViewModel.readChatData.observe(viewLifecycleOwner) {
             adapter.differ.submitList(it)
+
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -117,7 +118,7 @@ class ChatScreenFragment : Fragment() {
                                 database.updateChildren(childUpdates)
                                     .addOnSuccessListener {
                                         chatsViewModel.updateChats(args.chats.userName)
-                                        chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+                                        chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
 //                                                linearLayoutManager.reverseLayout = true
                                             linearLayoutManager.stackFromEnd = true
                                             adapter.differ.submitList(chatList)
@@ -154,7 +155,7 @@ class ChatScreenFragment : Fragment() {
                                             database.updateChildren(childUpdates)
                                                 .addOnSuccessListener {
                                                     chatsViewModel.updateChats(args.chats.userName)
-                                                    chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+                                                    chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
 //                                                        linearLayoutManager.reverseLayout = true
                                                         linearLayoutManager.stackFromEnd = true
                                                         adapter.differ.submitList(chatList)
@@ -189,7 +190,7 @@ class ChatScreenFragment : Fragment() {
                                             database.updateChildren(childUpdates)
                                                 .addOnSuccessListener {
                                                     chatsViewModel.updateChats(args.chats.userName)
-                                                    chatsViewModel.chats.observe(viewLifecycleOwner) { chatList ->
+                                                    chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
 //                                                        linearLayoutManager.reverseLayout = true
                                                         linearLayoutManager.stackFromEnd = true
                                                         adapter.differ.submitList(chatList)

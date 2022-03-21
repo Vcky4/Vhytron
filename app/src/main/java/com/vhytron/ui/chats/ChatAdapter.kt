@@ -17,15 +17,13 @@ import com.vhytron.databinding.ChatItemBinding
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
-
-    val userRepo: Repositories.UserRepository by inject()
+class ChatAdapter(private val userName: String) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
 
     inner class ChatViewHolder(private val binding: ChatItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(chats: ChatModel) {
 
-            if (userRepo.getAllUsers.userName == chats.userName) {
+            if (userName == chats.userName) {
                 binding.card.setBackgroundResource(R.drawable.chat_right)
                 binding.layout.setPadding(100, 10, 10, 10)
                 binding.layout.setHorizontalGravity(Gravity.END)

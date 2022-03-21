@@ -1,21 +1,15 @@
 package com.vhytron.database
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.ContentValues
-import android.graphics.BitmapFactory
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.*
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.vhytron.R
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.ContactModel
 import com.vhytron.ui.chats.PeopleModel
@@ -33,65 +27,37 @@ class AppViewModel: ViewModel(), KoinComponent {
     private val ref = database.child("users").ref
     private val chatRef = database.child("chats").ref
 
-    private val _chats = MutableLiveData<MutableList<ChatModel>>()
-
-    val recentChats: LiveData<List<RecentChats>>
-    val chats: LiveData<MutableList<ChatModel>> = _chats
-
-    //get user data
-    val readUserData: UserEntity
-    //get chats
-    val readChatData: LiveData<List<ChatModel>>
-    //get user
-    val thisUser: LiveData<UserEntity>
-    //get all people
-    val allPeople: LiveData<List<PeopleModel>>
-
-    private val _error = MutableLiveData<String>()
-    private val _signUpSuccessful = MutableLiveData<Boolean>(false)
-
-    val message: LiveData<String> = _error
-    val signUpSuccessful: LiveData<Boolean> = _signUpSuccessful
-
-
-    //declare user repository
-    private val userRepository: Repositories.UserRepository by inject()
-
-    //declare merchant repository
     private val chatRepository: Repositories.ChatRepository by inject()
 
-
     private val recentChatRepository: Repositories.RecentChatRepository by inject()
-
 
     private val peopleRepository: Repositories.PeopleRepository by inject()
 
 
-    init {
-        //instantiate user
-        readUserData = userRepository.getAllUsers
-        //instantiate merchant
-        readChatData = chatRepository.getAllChats
+    val recentChats = recentChatRepository.getAllChats
 
-        thisUser = userRepository.getUser()
+    //get user data
+    //val readUserData: UserEntity = userRepository.getAllUsers
+    //get chats
+    val readChatData = chatRepository.getAllChats
+    //get user
+//    val thisUser = currentUserRepository.getAllUser
+    //get all people
+    val allPeople = peopleRepository.getAllPeople
 
-        allPeople = peopleRepository.getAllPeople
+    private val _error = MutableLiveData<String>()
+    private val _signUpSuccessful = MutableLiveData(false)
 
-        recentChats = recentChatRepository.getAllChats
+    val message: LiveData<String> = _error
+    val signUpSuccessful: LiveData<Boolean> = _signUpSuccessful
 
-    }
+//    private fun _addUser(user: CurrentUser){
+//        viewModelScope.launch(Dispatchers.IO) {
+//            userRepository.insertUser(user)
+//            Log.d("entity", user.toString())
+//        }
+//    }
 
-    private fun _addUser(user: UserEntity){
-        viewModelScope.launch(Dispatchers.IO) {
-            userRepository.insertUser(user)
-        }
-    }
-
-    private fun _updateUser(user: UserEntity){
-        viewModelScope.launch {
-            userRepository.updateUser(user)
-        }
-    }
 
 
     @SuppressLint("SetTextI18n")
@@ -109,7 +75,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                                         val name = dataValues.child("name").value.toString()
                                         val image = dataValues.child("image").value.toString()
 
-                                        _updateUser(UserEntity(it.uid, name, title, userName, image))
+//                                        _updateUser(CurrentUser(it.uid, name, title, userName, image))
 
 //                                        val oneMegaByte: Long = 1024 * 1024
 //
@@ -158,12 +124,17 @@ class AppViewModel: ViewModel(), KoinComponent {
             it.children.forEach { user ->
                 if(user.key == auth.currentUser?.uid){
                     Log.d("user", user.child("userName").value.toString())
+                    viewModelScope.launch(Dispatchers.IO) {
+/*
+                        currentUserRepository.insertUser(
+                            CurrentUser(user.key.toString(), user.child("name").toString(),
+                            user.child("title").toString(),
+                            user.child("userName").value.toString(), user.child("image").value.toString())
+                        )
+*/
+                    }
 
-                    _addUser(UserEntity(user.key.toString(), user.child("name").toString(),
-                        user.child("title").toString(),
-                        user.child("userName").value.toString(), user.child("image").value.toString()))
-
-                    Log.d("user", readUserData.toString())
+//                    Log.d("userrr", currentUserRepository.getAllUser.value.toString())
                 }
             }
         }
@@ -186,7 +157,10 @@ class AppViewModel: ViewModel(), KoinComponent {
         database.updateChildren(childUpdates)
             .addOnSuccessListener {
                 // Write was successful!
-                _addUser(UserEntity(userId, name, title, userName,""))
+                viewModelScope.launch(Dispatchers.IO) {
+//                    userRepository.insertUser(CurrentUser(userId, name, title, userName,""))
+//                    Log.d("entity", user.toString())
+                }
                 _signUpSuccessful.value = true
             }
             .addOnFailureListener {
@@ -208,7 +182,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                     c.children.forEach { chatsL ->
                         val chat = chatsL.key.toString()
                         val friend = chat.split(" ").filter { it != me }.joinToString("")
-
+                        newLogin()
                         currentUser.children.forEach { thisUser ->
                             Log.d("chats/friend", thisUser.child("userName").value.toString())
                             if (friend == thisUser.child("userName").value.toString()) {
@@ -227,6 +201,8 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                     ))
                                             )
                                         }
+//                                        Log.d("userrr", currentUserRepository.getAllUser.value.toString())
+                                        Log.d("recent", recentChatRepository.getAllChats.value.toString())
                                     }
                                 }
                                     .addOnFailureListener { e ->

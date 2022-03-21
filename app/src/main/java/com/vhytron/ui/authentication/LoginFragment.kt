@@ -21,12 +21,13 @@ import com.vhytron.Network
 import com.vhytron.R
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentLoginBinding
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: AppViewModel
+    private val viewModel: AppViewModel by sharedViewModel()
 
 
     // This property is only valid between onCreateView and
@@ -40,7 +41,6 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         auth = Firebase.auth
-        viewModel = ViewModelProvider(this)[AppViewModel::class.java]
         return binding.root
     }
 

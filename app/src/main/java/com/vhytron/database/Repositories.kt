@@ -1,5 +1,7 @@
 package com.vhytron.database
 
+import android.app.Application
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.PeopleModel
@@ -9,32 +11,6 @@ import org.koin.core.component.inject
 
 class Repositories {
 
-    class UserRepository: KoinComponent{
-
-        private val db: AppDatabase by inject()
-        private val userDao: UserDao = db.userDao()
-
-        //Fetch All the Users
-        val getAllUsers: UserEntity = userDao.getAllUser()
-        fun getUser(): LiveData<UserEntity>{
-            return userDao.getUser()
-        }
-
-        // Insert new user
-        suspend fun insertUser(users: UserEntity) {
-            userDao.insertUser(users)
-        }
-
-        // update user
-        suspend fun updateUser(users: UserEntity) {
-            userDao.updateUser(users)
-        }
-
-        // Delete user
-        suspend fun deleteUser(users: UserEntity) {
-            userDao.deleteUser(users)
-        }
-    }
 
     class ChatRepository: KoinComponent{
 
@@ -59,6 +35,7 @@ class Repositories {
             chatsDao.deleteChat(chat)
         }
     }
+
 
     class RecentChatRepository: KoinComponent{
 
