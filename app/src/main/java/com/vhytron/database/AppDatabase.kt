@@ -13,6 +13,7 @@ import com.vhytron.ui.chats.RecentChats
         ChatModel::class,
         PeopleModel::class,
         RecentChats::class,
+        User::class
     ],
     version = 1,
     exportSchema = false
@@ -25,6 +26,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun recentChatsDao(): RecentChatsDao
 
     abstract fun peopleDao(): PeopleDao
+
+    abstract fun userDao(): UserDao
 
 /*
     companion object {

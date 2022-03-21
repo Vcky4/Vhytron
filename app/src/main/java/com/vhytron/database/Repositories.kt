@@ -11,6 +11,17 @@ import org.koin.core.component.inject
 
 class Repositories {
 
+    class UserRepository: KoinComponent{
+        private val db : AppDatabase by inject()
+        private val userDao: UserDao = db.userDao()
+
+        val getUser: LiveData<List<User>> = userDao.getAllUser()
+
+        suspend fun insertUser(user: User){
+            userDao.insertUser((user))
+        }
+    }
+
 
     class ChatRepository: KoinComponent{
 
@@ -69,6 +80,8 @@ class Repositories {
 
         //Fetch All the people
         val getAllPeople: LiveData<List<PeopleModel>> = peopleDao.getAllPeople()
+
+        fun thisUser() = peopleDao.thisUser()
 
         // Insert new user
         suspend fun insertPeople(people: PeopleModel) {

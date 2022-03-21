@@ -13,7 +13,8 @@ data class PeopleModel(
     val image: String = "",
     val name: String = "",
     val title: String = "",
-    @PrimaryKey val userName: String = ""):
+    @PrimaryKey val userName: String = "",
+    val uId: String = ""):
     Serializable{
 
     @Exclude
@@ -22,7 +23,7 @@ data class PeopleModel(
             "image" to image,
             "name" to name,
             "title" to title,
-            "userName" to userName
+            "userName" to userName,
         )
     }
 }

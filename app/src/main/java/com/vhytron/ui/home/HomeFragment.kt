@@ -191,28 +191,32 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             editProfileAlert.dismiss()
         }
 
-//        viewModel.thisUser.observe(viewLifecycleOwner){user ->
-//
-//            //Log.d("User", user.toString())
-//            profileBinding.title.text = user.title
-//            profileBinding.profileName.text = user.name
-//            editProfileBinding.profileName.setText(user.name)
-//            profileBinding.userName.text = user.userName
-//
-//            if (user.image.isEmpty()){
-//                editProfileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
-//                binding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
-//                profileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
-//            }else{
-//                Glide.with(requireContext()).load(user.image.toUri())
-//                    .into(binding.profilePic)
-//                Glide.with(requireContext()).load(user.image.toUri())
-//                    .into(editProfileBinding.profilePic)
-//                Glide.with(requireContext()).load(user.image.toUri())
-//                    .into(profileBinding.profilePic)
-//            }
-//
-//        }
+        viewModel.thisUser.observe(viewLifecycleOwner){
+
+            val users = it.filter { it.uId == auth.currentUser?.uid }
+            users.forEach { user ->
+                //Log.d("User", user.toString())
+                profileBinding.title.text = user.title
+                profileBinding.profileName.text = user.name
+                editProfileBinding.profileName.setText(user.name)
+                profileBinding.userName.text = user.userName
+
+                if (user.image.isEmpty()){
+                    editProfileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+                    binding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+                    profileBinding.profilePic.setImageResource(R.drawable.ic_baseline_person_24)
+                }else{
+                    Glide.with(requireContext()).load(user.image.toUri())
+                        .into(binding.profilePic)
+                    Glide.with(requireContext()).load(user.image.toUri())
+                        .into(editProfileBinding.profilePic)
+                    Glide.with(requireContext()).load(user.image.toUri())
+                        .into(profileBinding.profilePic)
+                }
+
+            }
+
+        }
 
         viewModel.message.observe(viewLifecycleOwner){
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()

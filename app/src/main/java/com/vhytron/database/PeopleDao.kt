@@ -12,6 +12,9 @@ interface PeopleDao {
     @Query("Select * from people ")
     fun getAllPeople(): LiveData<List<PeopleModel>>
 
+    @Query("Select * from people")
+    fun thisUser(): LiveData<List<PeopleModel>>
+
     @Update
     suspend fun updatePeople(people: PeopleModel)
 

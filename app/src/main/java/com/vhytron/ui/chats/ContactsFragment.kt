@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.vhytron.R
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentContactBinding
@@ -22,6 +25,8 @@ class ContactsFragment : Fragment() {
     private lateinit var binding: FragmentContactBinding
     private val chatsViewModel: AppViewModel by sharedViewModel()
     private lateinit var adapter: PeopleAdapter
+    private val auth: FirebaseAuth = Firebase.auth
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,8 +46,8 @@ class ContactsFragment : Fragment() {
         //set up recycler
         binding.contactRy.layoutManager = LinearLayoutManager(activity)
         binding.contactRy.adapter = adapter
-        chatsViewModel.allPeople.observe(viewLifecycleOwner){
-            adapter.differ.submitList(it)
+        chatsViewModel.allPeople.observe(viewLifecycleOwner){ people ->
+            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() })
             binding.contactLoading.visibility = GONE
         }
 

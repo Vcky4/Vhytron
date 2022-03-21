@@ -17,6 +17,7 @@ import com.vhytron.ui.chats.RecentChats
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 
 class AppViewModel: ViewModel(), KoinComponent {
@@ -34,14 +35,15 @@ class AppViewModel: ViewModel(), KoinComponent {
     private val peopleRepository: Repositories.PeopleRepository by inject()
 
 
+
     val recentChats = recentChatRepository.getAllChats
 
-    //get user data
-    //val readUserData: UserEntity = userRepository.getAllUsers
     //get chats
     val readChatData = chatRepository.getAllChats
     //get user
-//    val thisUser = currentUserRepository.getAllUser
+
+    val thisUser = peopleRepository.getAllPeople
+
     //get all people
     val allPeople = peopleRepository.getAllPeople
 
@@ -119,27 +121,6 @@ class AppViewModel: ViewModel(), KoinComponent {
 
     }
 
-    fun newLogin(){
-        ref.get().addOnSuccessListener {
-            it.children.forEach { user ->
-                if(user.key == auth.currentUser?.uid){
-                    Log.d("user", user.child("userName").value.toString())
-                    viewModelScope.launch(Dispatchers.IO) {
-/*
-                        currentUserRepository.insertUser(
-                            CurrentUser(user.key.toString(), user.child("name").toString(),
-                            user.child("title").toString(),
-                            user.child("userName").value.toString(), user.child("image").value.toString())
-                        )
-*/
-                    }
-
-//                    Log.d("userrr", currentUserRepository.getAllUser.value.toString())
-                }
-            }
-        }
-
-    }
 
 
     fun addUser(name: String, userName: String, title: String, userId: String) {
@@ -182,7 +163,6 @@ class AppViewModel: ViewModel(), KoinComponent {
                     c.children.forEach { chatsL ->
                         val chat = chatsL.key.toString()
                         val friend = chat.split(" ").filter { it != me }.joinToString("")
-                        newLogin()
                         currentUser.children.forEach { thisUser ->
                             Log.d("chats/friend", thisUser.child("userName").value.toString())
                             if (friend == thisUser.child("userName").value.toString()) {
@@ -201,7 +181,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                     ))
                                             )
                                         }
-//                                        Log.d("userrr", currentUserRepository.getAllUser.value.toString())
+
                                         Log.d("recent", recentChatRepository.getAllChats.value.toString())
                                     }
                                 }
@@ -226,14 +206,11 @@ class AppViewModel: ViewModel(), KoinComponent {
                 val menuListener = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (dataValues in dataSnapshot.children) {
-                            auth.currentUser.let {
-                                if (it != null && dataValues.key != it.uid) {
                                     val userName =
                                         dataValues.child("userName").value.toString()
                                     val title =
                                         dataValues.child("title").value.toString()
                                     val name = dataValues.child("name").value.toString()
-
 
                                     storageRef.child("${userName}.jpg").downloadUrl
                                         .addOnSuccessListener { image ->
@@ -241,17 +218,17 @@ class AppViewModel: ViewModel(), KoinComponent {
 
                                                 viewModelScope.launch(Dispatchers.IO) {
                                                     peopleRepository.insertPeople(PeopleModel(
-                                                        image.toString(), name, title, userName
+                                                        image.toString(), name, title, userName,
+                                                        dataValues.key.toString()
                                                     ))
                                                 }
                                             }
+                                            Log.d("thisguy", thisUser.toString())
                                         }
                                         .addOnFailureListener { e ->
                                             _error.value = e.message
                                         }
 
-                                }
-                            }
                         }
                     }
 

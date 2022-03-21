@@ -32,4 +32,7 @@ val appModule = module {
         Repositories.PeopleRepository()
     }
 
+    factory {
+        Repositories.UserRepository()
+    }
 }
