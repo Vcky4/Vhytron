@@ -1,35 +1,48 @@
 package com.vhytron.ui.chats
 
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.core.Repo
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.vhytron.R
+import com.vhytron.database.AppViewModel
 import com.vhytron.database.Repositories
 import com.vhytron.databinding.ChatItemBinding
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class ChatAdapter(private val userName: String) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
+class ChatAdapter(private val view: LifecycleOwner) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
+
+    private val auth: FirebaseAuth = Firebase.auth
+    private val people: Repositories.PeopleRepository by inject()
 
     inner class ChatViewHolder(private val binding: ChatItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindItem(chats: ChatModel) {
 
-            if (userName == chats.userName) {
-                binding.card.setBackgroundResource(R.drawable.chat_right)
-                binding.layout.setPadding(100, 10, 10, 10)
-                binding.layout.setHorizontalGravity(Gravity.END)
-            } else {
-                binding.card.setBackgroundResource(R.drawable.chart_left)
-                binding.layout.setPadding(10, 10, 100, 10)
+            people.getAllPeople.observe(view){ a ->
+                a.filter { it.uId == auth.currentUser?.uid }.forEach { person ->
+                    Log.d("chat", person.userName )
+                    if (person.userName == chats.userName) {
+                        binding.card.setBackgroundResource(R.drawable.chat_right)
+                        binding.layout.setPadding(100, 10, 10, 10)
+                        binding.layout.setHorizontalGravity(Gravity.END)
+                    } else {
+                        binding.card.setBackgroundResource(R.drawable.chart_left)
+                        binding.layout.setPadding(10, 10, 100, 10)
+                    }
+
+                }
             }
             binding.chat.text = chats.message
             binding.time.text = chats.time

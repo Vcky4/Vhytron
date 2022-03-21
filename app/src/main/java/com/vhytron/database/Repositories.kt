@@ -1,7 +1,5 @@
 package com.vhytron.database
 
-import android.app.Application
-import android.content.Context
 import androidx.lifecycle.LiveData
 import com.vhytron.ui.chats.ChatModel
 import com.vhytron.ui.chats.PeopleModel

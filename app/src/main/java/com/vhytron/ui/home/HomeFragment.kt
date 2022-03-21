@@ -71,7 +71,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         settingsBinding = SettingsAlertBinding.inflate(layoutInflater)
         teamsBinding = TeamsAlertBinding.inflate(layoutInflater)
 
-        viewModel.update()
+        viewModel.updatePeople()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -187,7 +187,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             editProfile(editProfileBinding.profileName.text.toString(),
                 editProfileBinding.titleSpinner.selectedItem.toString())
 
-            viewModel.update()
+            viewModel.updatePeople()
             editProfileAlert.dismiss()
         }
 

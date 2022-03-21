@@ -139,7 +139,7 @@ class AppViewModel: ViewModel(), KoinComponent {
             .addOnSuccessListener {
                 // Write was successful!
                 viewModelScope.launch(Dispatchers.IO) {
-//                    userRepository.insertUser(CurrentUser(userId, name, title, userName,""))
+                    updatePeople()
 //                    Log.d("entity", user.toString())
                 }
                 _signUpSuccessful.value = true

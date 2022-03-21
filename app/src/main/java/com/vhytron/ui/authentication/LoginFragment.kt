@@ -10,6 +10,8 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -63,6 +65,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.loginBt.setOnClickListener {
+            binding.loginLoading.visibility = VISIBLE
             login(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
         }
 
@@ -95,16 +98,18 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful){
-                    viewModel.newLogin()
                     Log.d(TAG, "loginWithEmailPassword:Successful")
                     Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    binding.loginLoading.visibility = GONE
                     findNavController().navigate(R.id.action_login_to_nav_home)
                 }else{
+                    binding.loginLoading.visibility = GONE
                     Log.w(TAG, "loginWithEmailPassword:failed", task.exception)
                     Toast.makeText(context, "authentication failed", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener{exception ->
+                binding.loginLoading.visibility = GONE
                 Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
     }

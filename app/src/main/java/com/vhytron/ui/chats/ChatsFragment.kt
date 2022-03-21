@@ -39,6 +39,7 @@ class ChatsFragment : Fragment() {
     ): View {
         _binding = FragmentChartsBinding.inflate(inflater, container, false)
         auth = Firebase.auth
+        chatsViewModel.getRecentChats()
         return binding.root
     }
 
@@ -47,7 +48,6 @@ class ChatsFragment : Fragment() {
         val adapter = PeopleAdapter(requireContext())
         binding.chartRv.layoutManager = LinearLayoutManager(activity)
         binding.chartRv.adapter = adapter
-        chatsViewModel.getRecentChats()
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {
             val list = mutableListOf<PeopleModel>()
             it.forEach {people ->
