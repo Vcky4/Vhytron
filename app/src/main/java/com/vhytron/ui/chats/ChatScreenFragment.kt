@@ -75,7 +75,6 @@ class ChatScreenFragment : Fragment() {
         binding.chatRv.adapter = adapter
         chatsViewModel.readChatData.observe(viewLifecycleOwner) {
             adapter.differ.submitList(it)
-
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -109,7 +108,7 @@ class ChatScreenFragment : Fragment() {
                             if (!(data.child("chats").exists())) {
                                 Log.d("message", "got here right1")
                                 val chat =
-                                    ChatModel(key,user.value.toString().trim(), message, "2:30pm")
+                                    ChatModel(key,user.value.toString().trim(), message, System.currentTimeMillis())
                                 Log.d("message", "got here right")
                                 val postValues = chat.toMap()
 
@@ -146,7 +145,7 @@ class ChatScreenFragment : Fragment() {
                                             Log.d("key", dd.key.toString())
 
                                             val chat =
-                                                ChatModel(key,user.value.toString(), message, "2:30pm")
+                                                ChatModel(key,user.value.toString(), message, System.currentTimeMillis())
 
                                             val postValues = chat.toMap()
 
@@ -180,7 +179,7 @@ class ChatScreenFragment : Fragment() {
                                                 ChatModel(
                                                     key,user.value.toString(),
                                                     message,
-                                                    "2:30pm"
+                                                    System.currentTimeMillis()
                                                 )
                                             Log.d("message", "got here right")
                                             val postValues = chat.toMap()

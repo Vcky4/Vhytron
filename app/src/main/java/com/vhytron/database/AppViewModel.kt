@@ -275,7 +275,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                     val sender = snapshot.child("userName")
                                                         .value.toString()
                                                     val time = snapshot.child("time")
-                                                        .value.toString()
+                                                        .value.toString().toLong()
                                                     viewModelScope.launch(Dispatchers.IO) {
                                                         Log.d("chatId", snapshot.key.toString())
                                                         chatRepository.insertChat(ChatModel(
@@ -298,7 +298,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                         // handle error
                     }
                 }
-                chatRef.addListenerForSingleValueEvent(menuListener)
+                chatRef.orderByChild("time").addListenerForSingleValueEvent(menuListener)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {

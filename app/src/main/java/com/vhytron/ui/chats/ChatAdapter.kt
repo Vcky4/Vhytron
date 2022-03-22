@@ -22,6 +22,7 @@ import com.vhytron.database.Repositories
 import com.vhytron.databinding.ChatItemBinding
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.sql.Timestamp
 
 class ChatAdapter(private val view: LifecycleOwner) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(), KoinComponent {
 
@@ -39,12 +40,12 @@ class ChatAdapter(private val view: LifecycleOwner) : RecyclerView.Adapter<ChatA
                         binding.card.visibility = GONE
                         binding.cardRight.visibility = VISIBLE
                         binding.chatRight.text = chats.message
-                        binding.timeRight.text = chats.time
+                        binding.timeRight.text = Timestamp(chats.time).toString()
                     } else {
                         binding.card.visibility = VISIBLE
                         binding.cardRight.visibility = GONE
                         binding.chat.text = chats.message
-                        binding.time.text = chats.time
+                        binding.time.text = Timestamp(chats.time).toString()
                     }
 
                 }
