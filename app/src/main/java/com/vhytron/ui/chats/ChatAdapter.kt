@@ -3,6 +3,8 @@ package com.vhytron.ui.chats
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -34,18 +36,19 @@ class ChatAdapter(private val view: LifecycleOwner) : RecyclerView.Adapter<ChatA
                 a.filter { it.uId == auth.currentUser?.uid }.forEach { person ->
                     Log.d("chat", person.userName )
                     if (person.userName == chats.userName) {
-                        binding.card.setBackgroundResource(R.drawable.chat_right)
-                        binding.layout.setPadding(100, 10, 10, 10)
-                        binding.layout.setHorizontalGravity(Gravity.END)
+                        binding.card.visibility = GONE
+                        binding.cardRight.visibility = VISIBLE
+                        binding.chatRight.text = chats.message
+                        binding.timeRight.text = chats.time
                     } else {
-                        binding.card.setBackgroundResource(R.drawable.chart_left)
-                        binding.layout.setPadding(10, 10, 100, 10)
+                        binding.card.visibility = VISIBLE
+                        binding.cardRight.visibility = GONE
+                        binding.chat.text = chats.message
+                        binding.time.text = chats.time
                     }
 
                 }
             }
-            binding.chat.text = chats.message
-            binding.time.text = chats.time
         }
     }
 

@@ -50,9 +50,7 @@ class ChatScreenFragment : Fragment() {
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
 
-        chatsViewModel.allPeople.observe(viewLifecycleOwner) {
-            Log.d("allPeople", it.toString())
-        }
+
         adapter = ChatAdapter(viewLifecycleOwner)
 
         return binding.root
