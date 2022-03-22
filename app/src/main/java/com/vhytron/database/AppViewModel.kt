@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
+import com.google.firebase.database.core.Tag
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -177,16 +178,28 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                         image.toString(),
                                                         thisUser.child("name").value.toString(),
                                                         thisUser.child("title").value.toString(),
-                                                        friend
+                                                        friend, thisUser.key.toString()
                                                     ))
                                             )
                                         }
 
                                         Log.d("recent", recentChatRepository.getAllChats.value.toString())
+                                    }else{
+                                        viewModelScope.launch(Dispatchers.IO) {
+                                            recentChatRepository.insertChat(
+                                                RecentChats(
+                                                    PeopleModel(
+                                                        "",
+                                                        thisUser.child("name").value.toString(),
+                                                        thisUser.child("title").value.toString(),
+                                                        friend, thisUser.key.toString()
+                                                    ))
+                                            )
+                                        }
                                     }
                                 }
                                     .addOnFailureListener { e ->
-                                        _error.value = e.message
+                                        Log.e("peopleImage", e.message.toString())
                                     }
                             }
                         }
@@ -215,10 +228,16 @@ class AppViewModel: ViewModel(), KoinComponent {
                                     storageRef.child("${userName}.jpg").downloadUrl
                                         .addOnSuccessListener { image ->
                                             if (image !=null){
-
                                                 viewModelScope.launch(Dispatchers.IO) {
                                                     peopleRepository.insertPeople(PeopleModel(
                                                         image.toString(), name, title, userName,
+                                                        dataValues.key.toString()
+                                                    ))
+                                                }
+                                            }else{
+                                                viewModelScope.launch(Dispatchers.IO) {
+                                                    peopleRepository.insertPeople(PeopleModel(
+                                                        "", name, title, userName,
                                                         dataValues.key.toString()
                                                     ))
                                                 }
@@ -226,7 +245,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                                             Log.d("thisguy", thisUser.toString())
                                         }
                                         .addOnFailureListener { e ->
-                                            _error.value = e.message
+                                            Log.e("peopleImage", e.message.toString())
                                         }
 
                         }
