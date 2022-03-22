@@ -97,7 +97,7 @@ class SignUpFragment : Fragment(), AdapterView.OnItemSelectedListener {
         //            _key.ifEmpty {
 //            database.child("devotional").push().key
 //        }
-        viewModel.addUser(userId, name, title, userName)
+        viewModel.addUser(name, userName, title, userId)
 
         viewModel.signUpSuccessful.observe(viewLifecycleOwner){successful ->
             if (successful){
