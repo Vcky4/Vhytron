@@ -48,12 +48,11 @@ class ChatsFragment : Fragment() {
         val adapter = PeopleAdapter(requireContext())
         binding.chartRv.layoutManager = LinearLayoutManager(activity)
         binding.chartRv.adapter = adapter
-        chatsViewModel.recentChats.observe(viewLifecycleOwner) {
+        chatsViewModel.recentChats.observe(viewLifecycleOwner) {recentChats ->
             val list = mutableListOf<PeopleModel>()
-            it.forEach {people ->
-
+            recentChats.forEach {people ->
                 list.add(people.people)
-                adapter.differ.submitList(list)
+                adapter.differ.submitList(list.sortedByDescending { it.time })
             }
 
         }

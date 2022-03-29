@@ -21,12 +21,13 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 
-class AppViewModel: ViewModel(), KoinComponent {
+class AppViewModel : ViewModel(), KoinComponent {
 
     private val auth: FirebaseAuth = Firebase.auth
     private val database: DatabaseReference = Firebase.database.reference
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("users").ref
+    private val refRecent = database.child("recent").ref
     private val chatRef = database.child("chats").ref
 
     private val chatRepository: Repositories.ChatRepository by inject()
@@ -35,9 +36,16 @@ class AppViewModel: ViewModel(), KoinComponent {
 
     private val peopleRepository: Repositories.PeopleRepository by inject()
 
+    private val roomDatabase: AppDatabase by inject()
 
 
     val recentChats = recentChatRepository.getAllChats
+
+    fun clear() {
+        viewModelScope.launch(Dispatchers.IO) {
+            roomDatabase.clearAllTables()
+        }
+    }
 
     //get chats
     val readChatData = chatRepository.getAllChats
@@ -62,9 +70,8 @@ class AppViewModel: ViewModel(), KoinComponent {
 //    }
 
 
-
     @SuppressLint("SetTextI18n")
-    fun update(){
+    fun update() {
         val childEventListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val menuListener = object : ValueEventListener {
@@ -72,7 +79,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                         for (dataValues in dataSnapshot.children) {
                             auth.currentUser.let {
                                 if (it != null) {
-                                    if (dataValues.key.toString() == it.uid){
+                                    if (dataValues.key.toString() == it.uid) {
                                         val userName = dataValues.child("userName").value.toString()
                                         val title = dataValues.child("title").value.toString()
                                         val name = dataValues.child("name").value.toString()
@@ -105,7 +112,8 @@ class AppViewModel: ViewModel(), KoinComponent {
                         _error.value = databaseError.message
                     }
                 }
-                ref.addListenerForSingleValueEvent(menuListener)            }
+                ref.addListenerForSingleValueEvent(menuListener)
+            }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
             }
@@ -123,13 +131,12 @@ class AppViewModel: ViewModel(), KoinComponent {
     }
 
 
-
     fun addUser(name: String, userName: String, title: String, userId: String) {
         //            _key.ifEmpty {
 //            database.child("devotional").push().key
 //        }
 
-        val user = ContactModel("", name,title,userName)
+        val user = ContactModel("", name, title, userName)
         val postValues = user.toMap()
 
         val childUpdates = hashMapOf<String, Any>(
@@ -158,8 +165,77 @@ class AppViewModel: ViewModel(), KoinComponent {
 
     fun getRecentChats() {
         auth.currentUser.let { user ->
-            ref.get().addOnSuccessListener { currentUser ->
-                val me = currentUser.child(user?.uid.toString()).child("userName").value.toString()
+
+            val recentChatsListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    for (dataValues in snapshot.children.filter { it.key == user?.uid }) {
+                        dataValues.children.forEach { each ->
+                            storageRef.child(
+                                "${each.child("userName").value.toString()}.jpg"
+                            ).downloadUrl
+                                .addOnSuccessListener { image ->
+                                    viewModelScope.launch(Dispatchers.IO) {
+                                        if (image != null) {
+                                            recentChatRepository.insertChat(
+                                                RecentChats(
+                                                    PeopleModel(
+                                                        image.toString(),
+                                                        each.child("name").value.toString(),
+                                                        each.child("title").value.toString(),
+                                                        each.child("userName").value.toString(),
+                                                        each.key.toString()
+                                                    )
+                                                )
+                                            )
+
+
+                                            Log.d(
+                                                "recent",
+                                                recentChatRepository.getAllChats.value.toString()
+                                            )
+                                        } else {
+                                            recentChatRepository.insertChat(
+                                                RecentChats(
+                                                    PeopleModel(
+                                                        "",
+                                                        each.child("name").value.toString(),
+                                                        each.child("title").value.toString(),
+                                                        each.child("userName").value.toString(),
+                                                        each.key.toString()
+                                                    )
+                                                )
+                                            )
+                                            Log.d("key",each.key.toString())
+                                        }
+                                    }
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("peopleImage", e.message.toString())
+                                }
+                        }
+
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    _error.value = error.message
+                    return
+                }
+
+            }
+            refRecent.addListenerForSingleValueEvent(recentChatsListener)
+
+/*
+            refRecent.get().addOnSuccessListener { currentUser ->
+                currentUser.children.forEach {
+                    if (it.key == user?.uid){
+//                        Log.d("recentsss", it.value.toString())
+                    }
+                }
+
+*/
+/*
                 chatRef.get().addOnSuccessListener { c ->
                     c.children.forEach { chatsL ->
                         val chat = chatsL.key.toString()
@@ -207,68 +283,59 @@ class AppViewModel: ViewModel(), KoinComponent {
 
                     }
                 }
+*//*
+
 
             }
+*/
         }
     }
 
 
     fun updatePeople() {
-        val childEventListener = object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (dataValues in dataSnapshot.children) {
-                                    val userName =
-                                        dataValues.child("userName").value.toString()
-                                    val title =
-                                        dataValues.child("title").value.toString()
-                                    val name = dataValues.child("name").value.toString()
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (dataValues in dataSnapshot.children) {
+                    val userName =
+                        dataValues.child("userName").value.toString()
+                    val title =
+                        dataValues.child("title").value.toString()
+                    val name = dataValues.child("name").value.toString()
 
-                                    storageRef.child("${userName}.jpg").downloadUrl
-                                        .addOnSuccessListener { image ->
-                                            if (image !=null){
-                                                viewModelScope.launch(Dispatchers.IO) {
-                                                    peopleRepository.insertPeople(PeopleModel(
-                                                        image.toString(), name, title, userName,
-                                                        dataValues.key.toString()
-                                                    ))
-                                                }
-                                            }else{
-                                                viewModelScope.launch(Dispatchers.IO) {
-                                                    peopleRepository.insertPeople(PeopleModel(
-                                                        "", name, title, userName,
-                                                        dataValues.key.toString()
-                                                    ))
-                                                }
-                                            }
-                                            Log.d("thisguy", thisUser.toString())
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Log.e("peopleImage", e.message.toString())
-                                        }
-
+                    storageRef.child("${userName}.jpg").downloadUrl
+                        .addOnSuccessListener { image ->
+                            if (image != null) {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    peopleRepository.insertPeople(
+                                        PeopleModel(
+                                            image.toString(), name, title, userName,
+                                            dataValues.key.toString()
+                                        )
+                                    )
+                                }
+                            } else {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    peopleRepository.insertPeople(
+                                        PeopleModel(
+                                            "", name, title, userName,
+                                            dataValues.key.toString()
+                                        )
+                                    )
+                                }
+                            }
                         }
-                    }
+                        .addOnFailureListener { e ->
+                            Log.e("peopleImage", e.message.toString())
+                        }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // handle error
-                    }
                 }
-                ref.addListenerForSingleValueEvent(menuListener)
             }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            override fun onCancelled(databaseError: DatabaseError) {
+                // handle error
             }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-
         }
-        ref.addChildEventListener(childEventListener)
+        ref.orderByKey().addListenerForSingleValueEvent(menuListener)
     }
 
 
@@ -286,7 +353,6 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                     .contains(data.value.toString()) &&
                                                 dataValues.key.toString().contains(friend)
                                             ) {
-                                                Log.d(ContentValues.TAG, dataValues.key.toString())
 
                                                 dataValues.children.forEach { snapshot ->
                                                     val message =
@@ -296,9 +362,15 @@ class AppViewModel: ViewModel(), KoinComponent {
                                                     val time = snapshot.child("time")
                                                         .value.toString().toLong()
                                                     viewModelScope.launch(Dispatchers.IO) {
-                                                        Log.d("chatId", snapshot.key.toString())
-                                                        chatRepository.insertChat(ChatModel(
-                                                            snapshot.key.toString(), sender, message, time)
+                                                        Log.d("chatId", dataValues.key.toString())
+                                                        chatRepository.insertChat(
+                                                            ChatModel(
+                                                                snapshot.key.toString(),
+                                                                sender,
+                                                                message,
+                                                                time,
+                                                                dataValues.key.toString()
+                                                            )
                                                         )
                                                     }
                                                 }
@@ -317,7 +389,7 @@ class AppViewModel: ViewModel(), KoinComponent {
                         // handle error
                     }
                 }
-                chatRef.orderByChild("time").addListenerForSingleValueEvent(menuListener)
+                chatRef.orderByKey().addListenerForSingleValueEvent(menuListener)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {

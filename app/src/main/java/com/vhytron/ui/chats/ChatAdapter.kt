@@ -1,5 +1,6 @@
 package com.vhytron.ui.chats
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -31,21 +32,24 @@ class ChatAdapter(private val view: LifecycleOwner) : RecyclerView.Adapter<ChatA
 
     inner class ChatViewHolder(private val binding: ChatItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bindItem(chats: ChatModel) {
 
             people.getAllPeople.observe(view){ a ->
                 a.filter { it.uId == auth.currentUser?.uid }.forEach { person ->
                     Log.d("chat", person.userName )
+                    val hours = Timestamp(chats.time).hours
+                    val minutes = Timestamp(chats.time).minutes
                     if (person.userName == chats.userName) {
                         binding.card.visibility = GONE
                         binding.cardRight.visibility = VISIBLE
                         binding.chatRight.text = chats.message
-                        binding.timeRight.text = Timestamp(chats.time).toString()
+                        binding.timeRight.text = "${if( hours > 12){hours.minus(12)}else{hours}}${if(minutes != 0){":$minutes"}else{""}}${if(hours >= 12){"pm"}else{"am"}}"
                     } else {
                         binding.card.visibility = VISIBLE
                         binding.cardRight.visibility = GONE
                         binding.chat.text = chats.message
-                        binding.time.text = Timestamp(chats.time).toString()
+                        binding.time.text = "${if( hours > 12){hours.minus(12)}else{hours}}${if(minutes != 0){":$minutes"}else{""}}${if(hours >= 12){"pm"}else{"am"}}"
                     }
 
                 }

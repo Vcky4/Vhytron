@@ -10,7 +10,8 @@ data class ChatModel(
     @PrimaryKey val id: String,
     val userName: String,
     val message: String,
-    val time: Long){
+    val time: Long,
+    val parties: String = ""){
 
     @Exclude
     fun toMap(): Map<String, Any?>{

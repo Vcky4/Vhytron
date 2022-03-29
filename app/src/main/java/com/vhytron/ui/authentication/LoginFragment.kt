@@ -66,6 +66,7 @@ class LoginFragment : Fragment() {
 
         binding.loginBt.setOnClickListener {
             binding.loginLoading.visibility = VISIBLE
+            binding.loginBt.isEnabled = false
             login(binding.emailText.text.toString().trim(), binding.passwordText.text.toString().trim())
         }
 
@@ -104,12 +105,14 @@ class LoginFragment : Fragment() {
                     findNavController().navigate(R.id.action_login_to_nav_home)
                 }else{
                     binding.loginLoading.visibility = GONE
+                    binding.loginBt.isEnabled = false
                     Log.w(TAG, "loginWithEmailPassword:failed", task.exception)
                     Toast.makeText(context, "authentication failed", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener{exception ->
                 binding.loginLoading.visibility = GONE
+                binding.loginBt.isEnabled = false
                 Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
             }
     }

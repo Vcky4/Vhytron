@@ -30,11 +30,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
+import com.vhytron.database.AppDatabase
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.sharedStateViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,6 +55,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var settingsBinding: SettingsAlertBinding
     private lateinit var teamsBinding: TeamsAlertBinding
     private  var imageUri: Uri? = null
+    private val roomDatabase: AppDatabase by inject()
 
 
     // This property is only valid between onCreateView and
@@ -164,6 +167,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }.attach()
 
         profileBinding.logOutBt.setOnClickListener {
+            viewModel.clear()
             auth.signOut()
             findNavController().navigate(R.id.action_nav_home_to_login)
             profileAlert.dismiss()
@@ -175,7 +179,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 uploadImageToFirebase(uri)
             }
         }
-
 
         editProfileBinding.editImage.setOnClickListener {
             getContent.launch("image/*")

@@ -1,7 +1,5 @@
 package com.vhytron.ui.chats
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.database.Exclude

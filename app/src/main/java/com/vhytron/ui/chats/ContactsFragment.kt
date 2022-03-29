@@ -1,6 +1,7 @@
 package com.vhytron.ui.chats
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -47,7 +48,8 @@ class ContactsFragment : Fragment() {
         binding.contactRy.layoutManager = LinearLayoutManager(activity)
         binding.contactRy.adapter = adapter
         chatsViewModel.allPeople.observe(viewLifecycleOwner){ people ->
-            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() })
+            Log.d("userID", auth.currentUser?.uid.toString())
+            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() }.sortedBy { it.name })
             binding.contactLoading.visibility = GONE
         }
 

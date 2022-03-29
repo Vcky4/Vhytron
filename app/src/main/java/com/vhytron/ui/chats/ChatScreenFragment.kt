@@ -11,8 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
@@ -21,10 +19,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.vhytron.database.AppDatabase
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -49,8 +45,6 @@ class ChatScreenFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
         auth = Firebase.auth
-
-
         adapter = ChatAdapter(viewLifecycleOwner)
 
         return binding.root
@@ -74,7 +68,16 @@ class ChatScreenFragment : Fragment() {
         binding.chatRv.layoutManager = linearLayoutManager
         binding.chatRv.adapter = adapter
         chatsViewModel.readChatData.observe(viewLifecycleOwner) {
-            adapter.differ.submitList(it)
+            chatsViewModel.allPeople.observe(viewLifecycleOwner) { a ->
+                a.filter { it.uId == auth.currentUser?.uid }.forEach { person ->
+                    Log.d("chat", person.userName)
+                    adapter.differ.submitList(
+                        it.filter {
+                            it.parties == "${person.userName} ${args.chats.userName}" ||
+                                    it.parties == "${args.chats.userName} ${person.userName}"
+                        })
+                }
+            }
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -95,126 +98,157 @@ class ChatScreenFragment : Fragment() {
 
     private fun createChats(args: ChatsFragmentArgs, message: String) {
         val key = database.child("chats").push().key
+        val storageRef = Firebase.storage.reference.child("profileImage")
+        val friend = args.chats
         if (key == null) {
             Log.w(ContentValues.TAG, "couldn't get push key for chats")
             return
         }
 
         auth.currentUser.let {
-            if (it != null) {
-                database.child("users")
-                    .child(it.uid).child("userName").get().addOnSuccessListener { user ->
-                        database.get().addOnSuccessListener { data ->
-                            if (!(data.child("chats").exists())) {
-                                Log.d("message", "got here right1")
+            storageRef.child("${friend.userName}.jpg").downloadUrl
+                .addOnSuccessListener { image ->
+                    if (it != null) {
+
+                        database.child("users")
+                            .child(it.uid).child("userName").get().addOnSuccessListener { user ->
                                 val chat =
-                                    ChatModel(key,user.value.toString().trim(), message, System.currentTimeMillis())
-                                Log.d("message", "got here right")
-                                val postValues = chat.toMap()
+                                    ChatModel(
+                                        key,
+                                        user.value.toString().trim(),
+                                        message,
+                                        System.currentTimeMillis()
+                                    )
+                                val recentChats =
+                                    PeopleModel(
+                                        image.toString(),
+                                        friend.name,
+                                        friend.title,
+                                        friend.userName,
+                                        time = System.currentTimeMillis()
+                                    )
 
-                                val childUpdates = hashMapOf<String, Any>(
-                                    "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postValues
-                                )
+                                val postChat = chat.toMap()
+                                val postRecent = recentChats.toMap()
 
-                                database.updateChildren(childUpdates)
-                                    .addOnSuccessListener {
-                                        chatsViewModel.updateChats(args.chats.userName)
-                                        chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
-//                                                linearLayoutManager.reverseLayout = true
-                                            linearLayoutManager.stackFromEnd = true
-                                            adapter.differ.submitList(chatList)
-                                        }
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        // Write failed
-                                        Toast.makeText(
-                                            context,
-                                            exception.localizedMessage,
-                                            Toast.LENGTH_LONG
+                                //check if directory exist
+                                database.get().addOnSuccessListener { data ->
+                                    if (!(data.child("chats").exists())) {
+
+                                        Log.d("message", "no chat directory")
+
+                                        val childUpdates = hashMapOf<String, Any>(
+                                            "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
                                         )
-                                            .show()
-                                    }
+                                        val recentUpdate = hashMapOf<String, Any>(
+                                            "/recent/${it.uid}/${friend.userName}" to postRecent
+                                        )
 
-                            } else {
-                                ref.get().addOnSuccessListener { chatData ->
-                                    //do this if it's the first chat
-                                    chatData.children.forEach { dd ->
-                                        if (dd.key.toString().contains(user.value.toString()) &&
-                                            dd.key.toString().contains(args.chats.userName)
-                                        ) {
-                                            Log.d("key", dd.key.toString())
+                                        database.updateChildren(childUpdates)
+                                            .addOnSuccessListener {
+                                                chatsViewModel.updateChats(args.chats.userName)
 
-                                            val chat =
-                                                ChatModel(key,user.value.toString(), message, System.currentTimeMillis())
-
-                                            val postValues = chat.toMap()
-
-                                            val childUpdates = hashMapOf<String, Any>(
-                                                "/chats/${dd.key.toString()}/$key" to postValues
-                                            )
-
-                                            database.updateChildren(childUpdates)
-                                                .addOnSuccessListener {
-                                                    chatsViewModel.updateChats(args.chats.userName)
-                                                    chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
-//                                                        linearLayoutManager.reverseLayout = true
-                                                        linearLayoutManager.stackFromEnd = true
-                                                        adapter.differ.submitList(chatList)
-                                                    }
-                                                }
-                                                .addOnFailureListener { exception ->
-                                                    // Write failed
-                                                    Toast.makeText(
-                                                        context,
-                                                        exception.localizedMessage,
-                                                        Toast.LENGTH_LONG
-                                                    )
-                                                        .show()
-                                                }
-                                        }
-                                        if (!chatData.child("${user.value.toString()} ${args.chats.userName}").exists() &&
-                                            !chatData.child("${args.chats.userName} ${user.value.toString()}").exists()){
-                                                    Log.d("problem", chatData.child("${user.value.toString()} ${args.chats.userName}").exists().toString() )
-                                            val chat =
-                                                ChatModel(
-                                                    key,user.value.toString(),
-                                                    message,
-                                                    System.currentTimeMillis()
+                                            }
+                                        database.updateChildren(recentUpdate)
+                                            .addOnSuccessListener {
+                                                //todo
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // Write failed
+                                                Toast.makeText(
+                                                    context,
+                                                    exception.localizedMessage,
+                                                    Toast.LENGTH_LONG
                                                 )
-                                            Log.d("message", "got here right")
-                                            val postValues = chat.toMap()
+                                                    .show()
+                                            }
 
-                                            val childUpdates = hashMapOf<String, Any>(
-                                                "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postValues
-                                            )
 
-                                            database.updateChildren(childUpdates)
-                                                .addOnSuccessListener {
-                                                    chatsViewModel.updateChats(args.chats.userName)
-                                                    chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
-//                                                        linearLayoutManager.reverseLayout = true
-                                                        linearLayoutManager.stackFromEnd = true
-                                                        adapter.differ.submitList(chatList)
-                                                    }
-                                                }
-                                                .addOnFailureListener { exception ->
-                                                    // Write failed
-                                                    Toast.makeText(
-                                                        context,
-                                                        exception.localizedMessage,
-                                                        Toast.LENGTH_LONG
+                                    } else {
+                                        // add child to directory
+                                        ref.get().addOnSuccessListener { chatData ->
+                                            //do this if it's the first chat
+                                            chatData.children.forEach { dd ->
+                                                if (dd.key.toString()
+                                                        .contains(user.value.toString()) &&
+                                                    dd.key.toString().contains(args.chats.userName)
+                                                ) {
+                                                    Log.d("key", dd.key.toString())
+
+                                                    val childUpdates =
+                                                        hashMapOf<String, Any>(
+                                                            "/chats/${dd.key.toString()}/$key" to postChat
+                                                        )
+                                                    val recentUpdate = hashMapOf<String, Any>(
+                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
                                                     )
-                                                        .show()
+
+                                                    database.updateChildren(childUpdates)
+                                                        .addOnSuccessListener {
+                                                            chatsViewModel.updateChats(args.chats.userName)
+                                                        }
+                                                    database.updateChildren(recentUpdate)
+                                                        .addOnSuccessListener {
+                                                            //todo
+                                                        }
+                                                        .addOnFailureListener { exception ->
+                                                            // Write failed
+                                                            Toast.makeText(
+                                                                context,
+                                                                exception.localizedMessage,
+                                                                Toast.LENGTH_LONG
+                                                            )
+                                                                .show()
+                                                        }
+
                                                 }
+
+                                                if (!chatData.child("${user.value.toString()} ${args.chats.userName}")
+                                                        .exists() &&
+                                                    !chatData.child("${args.chats.userName} ${user.value.toString()}")
+                                                        .exists()
+                                                ) {
+                                                    Log.d(
+                                                        "problem",
+                                                        chatData.child("${user.value.toString()} ${args.chats.userName}")
+                                                            .exists().toString()
+                                                    )
+
+                                                    val childUpdates = hashMapOf<String, Any>(
+                                                        "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
+                                                    )
+
+                                                    val recentUpdate = hashMapOf<String, Any>(
+                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
+                                                    )
+
+                                                    database.updateChildren(childUpdates)
+                                                        .addOnSuccessListener {
+                                                            chatsViewModel.updateChats(args.chats.userName)
+                                                        }
+                                                    database.updateChildren(recentUpdate)
+                                                        .addOnSuccessListener {
+                                                            //todo
+                                                        }
+                                                        .addOnFailureListener { exception ->
+                                                            // Write failed
+                                                            Toast.makeText(
+                                                                context,
+                                                                exception.localizedMessage,
+                                                                Toast.LENGTH_LONG
+                                                            )
+                                                                .show()
+                                                        }
+                                                }
+                                            }
                                         }
+
                                     }
                                 }
 
                             }
-                        }
-
                     }
-            }
+                }
         }
     }
 
