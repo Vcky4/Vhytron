@@ -3,12 +3,13 @@ package com.vhytron.database
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
-import com.google.firebase.database.core.Tag
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -16,7 +17,6 @@ import com.vhytron.ui.chats.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.component.inject
 
 class AppViewModel : ViewModel(), KoinComponent {
@@ -180,6 +180,7 @@ class AppViewModel : ViewModel(), KoinComponent {
                                                     if (image != null) {
                                                         recentChatRepository.insertChat(
                                                             RecentChats(
+                                                                users.key.toString(),
                                                                 PeopleModel(
                                                                     image.toString(),
                                                                     each.child("name").value.toString(),
@@ -202,6 +203,7 @@ class AppViewModel : ViewModel(), KoinComponent {
                                                     } else {
                                                         recentChatRepository.insertChat(
                                                             RecentChats(
+                                                                users.key.toString(),
                                                                 PeopleModel(
                                                                     "",
                                                                     each.child("name").value.toString(),
@@ -352,11 +354,11 @@ class AppViewModel : ViewModel(), KoinComponent {
                     if (it != null) {
 
                         database.child("users")
-                            .child(it.uid).child("userName").get().addOnSuccessListener { user ->
+                            .child(it.uid).get().addOnSuccessListener { user ->
                                 val chat =
                                     ChatModel(
                                         key,
-                                        user.value.toString().trim(),
+                                        user.child("userName").value.toString().trim(),
                                         message,
                                         System.currentTimeMillis()
                                     )
@@ -368,6 +370,15 @@ class AppViewModel : ViewModel(), KoinComponent {
                                         friend.userName,
                                         time = System.currentTimeMillis()
                                     )
+
+                                val otherUser =
+                                    PeopleModel(
+                                        image.toString(),
+                                        friend.name,
+                                        friend.title,
+                                        friend.userName,
+                                        time = System.currentTimeMillis()
+                                    )//complete this
 
                                 val postChat = chat.toMap()
                                 val postRecent = recentChats.toMap()

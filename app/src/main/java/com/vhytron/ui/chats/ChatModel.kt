@@ -25,7 +25,7 @@ data class ChatModel(
 
 @Entity(tableName = "recentChats")
 data class RecentChats(
-    @PrimaryKey
+    @PrimaryKey val key: String,
     @Embedded(prefix = "people_")
     val people: PeopleModel = PeopleModel()
 )

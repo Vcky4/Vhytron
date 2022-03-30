@@ -12,8 +12,10 @@ data class PeopleModel(
     val name: String = "",
     val title: String = "",
     val userName: String = "",
-    @PrimaryKey val uId: String = "",
-    val time: Long = 0):
+    @PrimaryKey
+    val uId: String = "",
+    val time: Long = 0
+):
     Serializable{
 
     @Exclude
