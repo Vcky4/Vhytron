@@ -3,6 +3,7 @@ package com.vhytron.database
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -11,10 +12,7 @@ import com.google.firebase.database.core.Tag
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.vhytron.ui.chats.ChatModel
-import com.vhytron.ui.chats.ContactModel
-import com.vhytron.ui.chats.PeopleModel
-import com.vhytron.ui.chats.RecentChats
+import com.vhytron.ui.chats.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -171,48 +169,60 @@ class AppViewModel : ViewModel(), KoinComponent {
 
                     for (dataValues in snapshot.children.filter { it.key == user?.uid }) {
                         dataValues.children.forEach { each ->
-                            storageRef.child(
-                                "${each.child("userName").value.toString()}.jpg"
-                            ).downloadUrl
-                                .addOnSuccessListener { image ->
-                                    viewModelScope.launch(Dispatchers.IO) {
-                                        if (image != null) {
-                                            recentChatRepository.insertChat(
-                                                RecentChats(
-                                                    PeopleModel(
-                                                        image.toString(),
-                                                        each.child("name").value.toString(),
-                                                        each.child("title").value.toString(),
-                                                        each.child("userName").value.toString(),
-                                                        each.key.toString()
-                                                    )
-                                                )
-                                            )
+                            ref.get().addOnSuccessListener {
+                                it.children.filter { it.child("userName").value == each.child("userName").value.toString() }
+                                    .forEach { users ->
+                                        storageRef.child(
+                                            "${each.child("userName").value.toString()}.jpg"
+                                        ).downloadUrl
+                                            .addOnSuccessListener { image ->
+                                                viewModelScope.launch(Dispatchers.IO) {
+                                                    if (image != null) {
+                                                        recentChatRepository.insertChat(
+                                                            RecentChats(
+                                                                PeopleModel(
+                                                                    image.toString(),
+                                                                    each.child("name").value.toString(),
+                                                                    each.child("title").value.toString(),
+                                                                    each.child("userName").value.toString(),
+                                                                    users.key.toString(),
+                                                                    each.child("time").value.toString()
+                                                                        .toLong()
+                                                                )
+                                                            )
+                                                        )
 
 
-                                            Log.d(
-                                                "recent",
-                                                recentChatRepository.getAllChats.value.toString()
-                                            )
-                                        } else {
-                                            recentChatRepository.insertChat(
-                                                RecentChats(
-                                                    PeopleModel(
-                                                        "",
-                                                        each.child("name").value.toString(),
-                                                        each.child("title").value.toString(),
-                                                        each.child("userName").value.toString(),
-                                                        each.key.toString()
-                                                    )
-                                                )
-                                            )
-                                            Log.d("key",each.key.toString())
-                                        }
+                                                        Log.d(
+                                                            "recent",
+                                                            recentChatRepository.getAllChats.value.toString()
+                                                        )
+
+                                                        Log.d("key", users.key.toString())
+                                                    } else {
+                                                        recentChatRepository.insertChat(
+                                                            RecentChats(
+                                                                PeopleModel(
+                                                                    "",
+                                                                    each.child("name").value.toString(),
+                                                                    each.child("title").value.toString(),
+                                                                    each.child("userName").value.toString(),
+                                                                    users.key.toString(),
+                                                                    each.child("time").value.toString()
+                                                                        .toLong()
+                                                                )
+                                                            )
+                                                        )
+                                                        Log.d("key", users.key.toString())
+                                                    }
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.e("peopleImage", e.message.toString())
+                                            }
                                     }
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e("peopleImage", e.message.toString())
-                                }
+                            }
+
                         }
 
                     }
@@ -226,68 +236,6 @@ class AppViewModel : ViewModel(), KoinComponent {
             }
             refRecent.addListenerForSingleValueEvent(recentChatsListener)
 
-/*
-            refRecent.get().addOnSuccessListener { currentUser ->
-                currentUser.children.forEach {
-                    if (it.key == user?.uid){
-//                        Log.d("recentsss", it.value.toString())
-                    }
-                }
-
-*/
-/*
-                chatRef.get().addOnSuccessListener { c ->
-                    c.children.forEach { chatsL ->
-                        val chat = chatsL.key.toString()
-                        val friend = chat.split(" ").filter { it != me }.joinToString("")
-                        currentUser.children.forEach { thisUser ->
-                            Log.d("chats/friend", thisUser.child("userName").value.toString())
-                            if (friend == thisUser.child("userName").value.toString()) {
-
-                                storageRef.child("${friend}.jpg").downloadUrl
-                                    .addOnSuccessListener { image ->
-                                    if (image !=null){
-                                        viewModelScope.launch(Dispatchers.IO) {
-                                            recentChatRepository.insertChat(
-                                                RecentChats(
-                                                    PeopleModel(
-                                                        image.toString(),
-                                                        thisUser.child("name").value.toString(),
-                                                        thisUser.child("title").value.toString(),
-                                                        friend, thisUser.key.toString()
-                                                    ))
-                                            )
-                                        }
-
-                                        Log.d("recent", recentChatRepository.getAllChats.value.toString())
-                                    }else{
-                                        viewModelScope.launch(Dispatchers.IO) {
-                                            recentChatRepository.insertChat(
-                                                RecentChats(
-                                                    PeopleModel(
-                                                        "",
-                                                        thisUser.child("name").value.toString(),
-                                                        thisUser.child("title").value.toString(),
-                                                        friend, thisUser.key.toString()
-                                                    ))
-                                            )
-                                        }
-                                    }
-                                }
-                                    .addOnFailureListener { e ->
-                                        Log.e("peopleImage", e.message.toString())
-                                    }
-                            }
-                        }
-
-
-                    }
-                }
-*//*
-
-
-            }
-*/
         }
     }
 
@@ -301,27 +249,26 @@ class AppViewModel : ViewModel(), KoinComponent {
                     val title =
                         dataValues.child("title").value.toString()
                     val name = dataValues.child("name").value.toString()
-
                     storageRef.child("${userName}.jpg").downloadUrl
                         .addOnSuccessListener { image ->
-                            if (image != null) {
-                                viewModelScope.launch(Dispatchers.IO) {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                if (image != null) {
                                     peopleRepository.insertPeople(
                                         PeopleModel(
                                             image.toString(), name, title, userName,
-                                            dataValues.key.toString()
+                                            uId = dataValues.key.toString()
                                         )
                                     )
-                                }
-                            } else {
-                                viewModelScope.launch(Dispatchers.IO) {
+                                    Log.d("peopleKey", dataValues.key.toString())
+                                } else {
                                     peopleRepository.insertPeople(
                                         PeopleModel(
                                             "", name, title, userName,
-                                            dataValues.key.toString()
+                                            uId = dataValues.key.toString()
                                         )
                                     )
                                 }
+
                             }
                         }
                         .addOnFailureListener { e ->
@@ -335,75 +282,238 @@ class AppViewModel : ViewModel(), KoinComponent {
                 // handle error
             }
         }
-        ref.orderByKey().addListenerForSingleValueEvent(menuListener)
+        ref.addListenerForSingleValueEvent(menuListener)
     }
 
 
     fun updateChats(friend: String) {
-        val childEventListener = object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val menuListener = object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        for (dataValues in dataSnapshot.children) {
-                            auth.currentUser.let {
-                                if (it != null) {
-                                    ref.child(it.uid).child("userName")
-                                        .get().addOnSuccessListener { data ->
-                                            if (dataValues.key.toString()
-                                                    .contains(data.value.toString()) &&
-                                                dataValues.key.toString().contains(friend)
-                                            ) {
+        val menuListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (dataValues in dataSnapshot.children) {
+                    auth.currentUser.let { user ->
+                        if (user != null) {
+                            dataValues.children.filter { dataValues.key == user.uid }
+                                .forEach { snapshot ->
+                                    snapshot.children.filter { snapshot.key == friend }
+                                        .forEach { chats ->
+                                            Log.d("chatnow", chats.value.toString())
+                                            Log.d("datavalues", dataValues.key.toString())
+                                            val message =
+                                                chats.child("message").value.toString()
+                                            val sender = chats.child("userName")
+                                                .value.toString()
+                                            val time = chats.child("time")
+                                                .value.toString().toLong()
+                                            viewModelScope.launch(Dispatchers.IO) {
+                                                Log.d("chatId", message.toString())
+                                                chatRepository.insertChat(
+                                                    ChatModel(
+                                                        chats.key.toString(),
+                                                        sender,
+                                                        message,
+                                                        time,
+                                                        snapshot.key.toString()
+                                                    )
+                                                )
+                                            }
+                                        }
 
-                                                dataValues.children.forEach { snapshot ->
-                                                    val message =
-                                                        snapshot.child("message").value.toString()
-                                                    val sender = snapshot.child("userName")
-                                                        .value.toString()
-                                                    val time = snapshot.child("time")
-                                                        .value.toString().toLong()
-                                                    viewModelScope.launch(Dispatchers.IO) {
-                                                        Log.d("chatId", dataValues.key.toString())
-                                                        chatRepository.insertChat(
-                                                            ChatModel(
-                                                                snapshot.key.toString(),
-                                                                sender,
-                                                                message,
-                                                                time,
-                                                                dataValues.key.toString()
-                                                            )
+                                }
+
+
+                        }
+                    }
+                }
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // handle error
+            }
+        }
+        chatRef.addListenerForSingleValueEvent(menuListener)
+
+    }
+
+
+    fun createChats(args: ChatsFragmentArgs, message: String) {
+        val key = database.child("chats").push().key
+        val storageRef = Firebase.storage.reference.child("profileImage")
+        val friend = args.chats
+        if (key == null) {
+            Log.w(ContentValues.TAG, "couldn't get push key for chats")
+            return
+        }
+
+
+        auth.currentUser.let {
+            storageRef.child("${friend.userName}.jpg").downloadUrl
+                .addOnSuccessListener { image ->
+                    if (it != null) {
+
+                        database.child("users")
+                            .child(it.uid).child("userName").get().addOnSuccessListener { user ->
+                                val chat =
+                                    ChatModel(
+                                        key,
+                                        user.value.toString().trim(),
+                                        message,
+                                        System.currentTimeMillis()
+                                    )
+                                val recentChats =
+                                    PeopleModel(
+                                        image.toString(),
+                                        friend.name,
+                                        friend.title,
+                                        friend.userName,
+                                        time = System.currentTimeMillis()
+                                    )
+
+                                val postChat = chat.toMap()
+                                val postRecent = recentChats.toMap()
+
+                                //check if directory exist
+                                database.get().addOnSuccessListener { data ->
+                                    if (!(data.child("chats").exists())) {
+
+                                        Log.d("message", "no chat directory")
+
+                                        val childUpdates = hashMapOf<String, Any>(
+                                            "/chats/${it.uid}/${args.chats.userName}/$key" to postChat,
+                                            "/chats/${friend.uId}/${user.value.toString()}/$key" to postChat
+                                        )
+                                        val recentUpdate = hashMapOf<String, Any>(
+                                            "/recent/${it.uid}/${friend.userName}" to postRecent,
+                                            "/recent/${friend.uId}/${user.value.toString()}" to postRecent
+                                        )
+                                        Log.d("friendId", friend.uId)
+
+                                        database.updateChildren(childUpdates)
+                                            .addOnSuccessListener {
+                                                updateChats(args.chats.userName)
+
+                                            }
+                                        database.updateChildren(recentUpdate)
+                                            .addOnSuccessListener {
+                                                getRecentChats()
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // Write failed
+                                                _error.postValue(exception.localizedMessage)
+                                            }
+
+
+                                    } else {
+                                        val childUpdates = hashMapOf<String, Any>(
+                                            "/chats/${it.uid}/${args.chats.userName}/$key" to postChat,
+                                            "/chats/${friend.uId}/${user.value.toString()}/$key" to postChat
+                                        )
+                                        val recentUpdate = hashMapOf<String, Any>(
+                                            "/recent/${it.uid}/${friend.userName}" to postRecent,
+                                            "/recent/${friend.uId}/${user.value.toString()}" to postRecent
+                                        )
+                                        Log.d("friendId", args.chats.toString())
+                                        database.updateChildren(childUpdates)
+                                            .addOnSuccessListener {
+                                                updateChats(args.chats.userName)
+
+                                            }
+                                        database.updateChildren(recentUpdate)
+                                            .addOnSuccessListener {
+                                                getRecentChats()
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // Write failed
+                                                _error.postValue(exception.localizedMessage)
+                                            }
+/*
+                                        // add child to directory
+                                        ref.get().addOnSuccessListener { chatData ->
+                                            //do this if it's the first chat
+                                            chatData.children.forEach { dd ->
+                                                if (dd.key.toString()
+                                                        .contains(user.value.toString()) &&
+                                                    dd.key.toString().contains(args.chats.userName)
+                                                ) {
+                                                    Log.d("key", dd.key.toString())
+
+                                                    val childUpdates =
+                                                        hashMapOf<String, Any>(
+                                                            "/chats/${dd.key.toString()}/$key" to postChat
                                                         )
-                                                    }
+                                                    val recentUpdate = hashMapOf<String, Any>(
+                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
+                                                    )
+
+                                                    val updateOthers = hashMapOf<String, Any>(
+                                                        "/recent/${friend.uId}/${user.value.toString()}" to postRecent
+                                                    )
+
+                                                    database.updateChildren(updateOthers)
+                                                    database.updateChildren(childUpdates)
+                                                        .addOnSuccessListener {
+                                                            updateChats(args.chats.userName)
+                                                        }
+                                                    database.updateChildren(recentUpdate)
+                                                        .addOnSuccessListener {
+                                                            //todo
+                                                        }
+                                                        .addOnFailureListener { exception ->
+                                                            // Write failed
+                                                            _error.postValue(exception.localizedMessage)
+                                                        }
+
+                                                }
+
+                                                if (!chatData.child("${user.value.toString()} ${args.chats.userName}")
+                                                        .exists() &&
+                                                    !chatData.child("${args.chats.userName} ${user.value.toString()}")
+                                                        .exists()
+                                                ) {
+                                                    Log.d(
+                                                        "problem",
+                                                        chatData.child("${user.value.toString()} ${args.chats.userName}")
+                                                            .exists().toString()
+                                                    )
+
+                                                    val childUpdates = hashMapOf<String, Any>(
+                                                        "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
+                                                    )
+
+                                                    val recentUpdate = hashMapOf<String, Any>(
+                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
+                                                    )
+
+                                                    val updateOthers = hashMapOf<String, Any>(
+                                                        "/recent/${friend.uId}/${user.value.toString()}" to postRecent
+                                                    )
+
+                                                    database.updateChildren(updateOthers)
+
+                                                    database.updateChildren(childUpdates)
+                                                        .addOnSuccessListener {
+                                                            updateChats(args.chats.userName)
+                                                        }
+                                                    database.updateChildren(recentUpdate)
+                                                        .addOnSuccessListener {
+                                                            //todo
+                                                        }
+                                                        .addOnFailureListener { exception ->
+                                                            // Write failed
+                                                            _error.postValue(exception.localizedMessage)
+                                                        }
                                                 }
                                             }
                                         }
-                                        .addOnFailureListener { e ->
-                                            _error.value = e.message
-                                        }
+*/
+
+                                    }
                                 }
+
                             }
-                        }
-
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // handle error
                     }
                 }
-                chatRef.orderByKey().addListenerForSingleValueEvent(menuListener)
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-
         }
-
-        chatRef.addChildEventListener(childEventListener)
-
     }
+
 }

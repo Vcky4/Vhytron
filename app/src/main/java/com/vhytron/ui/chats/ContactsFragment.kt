@@ -49,7 +49,7 @@ class ContactsFragment : Fragment() {
         binding.contactRy.adapter = adapter
         chatsViewModel.allPeople.observe(viewLifecycleOwner){ people ->
             Log.d("userID", auth.currentUser?.uid.toString())
-            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() }.sortedBy { it.name })
+            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() }.sortedBy { it.name.toString() })
             binding.contactLoading.visibility = GONE
         }
 

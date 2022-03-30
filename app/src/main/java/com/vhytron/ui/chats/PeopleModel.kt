@@ -11,8 +11,8 @@ data class PeopleModel(
     val image: String = "",
     val name: String = "",
     val title: String = "",
-    @PrimaryKey val userName: String = "",
-    val uId: String = "",
+    val userName: String = "",
+    @PrimaryKey val uId: String = "",
     val time: Long = 0):
     Serializable{
 

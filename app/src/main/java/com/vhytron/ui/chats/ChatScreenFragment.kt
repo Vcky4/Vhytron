@@ -68,16 +68,9 @@ class ChatScreenFragment : Fragment() {
         binding.chatRv.layoutManager = linearLayoutManager
         binding.chatRv.adapter = adapter
         chatsViewModel.readChatData.observe(viewLifecycleOwner) {
-            chatsViewModel.allPeople.observe(viewLifecycleOwner) { a ->
-                a.filter { it.uId == auth.currentUser?.uid }.forEach { person ->
-                    Log.d("chat", person.userName)
-                    adapter.differ.submitList(
-                        it.filter {
-                            it.parties == "${person.userName} ${args.chats.userName}" ||
-                                    it.parties == "${args.chats.userName} ${person.userName}"
-                        })
-                }
-            }
+            adapter.differ.submitList(
+                it.filter {it.parties == "${args.chats.userName}"
+                }.sortedBy { it.time })
         }
 
         binding.toolbar.setNavigationOnClickListener {
@@ -90,165 +83,9 @@ class ChatScreenFragment : Fragment() {
 
         binding.sendBt.setOnClickListener {
             if (binding.messageInput.text?.isNotEmpty() == true) {
-                createChats(args, binding.messageInput.text.toString())
+                chatsViewModel.createChats(args, binding.messageInput.text.toString())
                 binding.messageInput.text?.clear()
             }
-        }
-    }
-
-    private fun createChats(args: ChatsFragmentArgs, message: String) {
-        val key = database.child("chats").push().key
-        val storageRef = Firebase.storage.reference.child("profileImage")
-        val friend = args.chats
-        if (key == null) {
-            Log.w(ContentValues.TAG, "couldn't get push key for chats")
-            return
-        }
-
-        auth.currentUser.let {
-            storageRef.child("${friend.userName}.jpg").downloadUrl
-                .addOnSuccessListener { image ->
-                    if (it != null) {
-
-                        database.child("users")
-                            .child(it.uid).child("userName").get().addOnSuccessListener { user ->
-                                val chat =
-                                    ChatModel(
-                                        key,
-                                        user.value.toString().trim(),
-                                        message,
-                                        System.currentTimeMillis()
-                                    )
-                                val recentChats =
-                                    PeopleModel(
-                                        image.toString(),
-                                        friend.name,
-                                        friend.title,
-                                        friend.userName,
-                                        time = System.currentTimeMillis()
-                                    )
-
-                                val postChat = chat.toMap()
-                                val postRecent = recentChats.toMap()
-
-                                //check if directory exist
-                                database.get().addOnSuccessListener { data ->
-                                    if (!(data.child("chats").exists())) {
-
-                                        Log.d("message", "no chat directory")
-
-                                        val childUpdates = hashMapOf<String, Any>(
-                                            "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
-                                        )
-                                        val recentUpdate = hashMapOf<String, Any>(
-                                            "/recent/${it.uid}/${friend.userName}" to postRecent
-                                        )
-
-                                        database.updateChildren(childUpdates)
-                                            .addOnSuccessListener {
-                                                chatsViewModel.updateChats(args.chats.userName)
-
-                                            }
-                                        database.updateChildren(recentUpdate)
-                                            .addOnSuccessListener {
-                                                //todo
-                                            }
-                                            .addOnFailureListener { exception ->
-                                                // Write failed
-                                                Toast.makeText(
-                                                    context,
-                                                    exception.localizedMessage,
-                                                    Toast.LENGTH_LONG
-                                                )
-                                                    .show()
-                                            }
-
-
-                                    } else {
-                                        // add child to directory
-                                        ref.get().addOnSuccessListener { chatData ->
-                                            //do this if it's the first chat
-                                            chatData.children.forEach { dd ->
-                                                if (dd.key.toString()
-                                                        .contains(user.value.toString()) &&
-                                                    dd.key.toString().contains(args.chats.userName)
-                                                ) {
-                                                    Log.d("key", dd.key.toString())
-
-                                                    val childUpdates =
-                                                        hashMapOf<String, Any>(
-                                                            "/chats/${dd.key.toString()}/$key" to postChat
-                                                        )
-                                                    val recentUpdate = hashMapOf<String, Any>(
-                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
-                                                    )
-
-                                                    database.updateChildren(childUpdates)
-                                                        .addOnSuccessListener {
-                                                            chatsViewModel.updateChats(args.chats.userName)
-                                                        }
-                                                    database.updateChildren(recentUpdate)
-                                                        .addOnSuccessListener {
-                                                            //todo
-                                                        }
-                                                        .addOnFailureListener { exception ->
-                                                            // Write failed
-                                                            Toast.makeText(
-                                                                context,
-                                                                exception.localizedMessage,
-                                                                Toast.LENGTH_LONG
-                                                            )
-                                                                .show()
-                                                        }
-
-                                                }
-
-                                                if (!chatData.child("${user.value.toString()} ${args.chats.userName}")
-                                                        .exists() &&
-                                                    !chatData.child("${args.chats.userName} ${user.value.toString()}")
-                                                        .exists()
-                                                ) {
-                                                    Log.d(
-                                                        "problem",
-                                                        chatData.child("${user.value.toString()} ${args.chats.userName}")
-                                                            .exists().toString()
-                                                    )
-
-                                                    val childUpdates = hashMapOf<String, Any>(
-                                                        "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
-                                                    )
-
-                                                    val recentUpdate = hashMapOf<String, Any>(
-                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
-                                                    )
-
-                                                    database.updateChildren(childUpdates)
-                                                        .addOnSuccessListener {
-                                                            chatsViewModel.updateChats(args.chats.userName)
-                                                        }
-                                                    database.updateChildren(recentUpdate)
-                                                        .addOnSuccessListener {
-                                                            //todo
-                                                        }
-                                                        .addOnFailureListener { exception ->
-                                                            // Write failed
-                                                            Toast.makeText(
-                                                                context,
-                                                                exception.localizedMessage,
-                                                                Toast.LENGTH_LONG
-                                                            )
-                                                                .show()
-                                                        }
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-
-                            }
-                    }
-                }
         }
     }
 

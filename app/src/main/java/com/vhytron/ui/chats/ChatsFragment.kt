@@ -1,6 +1,7 @@
 package com.vhytron.ui.chats
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +53,8 @@ class ChatsFragment : Fragment() {
             val list = mutableListOf<PeopleModel>()
             recentChats.forEach {people ->
                 list.add(people.people)
-                adapter.differ.submitList(list.sortedByDescending { it.time })
+                adapter.differ.submitList(list.sortedByDescending { it.time.toInt() })
+                Log.d("let's see", list.toString())
             }
 
         }
