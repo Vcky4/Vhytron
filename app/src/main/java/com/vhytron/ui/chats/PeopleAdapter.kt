@@ -39,8 +39,11 @@ class PeopleAdapter(private val context: Context): RecyclerView.Adapter<PeopleAd
     }
 
     private val differCallback = object : DiffUtil.ItemCallback<PeopleModel>() {
-        override fun areItemsTheSame(oldItem: PeopleModel, newItem: PeopleModel) = oldItem.userName == newItem.userName
-        override fun areContentsTheSame(oldItem: PeopleModel, newItem: PeopleModel) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: PeopleModel, newItem: PeopleModel) =
+            oldItem.uId == newItem.uId
+
+        override fun areContentsTheSame(oldItem: PeopleModel, newItem: PeopleModel) =
+            oldItem == newItem
     }
 
     val differ = AsyncListDiffer(this, differCallback)

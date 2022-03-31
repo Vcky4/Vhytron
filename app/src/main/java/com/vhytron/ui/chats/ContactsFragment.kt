@@ -5,11 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -49,8 +47,14 @@ class ContactsFragment : Fragment() {
         binding.contactRy.adapter = adapter
         chatsViewModel.allPeople.observe(viewLifecycleOwner){ people ->
             Log.d("userID", auth.currentUser?.uid.toString())
-            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() }.sortedBy { it.name.toString() })
+            adapter.differ.submitList(people.filter { it.uId != auth.currentUser?.uid.toString() }
+                .sortedBy { it.name })
             binding.contactLoading.visibility = GONE
+            Log.d(
+                "this people",
+                people.filter { it.uId != auth.currentUser?.uid.toString() }.toString()
+            )
+            Log.d("my uId", auth.currentUser?.uid.toString())
         }
 
         //display errors

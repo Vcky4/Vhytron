@@ -338,7 +338,7 @@ class AppViewModel : ViewModel(), KoinComponent {
     }
 
 
-    fun createChats(args: ChatsFragmentArgs, message: String) {
+    fun createChats(args: ChatsFragmentArgs, message: String, me: PeopleModel) {
         val key = database.child("chats").push().key
         val storageRef = Firebase.storage.reference.child("profileImage")
         val friend = args.chats
@@ -353,175 +353,62 @@ class AppViewModel : ViewModel(), KoinComponent {
                 .addOnSuccessListener { image ->
                     if (it != null) {
 
-                        database.child("users")
-                            .child(it.uid).get().addOnSuccessListener { user ->
-                                val chat =
-                                    ChatModel(
-                                        key,
-                                        user.child("userName").value.toString().trim(),
-                                        message,
-                                        System.currentTimeMillis()
-                                    )
-                                val recentChats =
-                                    PeopleModel(
-                                        image.toString(),
-                                        friend.name,
-                                        friend.title,
-                                        friend.userName,
-                                        time = System.currentTimeMillis()
-                                    )
 
-                                val otherUser =
-                                    PeopleModel(
-                                        image.toString(),
-                                        friend.name,
-                                        friend.title,
-                                        friend.userName,
-                                        time = System.currentTimeMillis()
-                                    )//complete this
+                        val chat =
+                            ChatModel(
+                                key,
+                                me.userName.trim(),
+                                message,
+                                System.currentTimeMillis()
+                            )
+                        val recentChats =
+                            PeopleModel(
+                                image.toString(),
+                                friend.name,
+                                friend.title,
+                                friend.userName,
+                                time = System.currentTimeMillis()
+                            )
 
-                                val postChat = chat.toMap()
-                                val postRecent = recentChats.toMap()
+                        val otherUser =
+                            PeopleModel(
+                                me.image,
+                                me.name.trim(),
+                                me.title,
+                                me.userName,
+                                time = System.currentTimeMillis()
+                            )
 
-                                //check if directory exist
-                                database.get().addOnSuccessListener { data ->
-                                    if (!(data.child("chats").exists())) {
+                        val postChat = chat.toMap()
+                        val postRecent = recentChats.toMap()
+                        val postOther = otherUser.toMap()
 
-                                        Log.d("message", "no chat directory")
+                        Log.d("message", "no chat directory")
 
-                                        val childUpdates = hashMapOf<String, Any>(
-                                            "/chats/${it.uid}/${args.chats.userName}/$key" to postChat,
-                                            "/chats/${friend.uId}/${user.value.toString()}/$key" to postChat
-                                        )
-                                        val recentUpdate = hashMapOf<String, Any>(
-                                            "/recent/${it.uid}/${friend.userName}" to postRecent,
-                                            "/recent/${friend.uId}/${user.value.toString()}" to postRecent
-                                        )
-                                        Log.d("friendId", friend.uId)
+                        val childUpdates = hashMapOf<String, Any>(
+                            "/chats/${it.uid}/${args.chats.userName}/$key" to postChat,
+                            "/chats/${friend.uId}/${me.userName}/$key" to postChat
+                        )
+                        val recentUpdate = hashMapOf<String, Any>(
+                            "/recent/${it.uid}/${friend.userName}" to postRecent,
+                            "/recent/${friend.uId}/${me.userName}" to postOther
+                        )
+                        Log.d("friendId", friend.uId)
 
-                                        database.updateChildren(childUpdates)
-                                            .addOnSuccessListener {
-                                                updateChats(args.chats.userName)
-
-                                            }
-                                        database.updateChildren(recentUpdate)
-                                            .addOnSuccessListener {
-                                                getRecentChats()
-                                            }
-                                            .addOnFailureListener { exception ->
-                                                // Write failed
-                                                _error.postValue(exception.localizedMessage)
-                                            }
-
-
-                                    } else {
-                                        val childUpdates = hashMapOf<String, Any>(
-                                            "/chats/${it.uid}/${args.chats.userName}/$key" to postChat,
-                                            "/chats/${friend.uId}/${user.value.toString()}/$key" to postChat
-                                        )
-                                        val recentUpdate = hashMapOf<String, Any>(
-                                            "/recent/${it.uid}/${friend.userName}" to postRecent,
-                                            "/recent/${friend.uId}/${user.value.toString()}" to postRecent
-                                        )
-                                        Log.d("friendId", args.chats.toString())
-                                        database.updateChildren(childUpdates)
-                                            .addOnSuccessListener {
-                                                updateChats(args.chats.userName)
-
-                                            }
-                                        database.updateChildren(recentUpdate)
-                                            .addOnSuccessListener {
-                                                getRecentChats()
-                                            }
-                                            .addOnFailureListener { exception ->
-                                                // Write failed
-                                                _error.postValue(exception.localizedMessage)
-                                            }
-/*
-                                        // add child to directory
-                                        ref.get().addOnSuccessListener { chatData ->
-                                            //do this if it's the first chat
-                                            chatData.children.forEach { dd ->
-                                                if (dd.key.toString()
-                                                        .contains(user.value.toString()) &&
-                                                    dd.key.toString().contains(args.chats.userName)
-                                                ) {
-                                                    Log.d("key", dd.key.toString())
-
-                                                    val childUpdates =
-                                                        hashMapOf<String, Any>(
-                                                            "/chats/${dd.key.toString()}/$key" to postChat
-                                                        )
-                                                    val recentUpdate = hashMapOf<String, Any>(
-                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
-                                                    )
-
-                                                    val updateOthers = hashMapOf<String, Any>(
-                                                        "/recent/${friend.uId}/${user.value.toString()}" to postRecent
-                                                    )
-
-                                                    database.updateChildren(updateOthers)
-                                                    database.updateChildren(childUpdates)
-                                                        .addOnSuccessListener {
-                                                            updateChats(args.chats.userName)
-                                                        }
-                                                    database.updateChildren(recentUpdate)
-                                                        .addOnSuccessListener {
-                                                            //todo
-                                                        }
-                                                        .addOnFailureListener { exception ->
-                                                            // Write failed
-                                                            _error.postValue(exception.localizedMessage)
-                                                        }
-
-                                                }
-
-                                                if (!chatData.child("${user.value.toString()} ${args.chats.userName}")
-                                                        .exists() &&
-                                                    !chatData.child("${args.chats.userName} ${user.value.toString()}")
-                                                        .exists()
-                                                ) {
-                                                    Log.d(
-                                                        "problem",
-                                                        chatData.child("${user.value.toString()} ${args.chats.userName}")
-                                                            .exists().toString()
-                                                    )
-
-                                                    val childUpdates = hashMapOf<String, Any>(
-                                                        "/chats/${user.value.toString()} ${args.chats.userName}/$key" to postChat
-                                                    )
-
-                                                    val recentUpdate = hashMapOf<String, Any>(
-                                                        "/recent/${it.uid}/${friend.userName}" to postRecent
-                                                    )
-
-                                                    val updateOthers = hashMapOf<String, Any>(
-                                                        "/recent/${friend.uId}/${user.value.toString()}" to postRecent
-                                                    )
-
-                                                    database.updateChildren(updateOthers)
-
-                                                    database.updateChildren(childUpdates)
-                                                        .addOnSuccessListener {
-                                                            updateChats(args.chats.userName)
-                                                        }
-                                                    database.updateChildren(recentUpdate)
-                                                        .addOnSuccessListener {
-                                                            //todo
-                                                        }
-                                                        .addOnFailureListener { exception ->
-                                                            // Write failed
-                                                            _error.postValue(exception.localizedMessage)
-                                                        }
-                                                }
-                                            }
-                                        }
-*/
-
-                                    }
-                                }
+                        database.updateChildren(childUpdates)
+                            .addOnSuccessListener {
+                                updateChats(args.chats.userName)
 
                             }
+                        database.updateChildren(recentUpdate)
+                            .addOnSuccessListener {
+                                getRecentChats()
+                            }
+                            .addOnFailureListener { exception ->
+                                // Write failed
+                                _error.postValue(exception.localizedMessage)
+                            }
+
                     }
                 }
         }

@@ -51,11 +51,11 @@ class ChatsFragment : Fragment() {
         binding.chartRv.adapter = adapter
         chatsViewModel.recentChats.observe(viewLifecycleOwner) {recentChats ->
             val list = mutableListOf<PeopleModel>()
-            recentChats.forEach {people ->
+            recentChats.forEach { people ->
                 list.add(people.people)
-                adapter.differ.submitList(list.sortedByDescending { it.time.toInt() })
-                Log.d("let's see", list.toString())
             }
+            Log.d("let's see", list.toString())
+            adapter.differ.submitList(list.sortedByDescending { it.time.toInt() })
 
         }
         chatsViewModel.message.observe(viewLifecycleOwner){

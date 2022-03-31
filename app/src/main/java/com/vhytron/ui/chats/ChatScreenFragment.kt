@@ -1,6 +1,5 @@
 package com.vhytron.ui.chats
 
-import android.content.ContentValues
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +16,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,7 +26,6 @@ class ChatScreenFragment : Fragment() {
     private var _binding: FragmentChatScreenBinding? = null
     private lateinit var adapter: ChatAdapter
     private val database: DatabaseReference = Firebase.database.reference
-    private val ref = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
     private val chatsViewModel: AppViewModel by viewModel()
     private val linearLayoutManager = LinearLayoutManager(activity)
@@ -67,9 +63,10 @@ class ChatScreenFragment : Fragment() {
 
         binding.chatRv.layoutManager = linearLayoutManager
         binding.chatRv.adapter = adapter
-        chatsViewModel.readChatData.observe(viewLifecycleOwner) {
+        chatsViewModel.readChatData.observe(viewLifecycleOwner) { chatList ->
             adapter.differ.submitList(
-                it.filter {it.parties == "${args.chats.userName}"
+                chatList.filter {
+                    it.parties == args.chats.userName
                 }.sortedBy { it.time })
         }
 
@@ -82,10 +79,16 @@ class ChatScreenFragment : Fragment() {
             .into(binding.profilePic)
 
         binding.sendBt.setOnClickListener {
-            if (binding.messageInput.text?.isNotEmpty() == true) {
-                chatsViewModel.createChats(args, binding.messageInput.text.toString())
-                binding.messageInput.text?.clear()
+            chatsViewModel.thisUser.observe(viewLifecycleOwner) { peopleList ->
+                peopleList.filter { it.uId == auth.currentUser?.uid }.forEach { user ->
+                    if (binding.messageInput.text?.isNotEmpty() == true) {
+                        chatsViewModel.createChats(args, binding.messageInput.text.toString(), user)
+                        binding.messageInput.text?.clear()
+                    }
+                }
+
             }
+
         }
     }
 
