@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChatScreenBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,8 +28,9 @@ class ChatScreenFragment : Fragment() {
     private var _binding: FragmentChatScreenBinding? = null
     private lateinit var adapter: ChatAdapter
     private val database: DatabaseReference = Firebase.database.reference
+    private val chatRef = database.child("chats").ref
     private lateinit var auth: FirebaseAuth
-    private val chatsViewModel: AppViewModel by viewModel()
+    private val chatsViewModel: ChatsViewModel by viewModel()
     private val linearLayoutManager = LinearLayoutManager(activity)
 
     // This property is only valid between onCreateView and
@@ -57,9 +60,20 @@ class ChatScreenFragment : Fragment() {
         }
         val args = ChatsFragmentArgs.fromBundle(bundle)
 
-        linearLayoutManager.stackFromEnd = true
+        val recentChatsListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                chatsViewModel.updateChats(args.chats.userName)
+            }
 
-        chatsViewModel.updateChats(args.chats.userName)
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+
+        }
+        chatRef.addChildEventListener(recentChatsListener)
+
+        linearLayoutManager.stackFromEnd = true
 
         binding.chatRv.layoutManager = linearLayoutManager
         binding.chatRv.adapter = adapter

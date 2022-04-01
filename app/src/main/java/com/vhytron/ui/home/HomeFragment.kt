@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -18,28 +17,23 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
-import com.vhytron.database.AppDatabase
 import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.*
 import com.vhytron.ui.ViewPagerAdapter
 import com.vhytron.ui.chats.ChatsFragment
 import com.vhytron.ui.todos.TodosFragment
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.sharedStateViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -55,7 +49,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var settingsBinding: SettingsAlertBinding
     private lateinit var teamsBinding: TeamsAlertBinding
     private  var imageUri: Uri? = null
-    private val roomDatabase: AppDatabase by inject()
 
 
     // This property is only valid between onCreateView and
@@ -81,6 +74,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.updatePeople()
 
         requireActivity().setActionBar(binding.toolbar)
 

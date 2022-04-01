@@ -11,22 +11,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.vhytron.R
-import com.vhytron.database.AppViewModel
 import com.vhytron.databinding.FragmentChartsBinding
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ChatsFragment : Fragment() {
 
     private var _binding: FragmentChartsBinding? = null
-    private val chatsViewModel: AppViewModel by sharedViewModel()
-    private val storageRef = Firebase.storage.reference.child("profileImage")
+    private val chatsViewModel: ChatsViewModel by sharedViewModel()
     private lateinit var auth: FirebaseAuth
     private val database: DatabaseReference = Firebase.database.reference
+    private val refRecent = database.child("recent").ref
 
 
     // This property is only valid between onCreateView and
@@ -49,7 +50,21 @@ class ChatsFragment : Fragment() {
         val adapter = PeopleAdapter(requireContext())
         binding.chartRv.layoutManager = LinearLayoutManager(activity)
         binding.chartRv.adapter = adapter
-        chatsViewModel.recentChats.observe(viewLifecycleOwner) {recentChats ->
+
+        val recentChatsListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                chatsViewModel.getRecentChats()
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+
+        }
+        refRecent.addChildEventListener(recentChatsListener)
+
+        chatsViewModel.recentChats.observe(viewLifecycleOwner) { recentChats ->
             val list = mutableListOf<PeopleModel>()
             recentChats.forEach { people ->
                 list.add(people.people)
