@@ -68,6 +68,10 @@ class Repositories {
         suspend fun deleteChat(chat: RecentChats) {
             recentChatsDao.deleteChat(chat)
         }
+
+        suspend fun deleteAll() {
+            recentChatsDao.deleteAll()
+        }
     }
 
 

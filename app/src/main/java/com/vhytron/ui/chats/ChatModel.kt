@@ -10,8 +10,9 @@ data class ChatModel(
     @PrimaryKey val id: String,
     val userName: String,
     val message: String,
-    val time: Long,
-    val parties: String = ""){
+    val time: Long = System.currentTimeMillis(),
+    val parties: String = ""
+){
 
     @Exclude
     fun toMap(): Map<String, Any?>{

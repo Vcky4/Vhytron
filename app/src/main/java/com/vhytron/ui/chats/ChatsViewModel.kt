@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.vhytron.database.AppDatabase
 import com.vhytron.database.Repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +34,8 @@ class ChatsViewModel : ViewModel(), KoinComponent {
     private val recentChatRepository: Repositories.RecentChatRepository by inject()
     private val peopleRepository: Repositories.PeopleRepository by inject()
     private val _error = MutableLiveData<String>()
+    private val roomDatabase: AppDatabase by inject()
+
 
     val recentChats = recentChatRepository.getAllChats
 
@@ -47,11 +50,13 @@ class ChatsViewModel : ViewModel(), KoinComponent {
         getRecentChats()
     }
 
+    private val newList = mutableListOf<RecentChats>()
+
+
     fun getRecentChats() {
         auth.currentUser.let { user ->
             val recentChatsListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     for (dataValues in snapshot.children.filter { it.key == user?.uid }) {
                         dataValues.children.forEach { each ->
                             ref.get().addOnSuccessListener {
@@ -73,11 +78,29 @@ class ChatsViewModel : ViewModel(), KoinComponent {
                                                                     each.child("userName").value.toString(),
                                                                     users.key.toString(),
                                                                     each.child("time").value.toString()
-                                                                        .toLong()
+                                                                        .toLong(),
+                                                                    each.child("isRead").value.toString()
+                                                                        .toBoolean()
                                                                 )
                                                             )
                                                         )
 
+                                                        newList.add(
+                                                            RecentChats(
+                                                                users.key.toString(),
+                                                                PeopleModel(
+                                                                    image.toString(),
+                                                                    each.child("name").value.toString(),
+                                                                    each.child("title").value.toString(),
+                                                                    each.child("userName").value.toString(),
+                                                                    users.key.toString(),
+                                                                    each.child("time").value.toString()
+                                                                        .toLong(),
+                                                                    each.child("isRead").value.toString()
+                                                                        .toBoolean()
+                                                                )
+                                                            )
+                                                        )
 
                                                         Log.d(
                                                             "recent",
@@ -96,7 +119,25 @@ class ChatsViewModel : ViewModel(), KoinComponent {
                                                                     each.child("userName").value.toString(),
                                                                     users.key.toString(),
                                                                     each.child("time").value.toString()
-                                                                        .toLong()
+                                                                        .toLong(),
+                                                                    each.child("isRead").value.toString()
+                                                                        .toBoolean()
+                                                                )
+                                                            )
+                                                        )
+                                                        newList.add(
+                                                            RecentChats(
+                                                                users.key.toString(),
+                                                                PeopleModel(
+                                                                    image.toString(),
+                                                                    each.child("name").value.toString(),
+                                                                    each.child("title").value.toString(),
+                                                                    each.child("userName").value.toString(),
+                                                                    users.key.toString(),
+                                                                    each.child("time").value.toString()
+                                                                        .toLong(),
+                                                                    each.child("isRead").value.toString()
+                                                                        .toBoolean()
                                                                 )
                                                             )
                                                         )
@@ -123,6 +164,16 @@ class ChatsViewModel : ViewModel(), KoinComponent {
             }
 //            refRecent.addListenerForSingleValueEvent(recentChatsListener)
             refRecent.addValueEventListener(recentChatsListener)
+        }
+    }
+
+    fun delete(list: List<RecentChats>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            list.minus(newList).forEach {
+                recentChatRepository.deleteChat(it)
+                Log.d("new List", newList.toString())
+                Log.d("should delete", it.toString())
+            }
         }
     }
 
@@ -197,7 +248,6 @@ class ChatsViewModel : ViewModel(), KoinComponent {
                                 key,
                                 me.userName.trim(),
                                 message,
-                                System.currentTimeMillis()
                             )
                         val recentChats =
                             PeopleModel(
@@ -205,7 +255,7 @@ class ChatsViewModel : ViewModel(), KoinComponent {
                                 friend.name,
                                 friend.title,
                                 friend.userName,
-                                time = System.currentTimeMillis()
+                                isRead = true
                             )
 
                         val otherUser =
@@ -214,7 +264,6 @@ class ChatsViewModel : ViewModel(), KoinComponent {
                                 me.name.trim(),
                                 me.title,
                                 me.userName,
-                                time = System.currentTimeMillis()
                             )
 
                         val postChat = chat.toMap()

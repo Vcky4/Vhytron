@@ -65,6 +65,7 @@ class ChatsFragment : Fragment() {
         refRecent.addChildEventListener(recentChatsListener)
 
         chatsViewModel.recentChats.observe(viewLifecycleOwner) { recentChats ->
+            chatsViewModel.delete(recentChats)
             val list = mutableListOf<PeopleModel>()
             recentChats.forEach { people ->
                 list.add(people.people)

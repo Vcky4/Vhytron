@@ -14,7 +14,8 @@ data class PeopleModel(
     val userName: String = "",
     @PrimaryKey
     val uId: String = "",
-    val time: Long = 0
+    val time: Long = System.currentTimeMillis(),
+    var isRead: Boolean = false
 ):
     Serializable{
 
@@ -25,7 +26,8 @@ data class PeopleModel(
             "name" to name,
             "title" to title,
             "userName" to userName,
-            "time" to time
+            "time" to time,
+            "isRead" to isRead
         )
     }
 }

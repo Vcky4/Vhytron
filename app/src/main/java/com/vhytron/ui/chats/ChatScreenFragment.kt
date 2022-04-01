@@ -29,6 +29,7 @@ class ChatScreenFragment : Fragment() {
     private lateinit var adapter: ChatAdapter
     private val database: DatabaseReference = Firebase.database.reference
     private val chatRef = database.child("chats").ref
+    private val refRecent = database.child("recent").ref
     private lateinit var auth: FirebaseAuth
     private val chatsViewModel: ChatsViewModel by viewModel()
     private val linearLayoutManager = LinearLayoutManager(activity)
@@ -63,6 +64,8 @@ class ChatScreenFragment : Fragment() {
         val recentChatsListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 chatsViewModel.updateChats(args.chats.userName)
+
+
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -72,6 +75,13 @@ class ChatScreenFragment : Fragment() {
 
         }
         chatRef.addChildEventListener(recentChatsListener)
+
+        chatsViewModel.thisUser.observe(viewLifecycleOwner) { peopleList ->
+            peopleList.filter { it.uId == auth.currentUser?.uid }.forEach { user ->
+                refRecent.child(user.uId).child(args.chats.userName).child("isRead").setValue(true)
+            }
+        }
+
 
         linearLayoutManager.stackFromEnd = true
 

@@ -34,4 +34,7 @@ interface RecentChatsDao {
 
     @Delete
     suspend fun deleteChat(chat: RecentChats)
+
+    @Query("Delete from recentChats")
+    suspend fun deleteAll()
 }

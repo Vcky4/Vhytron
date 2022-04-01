@@ -29,17 +29,11 @@ class AppViewModel : ViewModel(), KoinComponent {
     private val storageRef = Firebase.storage.reference.child("profileImage")
     private val ref = database.child("users").ref
 
-
-    private val chatRepository: Repositories.ChatRepository by inject()
-
     private val recentChatRepository: Repositories.RecentChatRepository by inject()
 
     private val peopleRepository: Repositories.PeopleRepository by inject()
 
     private val roomDatabase: AppDatabase by inject()
-
-
-    val recentChats = recentChatRepository.getAllChats
 
     fun clear() {
         viewModelScope.launch(Dispatchers.IO) {
